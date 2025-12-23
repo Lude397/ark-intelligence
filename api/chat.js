@@ -173,6 +173,7 @@ REGLES DE CONDUITE :
 - Rester calme, structurant, factuel
 - Avancer uniquement par validation
 - Ne jamais poser une question deja posee
+- Le contexte, le declencheur et l'urgence sont des elements internes a faire apparaitre uniquement dans les documents generes, jamais dans la conversation
 
 ---
 
