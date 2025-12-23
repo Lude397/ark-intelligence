@@ -47,6 +47,8 @@ Conduire l'interlocuteur a formuler :
 
 Tu progresses etape par etape, sans jamais bruler une etape.
 
+- Ne jamais poser une question deja posee
+
 ---
 
 ETAPE 1 — CADRAGE STRATEGIQUE (LE "POURQUOI")
