@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ark Intelligence - ARK Corporat Group</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-tertiary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #c9a227;
+            --accent-hover: #d4af37;
+            --border: #2a2a2a;
+            --success: #22c55e;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ===== LAYOUT PRINCIPAL ===== */
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* ===== SIDEBAR (PC) ===== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--bg-primary);
+        }
+
+        .logo-text {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .logo-subtitle {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Documents list */
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 24px;
+        }
+
+        .sidebar-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .doc-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .doc-item:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .doc-item.active {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .doc-item.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .doc-item .icon {
+            width: 18px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* Dossiers */
+        .folder-item {
+            margin-top: 8px;
+        }
+
+        .folder-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .folder-header:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .folder-header .chevron {
+            margin-left: auto;
+            transition: transform 0.2s;
+        }
+
+        .folder-header.open .chevron {
+            transform: rotate(90deg);
+        }
+
+        .folder-content {
+            display: none;
+            padding-left: 20px;
+        }
+
+        .folder-content.open {
+            display: block;
+        }
+
+        .folder-content .doc-item {
+            font-size: 13px;
+            padding: 8px 12px;
+        }
+
+        /* Sidebar footer */
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .new-chat-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .new-chat-btn:hover {
+            background: var(--border);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ===== WELCOME SCREEN ===== */
+        .welcome-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .welcome-screen.hidden {
+            display: none;
+        }
+
+        .welcome-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--accent);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: 700;
+            color: var(--bg-primary);
+            margin-bottom: 24px;
+        }
+
+        .welcome-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .welcome-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .welcome-input-container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .welcome-textarea {
+            width: 100%;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 16px;
+            resize: none;
+            outline: none;
+            min-height: 100px;
+        }
+
+        .welcome-textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .welcome-send {
+            margin-top: 16px;
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            border: none;
+            border-radius: 10px;
+            color: var(--bg-primary);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .welcome-send:hover {
+            background: var(--accent-hover);
+        }
+
+        .welcome-send svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        /* ===== CHAT SCREEN ===== */
+        .chat-screen {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+        }
+
+        .chat-screen.visible {
+            display: flex;
+        }
+
+        .chat-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-header-info {
+            flex: 1;
+        }
+
+        .chat-header-title {
+            font-weight: 600;
+        }
+
+        .chat-header-status {
+            font-size: 12px;
+            color: var(--success);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .message {
+            max-width: 80%;
+            margin-bottom: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            margin-left: auto;
+        }
+
+        .message-content {
+            padding: 12px 16px;
+            border-radius: 16px;
+            line-height: 1.5;
+        }
+
+        .message.user .message-content {
+            background: var(--accent);
+            color: var(--bg-primary);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.ai .message-content {
+            background: var(--bg-secondary);
+            border-bottom-left-radius: 4px;
+        }
+
+        /* Options A/B/C/D */
+        .message.ai .message-content p {
+            margin-bottom: 8px;
+        }
+
+        .message.ai .message-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .chat-input-container {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 15px;
+            resize: none;
+            outline: none;
+            max-height: 120px;
+        }
+
+        .chat-input:focus {
+            border-color: var(--accent);
+        }
+
+        .chat-send {
+            width: 44px;
+            height: 44px;
+            background: var(--accent);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+
+        .chat-send:hover {
+            background: var(--accent-hover);
+        }
+
+        .chat-send svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--bg-primary);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        /* ===== LOADING SCREEN ===== */
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .loading-screen.visible {
+            display: flex;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== DOCUMENT SCREEN ===== */
+        .document-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-primary);
+            display: none;
+            flex-direction: column;
+            z-index: 50;
+        }
+
+        .document-screen.visible {
+            display: flex;
+        }
+
+        .document-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .document-back {
+            width: 36px;
+            height: 36px;
+            background: var(--bg-secondary);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .document-back svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--text-primary);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .document-title {
+            flex: 1;
+            font-weight: 600;
+        }
+
+        .document-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .document-actions button {
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .document-actions button:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .document-actions button.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .document-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .document-body {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 32px;
+            line-height: 1.7;
+        }
+
+        .document-body h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: var(--accent);
+        }
+
+        .document-body h2 {
+            font-size: 20px;
+            margin-top: 32px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .document-body h3 {
+            font-size: 16px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: var(--accent);
+        }
+
+        .document-body p {
+            margin-bottom: 12px;
+        }
+
+        .document-body ul, .document-body ol {
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        .document-body li {
+            margin-bottom: 8px;
+        }
+
+        .document-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        .document-body th, .document-body td {
+            padding: 12px;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        .document-body th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+        }
+
+        /* ===== MOBILE DOCS BUTTON ===== */
+        .mobile-docs-btn {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: var(--accent);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 40;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .mobile-docs-btn svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--bg-primary);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        /* Mobile docs modal */
+        .mobile-docs-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 60;
+            align-items: flex-end;
+        }
+
+        .mobile-docs-modal.visible {
+            display: flex;
+        }
+
+        .mobile-docs-content {
+            width: 100%;
+            max-height: 70vh;
+            background: var(--bg-secondary);
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .mobile-docs-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .mobile-docs-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .mobile-docs-close {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-tertiary);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-docs-close svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--text-primary);
+            stroke-width: 2;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .mobile-docs-btn {
+                display: flex;
+            }
+
+            .welcome-screen {
+                padding: 20px;
+            }
+
+            .welcome-logo {
+                width: 60px;
+                height: 60px;
+                font-size: 30px;
+            }
+
+            .welcome-title {
+                font-size: 22px;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            .document-body {
+                padding: 20px;
+            }
+
+            .chat-input-container {
+                padding-bottom: max(16px, env(safe-area-inset-bottom));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar (PC) -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="logo-icon">A</div>
+                    <div>
+                        <div class="logo-text">Ark Intelligence</div>
+                        <div class="logo-subtitle">ARK Corporat Group</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-content">
+                <!-- Documents Client -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Documents Client</div>
+                    <div class="doc-item disabled" data-doc="charter_client">
+                        <span class="icon">•</span>
+                        <span>Project Charter Client</span>
+                    </div>
+                    <div class="doc-item disabled" data-doc="cahier_charge">
+                        <span class="icon">•</span>
+                        <span>Cahier de charge</span>
+                    </div>
+                    <div class="doc-item disabled" data-doc="budget">
+                        <span class="icon">•</span>
+                        <span>Budget previsionnel</span>
+                    </div>
+                    <div class="doc-item disabled" data-doc="plan_projet">
+                        <span class="icon">•</span>
+                        <span>Plan de projet</span>
+                    </div>
+                    <div class="doc-item disabled" data-doc="checklist">
+                        <span class="icon">•</span>
+                        <span>Checklist lancement</span>
+                    </div>
+                </div>
+
+                <!-- Documents Internes -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Documents Internes</div>
+                    <div class="doc-item disabled" data-doc="charter_ark">
+                        <span class="icon">•</span>
+                        <span>Project Charter ARK</span>
+                    </div>
+                    <div class="doc-item disabled" data-doc="risques">
+                        <span class="icon">•</span>
+                        <span>Matrice des risques</span>
+                    </div>
+                </div>
+
+                <!-- ARK Process -->
+                <div class="sidebar-section">
+                    <div class="folder-item">
+                        <div class="folder-header" data-folder="ark-process">
+                            <span class="icon">▸</span>
+                            <span>ARK Process</span>
+                            <span class="chevron">›</span>
+                        </div>
+                        <div class="folder-content" id="folder-ark-process">
+                            <div class="doc-item disabled" data-doc="sop_clients">
+                                <span class="icon">•</span>
+                                <span>SOP Clients</span>
+                            </div>
+                            <div class="doc-item disabled" data-doc="sop_internes">
+                                <span class="icon">•</span>
+                                <span>SOP Internes</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ark Insight -->
+                <div class="sidebar-section">
+                    <div class="folder-item">
+                        <div class="folder-header" data-folder="ark-insight">
+                            <span class="icon">▸</span>
+                            <span>Ark Insight</span>
+                            <span class="chevron">›</span>
+                        </div>
+                        <div class="folder-content" id="folder-ark-insight">
+                            <div class="doc-item disabled" data-doc="diagnostics">
+                                <span class="icon">•</span>
+                                <span>Diagnostics</span>
+                            </div>
+                            <div class="doc-item disabled" data-doc="recommandations">
+                                <span class="icon">•</span>
+                                <span>Recommandations</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ark Business -->
+                <div class="sidebar-section">
+                    <div class="folder-item">
+                        <div class="folder-header" data-folder="ark-business">
+                            <span class="icon">▸</span>
+                            <span>Ark Business</span>
+                            <span class="chevron">›</span>
+                        </div>
+                        <div class="folder-content" id="folder-ark-business">
+                            <div class="doc-item disabled" data-doc="design_thinking">
+                                <span class="icon">•</span>
+                                <span>Design Thinking</span>
+                            </div>
+                            <div class="doc-item disabled" data-doc="business_model">
+                                <span class="icon">•</span>
+                                <span>Business Model</span>
+                            </div>
+                            <div class="doc-item disabled" data-doc="lean_startup">
+                                <span class="icon">•</span>
+                                <span>Lean Start Up</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <button class="new-chat-btn" id="newChatBtn">
+                    <span>+</span>
+                    <span>Nouveau projet</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Welcome Screen -->
+            <div class="welcome-screen" id="welcomeScreen">
+                <div class="welcome-logo">A</div>
+                <h1 class="welcome-title">Ark Intelligence</h1>
+                <p class="welcome-subtitle">Assistant de cadrage projet - ARK Corporat Group</p>
+                <div class="welcome-input-container">
+                    <textarea 
+                        class="welcome-textarea" 
+                        id="welcomeInput"
+                        placeholder="Decris ton projet en quelques mots..."
+                        rows="4"
+                    ></textarea>
+                    <button class="welcome-send" id="welcomeSend">
+                        C'est parti
+                        <svg viewBox="0 0 24 24">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Screen -->
+            <div class="chat-screen" id="chatScreen">
+                <div class="chat-header">
+                    <div class="logo-icon">A</div>
+                    <div class="chat-header-info">
+                        <div class="chat-header-title">Ark Intelligence</div>
+                        <div class="chat-header-status">En ligne</div>
+                    </div>
+                </div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input-container">
+                    <div class="chat-input-wrapper">
+                        <textarea 
+                            class="chat-input" 
+                            id="chatInput"
+                            placeholder="Ecris ta reponse..."
+                            rows="1"
+                        ></textarea>
+                        <button class="chat-send" id="chatSend">
+                            <svg viewBox="0 0 24 24">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Generation du document...</p>
+        </div>
+    </div>
+
+    <!-- Document Screen -->
+    <div class="document-screen" id="documentScreen">
+        <div class="document-header">
+            <button class="document-back" id="documentBack">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+            <div class="document-title" id="documentTitle">Document</div>
+            <div class="document-actions">
+                <button id="copyDoc">Copier</button>
+                <button id="shareWhatsApp" class="primary">WhatsApp</button>
+            </div>
+        </div>
+        <div class="document-content">
+            <div class="document-body" id="documentBody"></div>
+        </div>
+    </div>
+
+    <!-- Mobile Docs Button -->
+    <button class="mobile-docs-btn" id="mobileDocsBtn">
+        <svg viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+        </svg>
+    </button>
+
+    <!-- Mobile Docs Modal -->
+    <div class="mobile-docs-modal" id="mobileDocsModal">
+        <div class="mobile-docs-content">
+            <div class="mobile-docs-header">
+                <div class="mobile-docs-title">Documents</div>
+                <button class="mobile-docs-close" id="mobileDocsClose">
+                    <svg viewBox="0 0 24 24">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div id="mobileDocsList"></div>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIG =====
+        const CONFIG = {
+            apiUrl: '/api/chat'
+        };
+
+        // ===== STATE =====
+        const state = {
+            history: [],
+            documentsReady: false,
+            documentCache: {},
+            currentDoc: null
+        };
+
+        // ===== ELEMENTS =====
+        const elements = {
+            welcomeScreen: document.getElementById('welcomeScreen'),
+            chatScreen: document.getElementById('chatScreen'),
+            loadingScreen: document.getElementById('loadingScreen'),
+            documentScreen: document.getElementById('documentScreen'),
+            welcomeInput: document.getElementById('welcomeInput'),
+            welcomeSend: document.getElementById('welcomeSend'),
+            chatMessages: document.getElementById('chatMessages'),
+            chatInput: document.getElementById('chatInput'),
+            chatSend: document.getElementById('chatSend'),
+            newChatBtn: document.getElementById('newChatBtn'),
+            documentBack: document.getElementById('documentBack'),
+            documentTitle: document.getElementById('documentTitle'),
+            documentBody: document.getElementById('documentBody'),
+            copyDoc: document.getElementById('copyDoc'),
+            shareWhatsApp: document.getElementById('shareWhatsApp'),
+            mobileDocsBtn: document.getElementById('mobileDocsBtn'),
+            mobileDocsModal: document.getElementById('mobileDocsModal'),
+            mobileDocsClose: document.getElementById('mobileDocsClose'),
+            mobileDocsList: document.getElementById('mobileDocsList')
+        };
+
+        // ===== DOCUMENT NAMES =====
+        const DOC_NAMES = {
+            charter_client: 'Project Charter Client',
+            cahier_charge: 'Cahier de charge',
+            budget: 'Budget previsionnel',
+            plan_projet: 'Plan de projet',
+            checklist: 'Checklist lancement',
+            charter_ark: 'Project Charter ARK',
+            risques: 'Matrice des risques',
+            sop_clients: 'SOP Clients',
+            sop_internes: 'SOP Internes',
+            diagnostics: 'Diagnostics',
+            recommandations: 'Recommandations',
+            design_thinking: 'Design Thinking',
+            business_model: 'Business Model',
+            lean_startup: 'Lean Start Up'
+        };
+
+        // ===== INIT =====
+        function init() {
+            elements.welcomeSend.addEventListener('click', handleWelcomeSend);
+            elements.welcomeInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleWelcomeSend();
+                }
+            });
+
+            elements.chatSend.addEventListener('click', handleChatSend);
+            elements.chatInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleChatSend();
+                }
+            });
+
+            elements.newChatBtn.addEventListener('click', resetChat);
+            elements.documentBack.addEventListener('click', () => switchScreen('chat'));
+            elements.copyDoc.addEventListener('click', copyDocument);
+            elements.shareWhatsApp.addEventListener('click', shareWhatsApp);
+
+            // Mobile docs
+            elements.mobileDocsBtn.addEventListener('click', () => {
+                elements.mobileDocsModal.classList.add('visible');
+            });
+            elements.mobileDocsClose.addEventListener('click', () => {
+                elements.mobileDocsModal.classList.remove('visible');
+            });
+            elements.mobileDocsModal.addEventListener('click', (e) => {
+                if (e.target === elements.mobileDocsModal) {
+                    elements.mobileDocsModal.classList.remove('visible');
+                }
+            });
+
+            // Doc items click
+            document.querySelectorAll('.doc-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    if (!item.classList.contains('disabled')) {
+                        generateDocument(item.dataset.doc);
+                    }
+                });
+            });
+
+            // Folders toggle
+            document.querySelectorAll('.folder-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const folderId = header.dataset.folder;
+                    const content = document.getElementById('folder-' + folderId);
+                    header.classList.toggle('open');
+                    content.classList.toggle('open');
+                });
+            });
+
+            renderMobileDocsList();
+            switchScreen('welcome');
+        }
+
+        // ===== NAVIGATION =====
+        function switchScreen(screen) {
+            elements.welcomeScreen.classList.add('hidden');
+            elements.chatScreen.classList.remove('visible');
+            elements.loadingScreen.classList.remove('visible');
+            elements.documentScreen.classList.remove('visible');
+
+            if (screen === 'welcome') elements.welcomeScreen.classList.remove('hidden');
+            else if (screen === 'chat') elements.chatScreen.classList.add('visible');
+            else if (screen === 'loading') elements.loadingScreen.classList.add('visible');
+            else if (screen === 'document') elements.documentScreen.classList.add('visible');
+        }
+
+        // ===== CHAT =====
+        async function handleWelcomeSend() {
+            const message = elements.welcomeInput.value.trim();
+            if (!message) return;
+
+            switchScreen('chat');
+            addMessage(message, 'user');
+            elements.welcomeInput.value = '';
+
+            await sendToAPI(message);
+        }
+
+        async function handleChatSend() {
+            const message = elements.chatInput.value.trim();
+            if (!message) return;
+
+            addMessage(message, 'user');
+            elements.chatInput.value = '';
+
+            await sendToAPI(message);
+        }
+
+        function addMessage(content, type) {
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            div.innerHTML = `<div class="message-content">${formatMessage(content)}</div>`;
+            elements.chatMessages.appendChild(div);
+            scrollToBottom();
+
+            state.history.push({ type, content });
+        }
+
+        function formatMessage(text) {
+            // Convert line breaks
+            let html = text.replace(/\n/g, '<br>');
+            // Bold
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            return html;
+        }
+
+        function scrollToBottom() {
+            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+        }
+
+        async function sendToAPI(message) {
+            try {
+                const response = await fetch(CONFIG.apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        mode: 'chat',
+                        message,
+                        history: state.history.slice(0, -1)
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.action === 'generate') {
+                    enableDocuments();
+                }
+
+                addMessage(data.response, 'ai');
+
+            } catch (error) {
+                addMessage('Erreur de connexion. Reessaie.', 'ai');
+            }
+        }
+
+        // ===== DOCUMENTS =====
+        function enableDocuments() {
+            state.documentsReady = true;
+            document.querySelectorAll('.doc-item').forEach(item => {
+                item.classList.remove('disabled');
+            });
+            renderMobileDocsList();
+        }
+
+        async function generateDocument(docType) {
+            // Check cache
+            if (state.documentCache[docType]) {
+                showDocument(docType, state.documentCache[docType]);
+                return;
+            }
+
+            switchScreen('loading');
+            elements.mobileDocsModal.classList.remove('visible');
+
+            try {
+                const response = await fetch(CONFIG.apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        mode: 'generate',
+                        docType,
+                        history: state.history
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    state.documentCache[docType] = data.document;
+                    showDocument(docType, data.document);
+                } else {
+                    alert('Erreur lors de la generation');
+                    switchScreen('chat');
+                }
+
+            } catch (error) {
+                alert('Erreur de connexion');
+                switchScreen('chat');
+            }
+        }
+
+        function showDocument(docType, content) {
+            state.currentDoc = { type: docType, content };
+            elements.documentTitle.textContent = DOC_NAMES[docType] || docType;
+            elements.documentBody.innerHTML = markdownToHtml(content);
+            switchScreen('document');
+        }
+
+        function markdownToHtml(md) {
+            let html = md;
+
+            // Headers
+            html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+            html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+            html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+
+            // Bold
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+            // Tables
+            html = html.replace(/^\|(.+)\|$/gm, (match, content) => {
+                const cells = content.split('|').map(c => c.trim());
+                if (cells.every(c => /^[-:]+$/.test(c))) {
+                    return '<!--separator-->';
+                }
+                const isHeader = !html.includes('<!--separator-->') || 
+                    html.indexOf(match) < html.indexOf('<!--separator-->');
+                const tag = isHeader ? 'th' : 'td';
+                return '<tr>' + cells.map(c => `<${tag}>${c}</${tag}>`).join('') + '</tr>';
+            });
+            html = html.replace(/<!--separator-->/g, '');
+            html = html.replace(/(<tr>.*<\/tr>\n?)+/g, '<table>$&</table>');
+
+            // Lists
+            html = html.replace(/^- (.*$)/gm, '<li>$1</li>');
+            html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
+
+            // Paragraphs
+            html = html.replace(/^(?!<[hultro])(.*$)/gm, (match) => {
+                return match.trim() ? `<p>${match}</p>` : '';
+            });
+
+            // Clean empty paragraphs
+            html = html.replace(/<p><\/p>/g, '');
+
+            return html;
+        }
+
+        function copyDocument() {
+            if (state.currentDoc) {
+                navigator.clipboard.writeText(state.currentDoc.content);
+                elements.copyDoc.textContent = 'Copie !';
+                setTimeout(() => elements.copyDoc.textContent = 'Copier', 2000);
+            }
+        }
+
+        function shareWhatsApp() {
+            if (state.currentDoc) {
+                const text = encodeURIComponent(
+                    `*${DOC_NAMES[state.currentDoc.type]}*\n\n` +
+                    state.currentDoc.content +
+                    '\n\n---\nGenere par Ark Intelligence - ARK Corporat Group'
+                );
+                window.open(`https://wa.me/?text=${text}`, '_blank');
+            }
+        }
+
+        // ===== MOBILE DOCS LIST =====
+        function renderMobileDocsList() {
+            const sections = [
+                {
+                    title: 'Documents Client',
+                    docs: ['charter_client', 'cahier_charge', 'budget', 'plan_projet', 'checklist']
+                },
+                {
+                    title: 'Documents Internes',
+                    docs: ['charter_ark', 'risques']
+                },
+                {
+                    title: 'ARK Process',
+                    docs: ['sop_clients', 'sop_internes']
+                },
+                {
+                    title: 'Ark Insight',
+                    docs: ['diagnostics', 'recommandations']
+                },
+                {
+                    title: 'Ark Business',
+                    docs: ['design_thinking', 'business_model', 'lean_startup']
+                }
+            ];
+
+            let html = '';
+            sections.forEach(section => {
+                html += `<div class="sidebar-section">
+                    <div class="sidebar-section-title">${section.title}</div>`;
+                section.docs.forEach(doc => {
+                    const disabled = state.documentsReady ? '' : 'disabled';
+                    html += `<div class="doc-item ${disabled}" data-doc="${doc}">
+                        <span class="icon">•</span>
+                        <span>${DOC_NAMES[doc]}</span>
+                    </div>`;
+                });
+                html += '</div>';
+            });
+
+            elements.mobileDocsList.innerHTML = html;
+
+            // Re-attach click events
+            elements.mobileDocsList.querySelectorAll('.doc-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    if (!item.classList.contains('disabled')) {
+                        generateDocument(item.dataset.doc);
+                    }
+                });
+            });
+        }
+
+        // ===== RESET =====
+        function resetChat() {
+            state.history = [];
+            state.documentsReady = false;
+            state.documentCache = {};
+            state.currentDoc = null;
+
+            elements.chatMessages.innerHTML = '';
+            elements.welcomeInput.value = '';
+
+            document.querySelectorAll('.doc-item').forEach(item => {
+                item.classList.add('disabled');
+            });
+
+            renderMobileDocsList();
+            switchScreen('welcome');
+        }
+
+        // ===== START =====
+        init();
+
+        // Fix clavier mobile
+        window.visualViewport?.addEventListener('resize', () => {
+            scrollToBottom();
+        });
+    </script>
+</body>
+</html>
