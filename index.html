@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ark Intelligence - ARK Corporat Group</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23c9a227'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='%230a0a0a' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23c9a227'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='%230a0a0a' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
     <style>
         * {
             margin: 0;
@@ -270,6 +272,9 @@
             resize: none;
             outline: none;
             min-height: 100px;
+            max-height: 200px;
+            overflow-y: auto;
+            line-height: 1.5;
         }
 
         .welcome-textarea:focus {
@@ -403,10 +408,13 @@
             border: 1px solid var(--border);
             border-radius: 12px;
             color: var(--text-primary);
-            font-size: 15px;
+            font-size: 16px;
             resize: none;
             outline: none;
+            min-height: 44px;
             max-height: 120px;
+            overflow-y: auto;
+            line-height: 1.4;
         }
 
         .chat-input:focus {
@@ -706,6 +714,8 @@
 
             .welcome-screen {
                 padding: 20px;
+                height: 100%;
+                overflow-y: auto;
             }
 
             .welcome-logo {
@@ -726,8 +736,28 @@
                 padding: 20px;
             }
 
+            /* Fix clavier mobile */
+            .chat-screen {
+                height: 100%;
+                height: 100dvh;
+            }
+
+            .chat-messages {
+                flex: 1;
+                overflow-y: auto;
+                padding-bottom: 20px;
+            }
+
             .chat-input-container {
-                padding-bottom: max(16px, env(safe-area-inset-bottom));
+                position: sticky;
+                bottom: 0;
+                background: var(--bg-primary);
+                padding: 12px 16px;
+                padding-bottom: max(12px, env(safe-area-inset-bottom));
+            }
+
+            .welcome-input-container {
+                padding-bottom: 20px;
             }
         }
     </style>
@@ -1039,6 +1069,24 @@
                 }
             });
 
+            // Auto-resize textareas
+            elements.welcomeInput.addEventListener('input', () => autoResize(elements.welcomeInput));
+            elements.chatInput.addEventListener('input', () => autoResize(elements.chatInput));
+
+            // Fix clavier mobile - scroll quand focus
+            elements.chatInput.addEventListener('focus', () => {
+                setTimeout(() => {
+                    scrollToBottom();
+                    elements.chatInput.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }, 300);
+            });
+
+            elements.welcomeInput.addEventListener('focus', () => {
+                setTimeout(() => {
+                    elements.welcomeInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            });
+
             elements.newChatBtn.addEventListener('click', resetChat);
             elements.documentBack.addEventListener('click', () => switchScreen('chat'));
             elements.copyDoc.addEventListener('click', copyDocument);
@@ -1080,6 +1128,12 @@
             switchScreen('welcome');
         }
 
+        // ===== AUTO RESIZE TEXTAREA =====
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        }
+
         // ===== NAVIGATION =====
         function switchScreen(screen) {
             elements.welcomeScreen.classList.add('hidden');
@@ -1111,6 +1165,7 @@
 
             addMessage(message, 'user');
             elements.chatInput.value = '';
+            elements.chatInput.style.height = 'auto';
 
             await sendToAPI(message);
         }
@@ -1134,7 +1189,9 @@
         }
 
         function scrollToBottom() {
-            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+            requestAnimationFrame(() => {
+                elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+            });
         }
 
         async function sendToAPI(message) {
@@ -1346,9 +1403,25 @@
         // ===== START =====
         init();
 
-        // Fix clavier mobile
-        window.visualViewport?.addEventListener('resize', () => {
-            scrollToBottom();
+        // Fix clavier mobile - gestion du viewport
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
+                // Scroll vers le bas quand le clavier s'ouvre/ferme
+                scrollToBottom();
+                
+                // Ajuster la hauteur du container
+                const viewportHeight = window.visualViewport.height;
+                document.documentElement.style.setProperty('--viewport-height', `${viewportHeight}px`);
+            });
+
+            window.visualViewport.addEventListener('scroll', () => {
+                scrollToBottom();
+            });
+        }
+
+        // Fallback pour les anciens navigateurs
+        window.addEventListener('resize', () => {
+            setTimeout(scrollToBottom, 100);
         });
     </script>
 </body>
