@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ark Intelligence - ARK Corporat Group</title>
+    <title>Ark Intelligence - ARK Corporate Group</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23c9a227'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='%230a0a0a' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23c9a227'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='%230a0a0a' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
     <style>
@@ -13,6 +13,7 @@
             box-sizing: border-box;
         }
 
+        /* ===== THÈMES ===== */
         :root {
             --bg-primary: #0a0a0a;
             --bg-secondary: #141414;
@@ -26,12 +27,37 @@
             --sidebar-width: 280px;
         }
 
+        /* Thème Clair */
+        [data-theme="light"] {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e8e8e8;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --accent: #c9a227;
+            --accent-hover: #b8941f;
+            --border: #d0d0d0;
+        }
+
+        /* Thème Bleu Nuit */
+        [data-theme="navy"] {
+            --bg-primary: #0d1b2a;
+            --bg-secondary: #1b263b;
+            --bg-tertiary: #243447;
+            --text-primary: #e0e1dd;
+            --text-secondary: #9ba4b0;
+            --accent: #c9a227;
+            --accent-hover: #d4af37;
+            --border: #354759;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
             overflow: hidden;
+            transition: background 0.3s, color 0.3s;
         }
 
         /* ===== LAYOUT PRINCIPAL ===== */
@@ -48,11 +74,15 @@
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
+            transition: background 0.3s, border-color 0.3s;
         }
 
         .sidebar-header {
             padding: 20px;
             border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .sidebar-logo {
@@ -71,7 +101,7 @@
             justify-content: center;
             font-weight: 700;
             font-size: 20px;
-            color: var(--bg-primary);
+            color: #0a0a0a;
         }
 
         .logo-text {
@@ -82,6 +112,25 @@
         .logo-subtitle {
             font-size: 11px;
             color: var(--text-secondary);
+        }
+
+        /* Bouton thème */
+        .theme-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+
+        .theme-btn:hover {
+            border-color: var(--accent);
         }
 
         /* Documents list */
@@ -122,7 +171,7 @@
 
         .doc-item.active {
             background: var(--accent);
-            color: var(--bg-primary);
+            color: #0a0a0a;
         }
 
         .doc-item.disabled {
@@ -240,7 +289,7 @@
             justify-content: center;
             font-size: 40px;
             font-weight: 700;
-            color: var(--bg-primary);
+            color: #0a0a0a;
             margin-bottom: 24px;
         }
 
@@ -271,10 +320,10 @@
             font-size: 16px;
             resize: none;
             outline: none;
-            min-height: 100px;
-            max-height: 200px;
-            overflow-y: auto;
+            min-height: 60px;
             line-height: 1.5;
+            overflow: hidden;
+            transition: background 0.3s, border-color 0.3s, color 0.3s;
         }
 
         .welcome-textarea:focus {
@@ -288,7 +337,7 @@
             background: var(--accent);
             border: none;
             border-radius: 10px;
-            color: var(--bg-primary);
+            color: #0a0a0a;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
@@ -339,6 +388,21 @@
 
         .chat-header-title {
             font-weight: 600;
+        }
+
+        /* Bouton thème mobile */
+        .theme-btn-mobile {
+            width: 36px;
+            height: 36px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s;
         }
 
         .chat-messages {
@@ -404,13 +468,14 @@
 
         .message.user .message-content {
             background: var(--accent);
-            color: var(--bg-primary);
+            color: #0a0a0a;
             border-bottom-right-radius: 4px;
         }
 
         .message.ai .message-content {
             background: var(--bg-secondary);
             border-bottom-left-radius: 4px;
+            transition: background 0.3s;
         }
 
         /* Options A/B/C/D */
@@ -425,6 +490,8 @@
         .chat-input-container {
             padding: 16px 20px;
             border-top: 1px solid var(--border);
+            background: var(--bg-primary);
+            transition: background 0.3s;
         }
 
         .chat-input-wrapper {
@@ -444,9 +511,9 @@
             resize: none;
             outline: none;
             min-height: 44px;
-            max-height: 120px;
-            overflow-y: auto;
             line-height: 1.4;
+            overflow: hidden;
+            transition: background 0.3s, border-color 0.3s, color 0.3s;
         }
 
         .chat-input:focus {
@@ -474,7 +541,7 @@
         .chat-send svg {
             width: 20px;
             height: 20px;
-            stroke: var(--bg-primary);
+            stroke: #0a0a0a;
             stroke-width: 2;
             fill: none;
         }
@@ -496,6 +563,7 @@
 
         .loading-content {
             text-align: center;
+            color: #fff;
         }
 
         .loading-spinner {
@@ -520,6 +588,7 @@
             display: none;
             flex-direction: column;
             z-index: 50;
+            transition: background 0.3s;
         }
 
         .document-screen.visible {
@@ -544,12 +613,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            color: var(--text-primary);
         }
 
         .document-back svg {
             width: 20px;
             height: 20px;
-            stroke: var(--text-primary);
+            stroke: currentColor;
             stroke-width: 2;
             fill: none;
         }
@@ -585,7 +655,7 @@
         .document-actions button.primary {
             background: var(--accent);
             border-color: var(--accent);
-            color: var(--bg-primary);
+            color: #0a0a0a;
         }
 
         .document-content {
@@ -601,6 +671,7 @@
             border-radius: 12px;
             padding: 32px;
             line-height: 1.7;
+            transition: background 0.3s;
         }
 
         .document-body h1 {
@@ -675,7 +746,7 @@
         .mobile-docs-btn svg {
             width: 24px;
             height: 24px;
-            stroke: var(--bg-primary);
+            stroke: #0a0a0a;
             stroke-width: 2;
             fill: none;
         }
@@ -701,6 +772,7 @@
             border-radius: 20px 20px 0 0;
             padding: 20px;
             overflow-y: auto;
+            transition: background 0.3s;
         }
 
         .mobile-docs-header {
@@ -725,13 +797,109 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            color: var(--text-primary);
         }
 
         .mobile-docs-close svg {
             width: 18px;
             height: 18px;
-            stroke: var(--text-primary);
+            stroke: currentColor;
             stroke-width: 2;
+        }
+
+        /* ===== THEME MODAL ===== */
+        .theme-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 70;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-modal.visible {
+            display: flex;
+        }
+
+        .theme-modal-content {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 24px;
+            width: 90%;
+            max-width: 320px;
+            transition: background 0.3s;
+        }
+
+        .theme-modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .theme-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .theme-option:hover {
+            border-color: var(--accent);
+        }
+
+        .theme-option.active {
+            border-color: var(--accent);
+            background: var(--accent);
+            color: #0a0a0a;
+        }
+
+        .theme-option-preview {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+        }
+
+        .theme-option-preview.dark {
+            background: linear-gradient(135deg, #0a0a0a 50%, #141414 50%);
+        }
+
+        .theme-option-preview.light {
+            background: linear-gradient(135deg, #f5f5f5 50%, #ffffff 50%);
+        }
+
+        .theme-option-preview.navy {
+            background: linear-gradient(135deg, #0d1b2a 50%, #1b263b 50%);
+        }
+
+        .theme-option-name {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .theme-modal-close {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
         }
 
         /* ===== RESPONSIVE ===== */
@@ -741,6 +909,10 @@
             }
 
             .mobile-docs-btn {
+                display: flex;
+            }
+
+            .theme-btn-mobile {
                 display: flex;
             }
 
@@ -758,6 +930,10 @@
 
             .welcome-title {
                 font-size: 22px;
+            }
+
+            .welcome-textarea {
+                min-height: 80px;
             }
 
             .message {
@@ -783,9 +959,12 @@
             .chat-input-container {
                 position: sticky;
                 bottom: 0;
-                background: var(--bg-primary);
                 padding: 12px 16px;
                 padding-bottom: max(12px, env(safe-area-inset-bottom));
+            }
+
+            .chat-input {
+                min-height: 44px;
             }
 
             .welcome-input-container {
@@ -794,7 +973,7 @@
         }
     </style>
 </head>
-<body>
+<body data-theme="dark">
     <div class="app-container">
         <!-- Sidebar (PC) -->
         <aside class="sidebar" id="sidebar">
@@ -803,9 +982,10 @@
                     <div class="logo-icon">A</div>
                     <div>
                         <div class="logo-text">Ark Intelligence</div>
-                        <div class="logo-subtitle">ARK Corporat Group</div>
+                        <div class="logo-subtitle">ARK Corporate Group</div>
                     </div>
                 </div>
+                <button class="theme-btn" id="themeBtnDesktop" title="Changer le thème">🎨</button>
             </div>
 
             <div class="sidebar-content">
@@ -818,11 +998,11 @@
                     </div>
                     <div class="doc-item disabled" data-doc="cahier_charge">
                         <span class="icon">•</span>
-                        <span>Cahier de charge</span>
+                        <span>Cahier des charges</span>
                     </div>
                     <div class="doc-item disabled" data-doc="budget">
                         <span class="icon">•</span>
-                        <span>Budget previsionnel</span>
+                        <span>Budget prévisionnel</span>
                     </div>
                     <div class="doc-item disabled" data-doc="plan_projet">
                         <span class="icon">•</span>
@@ -929,13 +1109,13 @@
             <div class="welcome-screen" id="welcomeScreen">
                 <div class="welcome-logo">A</div>
                 <h1 class="welcome-title">Ark Intelligence</h1>
-                <p class="welcome-subtitle">Assistant de cadrage projet - ARK Corporat Group</p>
+                <p class="welcome-subtitle">Assistant de cadrage projet - ARK Corporate Group</p>
                 <div class="welcome-input-container">
                     <textarea 
                         class="welcome-textarea" 
                         id="welcomeInput"
-                        placeholder="Decris ton projet en quelques mots..."
-                        rows="4"
+                        placeholder="Décrivez votre projet en quelques mots..."
+                        rows="3"
                     ></textarea>
                     <button class="welcome-send" id="welcomeSend">
                         C'est parti
@@ -954,6 +1134,7 @@
                     <div class="chat-header-info">
                         <div class="chat-header-title">Ark Intelligence</div>
                     </div>
+                    <button class="theme-btn-mobile" id="themeBtnMobile" title="Changer le thème">🎨</button>
                 </div>
                 <div class="chat-messages" id="chatMessages"></div>
                 <div class="chat-input-container">
@@ -961,7 +1142,7 @@
                         <textarea 
                             class="chat-input" 
                             id="chatInput"
-                            placeholder="Ecris ta reponse..."
+                            placeholder="Écrivez votre réponse..."
                             rows="1"
                         ></textarea>
                         <button class="chat-send" id="chatSend">
@@ -980,7 +1161,7 @@
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-content">
             <div class="loading-spinner"></div>
-            <p>Generation du document...</p>
+            <p>Génération du document...</p>
         </div>
     </div>
 
@@ -1027,6 +1208,28 @@
         </div>
     </div>
 
+    <!-- Theme Modal -->
+    <div class="theme-modal" id="themeModal">
+        <div class="theme-modal-content">
+            <div class="theme-modal-title">Choisir un thème</div>
+            <div class="theme-options">
+                <div class="theme-option active" data-theme="dark">
+                    <div class="theme-option-preview dark"></div>
+                    <span class="theme-option-name">Sombre</span>
+                </div>
+                <div class="theme-option" data-theme="light">
+                    <div class="theme-option-preview light"></div>
+                    <span class="theme-option-name">Clair</span>
+                </div>
+                <div class="theme-option" data-theme="navy">
+                    <div class="theme-option-preview navy"></div>
+                    <span class="theme-option-name">Bleu Nuit</span>
+                </div>
+            </div>
+            <button class="theme-modal-close" id="themeModalClose">Fermer</button>
+        </div>
+    </div>
+
     <script>
         // ===== CONFIG =====
         const CONFIG = {
@@ -1038,7 +1241,8 @@
             history: [],
             documentsReady: false,
             documentCache: {},
-            currentDoc: null
+            currentDoc: null,
+            currentTheme: localStorage.getItem('ark-theme') || 'dark'
         };
 
         // ===== ELEMENTS =====
@@ -1061,14 +1265,18 @@
             mobileDocsBtn: document.getElementById('mobileDocsBtn'),
             mobileDocsModal: document.getElementById('mobileDocsModal'),
             mobileDocsClose: document.getElementById('mobileDocsClose'),
-            mobileDocsList: document.getElementById('mobileDocsList')
+            mobileDocsList: document.getElementById('mobileDocsList'),
+            themeBtnDesktop: document.getElementById('themeBtnDesktop'),
+            themeBtnMobile: document.getElementById('themeBtnMobile'),
+            themeModal: document.getElementById('themeModal'),
+            themeModalClose: document.getElementById('themeModalClose')
         };
 
         // ===== DOCUMENT NAMES =====
         const DOC_NAMES = {
             charter_client: 'Project Charter Client',
-            cahier_charge: 'Cahier de charge',
-            budget: 'Budget previsionnel',
+            cahier_charge: 'Cahier des charges',
+            budget: 'Budget prévisionnel',
             plan_projet: 'Plan de projet',
             checklist: 'Checklist lancement',
             charter_ark: 'Project Charter ARK',
@@ -1084,6 +1292,9 @@
 
         // ===== INIT =====
         function init() {
+            // Appliquer le thème sauvegardé
+            applyTheme(state.currentTheme);
+
             elements.welcomeSend.addEventListener('click', handleWelcomeSend);
             elements.welcomeInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -1101,8 +1312,8 @@
             });
 
             // Auto-resize textareas
-            elements.welcomeInput.addEventListener('input', () => autoResize(elements.welcomeInput));
-            elements.chatInput.addEventListener('input', () => autoResize(elements.chatInput));
+            elements.welcomeInput.addEventListener('input', () => autoResize(elements.welcomeInput, 200));
+            elements.chatInput.addEventListener('input', () => autoResize(elements.chatInput, 150));
 
             // Fix clavier mobile - scroll quand focus
             elements.chatInput.addEventListener('focus', () => {
@@ -1136,6 +1347,25 @@
                 }
             });
 
+            // Theme modal
+            elements.themeBtnDesktop.addEventListener('click', openThemeModal);
+            elements.themeBtnMobile.addEventListener('click', openThemeModal);
+            elements.themeModalClose.addEventListener('click', closeThemeModal);
+            elements.themeModal.addEventListener('click', (e) => {
+                if (e.target === elements.themeModal) {
+                    closeThemeModal();
+                }
+            });
+
+            // Theme options
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    const theme = option.dataset.theme;
+                    applyTheme(theme);
+                    closeThemeModal();
+                });
+            });
+
             // Doc items click
             document.querySelectorAll('.doc-item').forEach(item => {
                 item.addEventListener('click', () => {
@@ -1159,10 +1389,31 @@
             switchScreen('welcome');
         }
 
+        // ===== THEME =====
+        function openThemeModal() {
+            elements.themeModal.classList.add('visible');
+        }
+
+        function closeThemeModal() {
+            elements.themeModal.classList.remove('visible');
+        }
+
+        function applyTheme(theme) {
+            document.body.setAttribute('data-theme', theme);
+            state.currentTheme = theme;
+            localStorage.setItem('ark-theme', theme);
+
+            // Update active state in modal
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.classList.toggle('active', option.dataset.theme === theme);
+            });
+        }
+
         // ===== AUTO RESIZE TEXTAREA =====
-        function autoResize(textarea) {
+        function autoResize(textarea, maxHeight) {
             textarea.style.height = 'auto';
-            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+            const newHeight = Math.min(textarea.scrollHeight, maxHeight);
+            textarea.style.height = newHeight + 'px';
         }
 
         // ===== NAVIGATION =====
@@ -1186,6 +1437,7 @@
             switchScreen('chat');
             addMessage(message, 'user');
             elements.welcomeInput.value = '';
+            elements.welcomeInput.style.height = 'auto';
 
             await sendToAPI(message);
         }
@@ -1264,7 +1516,7 @@
 
             } catch (error) {
                 hideTypingIndicator();
-                addMessage('Erreur de connexion. Reessaie.', 'ai');
+                addMessage('Erreur de connexion. Réessayez.', 'ai');
             }
         }
 
@@ -1304,7 +1556,7 @@
                     state.documentCache[docType] = data.document;
                     showDocument(docType, data.document);
                 } else {
-                    alert('Erreur lors de la generation');
+                    alert('Erreur lors de la génération');
                     switchScreen('chat');
                 }
 
@@ -1364,7 +1616,7 @@
         function copyDocument() {
             if (state.currentDoc) {
                 navigator.clipboard.writeText(state.currentDoc.content);
-                elements.copyDoc.textContent = 'Copie !';
+                elements.copyDoc.textContent = 'Copié !';
                 setTimeout(() => elements.copyDoc.textContent = 'Copier', 2000);
             }
         }
@@ -1374,7 +1626,7 @@
                 const text = encodeURIComponent(
                     `*${DOC_NAMES[state.currentDoc.type]}*\n\n` +
                     state.currentDoc.content +
-                    '\n\n---\nGenere par Ark Intelligence - ARK Corporat Group'
+                    '\n\n---\nGénéré par Ark Intelligence - ARK Corporate Group'
                 );
                 window.open(`https://wa.me/?text=${text}`, '_blank');
             }
@@ -1455,10 +1707,7 @@
         // Fix clavier mobile - gestion du viewport
         if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', () => {
-                // Scroll vers le bas quand le clavier s'ouvre/ferme
                 scrollToBottom();
-                
-                // Ajuster la hauteur du container
                 const viewportHeight = window.visualViewport.height;
                 document.documentElement.style.setProperty('--viewport-height', `${viewportHeight}px`);
             });
