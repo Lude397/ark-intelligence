@@ -176,7 +176,8 @@ NE RÉPÈTE JAMAIS une étape déjà posée.`;
     const data = await response.json();
     const aiResponse = data.choices[0].message.content.trim();
     
-    if (aiResponse.startsWith('[GENERATE]')) {
+    // Détecter [GENERATE] n'importe où dans la réponse
+    if (aiResponse.includes('[GENERATE]')) {
         const cleanResponse = aiResponse.replace('[GENERATE]', '').trim();
         return res.status(200).json({ 
             action: 'generate',
