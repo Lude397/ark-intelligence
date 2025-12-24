@@ -288,14 +288,20 @@ Priorité : Faible / Moyenne / Élevée
 Document interne ARK Corporate Group - Ne pas diffuser`,
 
 // 3. CAHIER DES CHARGES
-cahier_charge: `Génère un CAHIER DES CHARGES complet basé sur la conversation.
+cahier_charge: `Génère un CAHIER DES CHARGES basé UNIQUEMENT sur les 5 étapes du cadrage.
 
-RÈGLES :
-- Remplis chaque section avec les informations collectées
-- Si info non collectée → mets "À définir"
-- Si tu peux déduire logiquement → propose avec mention "(estimation)"
-- Adapté au contexte Congo-Brazzaville (FCFA, Mobile Money)
-- Style professionnel et structuré
+RÈGLES STRICTES :
+- Utilise UNIQUEMENT les informations des 5 étapes collectées
+- NE PAS inventer ou déduire d'informations supplémentaires
+- Sections non couvertes par les 5 étapes = "À définir"
+- Sois fidèle aux réponses du client
+
+MAPPING DES 5 ÉTAPES :
+- Étape 1 (Pourquoi) → Contexte et motivation
+- Étape 2 (Problème) → Problème à résoudre  
+- Étape 3 (Périmètre) → Ce qui est inclus / exclu
+- Étape 4 (Besoin fonctionnel) → Fonctionnalité prioritaire
+- Étape 5 (Contrainte) → Contrainte principale
 
 ---
 
@@ -306,166 +312,76 @@ Date : ${new Date().toLocaleDateString('fr-FR')}
 
 ---
 
-### 1. CONTEXTE ET OBJECTIFS
+### 1. CONTEXTE ET MOTIVATION
+*(Source : Étape 1)*
 
-**Présentation du projet**
-[Description générale du projet en 2-3 phrases]
-
-**Problème à résoudre**
-[Problème central identifié]
-
-**Objectifs généraux**
-- [Objectif 1]
-- [Objectif 2]
-
-**Objectifs spécifiques**
-- [Objectif mesurable 1]
-- [Objectif mesurable 2]
+**Pourquoi ce projet ?**
+[Reprendre la réponse de l'étape 1 - motivation du lancement]
 
 ---
 
-### 2. PÉRIMÈTRE DU PROJET
+### 2. PROBLÈME À RÉSOUDRE
+*(Source : Étape 2)*
 
-**Ce qui est inclus**
-- [Élément inclus 1]
-- [Élément inclus 2]
-
-**Ce qui est exclu**
-- [Élément exclu 1]
-- [Élément exclu 2]
-
-**Limites fonctionnelles et opérationnelles**
-[Description des limites]
+**Problème principal**
+[Reprendre la réponse de l'étape 2 - blocage identifié]
 
 ---
 
-### 3. BESOINS FONCTIONNELS
+### 3. PÉRIMÈTRE DU PROJET
+*(Source : Étape 3)*
 
-**Fonctions attendues**
-| Fonction | Priorité |
-|----------|----------|
-| [Fonction 1] | Haute |
-| [Fonction 2] | Moyenne |
+**Ce qui est inclus au lancement**
+[Reprendre la réponse de l'étape 3 - périmètre choisi]
 
-**Cas d'usage principal**
-[Description du parcours utilisateur type]
-
-**Livrables attendus**
-- [Livrable 1]
-- [Livrable 2]
+**Ce qui est exclu (pour plus tard)**
+[Déduire de la réponse de l'étape 3]
 
 ---
 
-### 4. EXIGENCES TECHNIQUES
+### 4. BESOIN FONCTIONNEL PRIORITAIRE
+*(Source : Étape 4)*
 
-**Contraintes techniques**
-- [Contrainte ou "À définir"]
-
-**Normes et standards**
-- [Norme ou "À définir"]
-
-**Compatibilité et sécurité**
-- [Exigence ou "À définir"]
+**Fonctionnalité essentielle**
+[Reprendre la réponse de l'étape 4 - fonctionnalité prioritaire]
 
 ---
 
-### 5. CONTRAINTES
+### 5. CONTRAINTE PRINCIPALE
+*(Source : Étape 5)*
 
-**Budget**
-[Montant en FCFA ou "À définir"]
-
-**Délais**
-[Durée ou date cible ou "À définir"]
-
-**Contraintes réglementaires**
-- [Contrainte ou "À définir"]
-
-**Contraintes géographiques**
-- [Zone concernée]
-
-**Contraintes organisationnelles**
-- [Contrainte ou "À définir"]
+**Contrainte identifiée**
+[Reprendre la réponse de l'étape 5 - contrainte principale]
 
 ---
 
-### 6. RESSOURCES
+### 6. ÉLÉMENTS À DÉFINIR
 
-**Ressources humaines**
-| Rôle | Nombre | Responsabilité |
-|------|--------|----------------|
-| [Rôle] | [X] | [Mission] |
+Les éléments suivants n'ont pas été abordés lors du cadrage et devront être précisés ultérieurement :
 
-**Moyens matériels**
-- [Équipement ou "À définir"]
-
-**Moyens financiers**
-- [Source de financement ou "À définir"]
+- **Budget détaillé** : À définir
+- **Planning précis** : À définir
+- **Ressources humaines** : À définir
+- **Exigences techniques** : À définir
+- **Critères de succès mesurables** : À définir
+- **Risques détaillés** : À définir
 
 ---
 
-### 7. PLANNING PRÉVISIONNEL
+### 7. SYNTHÈSE
 
-**Phases du projet**
-| Phase | Durée estimée |
-|-------|---------------|
-| Préparation | [X semaines] |
-| Mise en place | [X semaines] |
-| Lancement | [X semaines] |
-| Suivi | [X semaines] |
-
-**Jalons clés**
-| Jalon | Date estimée |
-|-------|--------------|
-| [Jalon 1] | [Date] |
-| [Jalon 2] | [Date] |
+| Élément | Information |
+|---------|-------------|
+| Motivation | [Étape 1] |
+| Problème | [Étape 2] |
+| Périmètre | [Étape 3] |
+| Priorité fonctionnelle | [Étape 4] |
+| Contrainte | [Étape 5] |
 
 ---
 
-### 8. CRITÈRES DE PERFORMANCE ET DE QUALITÉ
-
-**Indicateurs de réussite**
-| Indicateur | Objectif |
-|------------|----------|
-| [Indicateur 1] | [Cible] |
-| [Indicateur 2] | [Cible] |
-
-**Niveaux de qualité attendus**
-- [Critère qualité ou "À définir"]
-
-**Modalités de validation**
-- [Processus ou "À définir"]
-
----
-
-### 9. RISQUES ET HYPOTHÈSES
-
-**Risques identifiés**
-| Risque | Impact | Probabilité | Mitigation |
-|--------|--------|-------------|------------|
-| [Risque 1] | Élevé/Moyen/Faible | Élevée/Moyenne/Faible | [Action] |
-| [Risque 2] | Élevé/Moyen/Faible | Élevée/Moyenne/Faible | [Action] |
-
-**Hypothèses de départ**
-- [Hypothèse 1]
-- [Hypothèse 2]
-
----
-
-### 10. MODALITÉS DE SUIVI ET DE VALIDATION
-
-**Gouvernance du projet**
-- Responsable projet : [Nom ou "À définir"]
-- Sponsor : [Nom ou "À définir"]
-
-**Processus de reporting**
-- [Fréquence et format ou "À définir"]
-
-**Conditions d'acceptation finale**
-- [Critères ou "À définir"]
-
----
-
-Document généré par Ark Intelligence - ARK Corporate Group`,
+Document généré par Ark Intelligence - ARK Corporate Group
+Basé sur le cadrage en 5 étapes`,
 
 // 4. BUDGET PRÉVISIONNEL
 budget: `Génère un BUDGET PRÉVISIONNEL détaillé.
