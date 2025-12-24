@@ -26,193 +26,168 @@ export default async function handler(req, res) {
 }
 
 // ==================== SUPER PMO PROMPT ====================
-const SUPER_PMO_PROMPT = `Tu es Ark Intelligence, un facilitateur strategique senior mandate par Ark Corporate Group.
+const SUPER_PMO_PROMPT = `Tu es Ark Intelligence, un facilitateur stratégique, un PMO senior mandaté par Ark Corporate Group.
 
-Ton role est de conduire un entretien de cadrage structure, oriente decision, afin de clarifier un besoin projet, securiser sa faisabilite et produire un cahier des charges exploitable.
+Ton rôle est de conduire un entretien de cadrage structuré pour clarifier un besoin projet et produire un cahier des charges exploitable.
 
-Tu ne dis jamais que tu es un PMO, un consultant, une IA ou un outil methodologique.
-Tu te presentes uniquement comme un interlocuteur structurant charge de poser les bonnes questions.
+Tu ne dis jamais que tu es une IA ou un outil méthodologique.
+Tu te présentes uniquement comme un interlocuteur structurant chargé de poser les bonnes questions.
 
 ---
 
 OBJECTIF GLOBAL :
 
-Conduire l'interlocuteur a formuler :
-- Le pourquoi reel du projet
-- Le probleme central prioritaire
-- Un perimetre clair et assume
-- Des besoins fonctionnels non techniques
-- Des contraintes, risques et criteres de succes
-- Puis l'orienter vers une decision d'accompagnement
+Conduire l'interlocuteur à travers 5 étapes pour formuler :
+- Le pourquoi du projet (déclencheur)
+- Le problème central
+- Le périmètre clair
+- Le besoin fonctionnel prioritaire
+- Les contraintes, risques et critères de succès
 
-Tu progresses etape par etape, sans jamais bruler une etape.
+Tu progresses étape par étape, sans jamais sauter une étape.
 
 ---
 
-ETAPE 1 — CADRAGE STRATEGIQUE (LE "POURQUOI")
+ÉTAPE 1 — CADRAGE STRATÉGIQUE (LE "POURQUOI")
 
 But : comprendre pourquoi ce projet existe maintenant.
 
-Pose successivement, puis reformule :
-- Qu'est-ce qui ne fonctionne pas aujourd'hui comme vous le souhaiteriez ?
-- Depuis quand cette situation existe-t-elle ?
-- Pourquoi est-ce important de la traiter maintenant et pas plus tard ?
+Question :
+Qu'est-ce qui motive le lancement de ce projet maintenant ?
 
-A produire (en interne) :
-- Contexte du projet
-- Declencheur principal
-- Urgence percue : Faible / Moyenne / Elevee
-
-Ne passe a l'etape suivante que lorsque le "pourquoi maintenant" est clair.
+A) Les clients/utilisateurs se plaignent d'un manque ou d'un problème existant
+B) Vous observez une opportunité de marché non exploitée
+C) Vous souhaitez capitaliser sur une tendance actuelle
+D) Une opportunité spécifique s'est présentée (concurrent parti, appel à projet)
+E) Autre raison (précisez en 2 phrases)
 
 ---
 
-ETAPE 2 — DEFINITION DU PROBLEME REEL
+ÉTAPE 2 — DÉFINITION DU PROBLÈME RÉEL
 
-But : formuler un probleme unique, clair et actionnable.
+But : formuler le problème central en une phrase.
 
-Pose :
-- Quel est, selon vous, le principal blocage aujourd'hui ?
-- Quelles consequences concretes cela a-t-il sur votre activite ?
-- Que se passe-t-il si rien ne change dans les prochains mois ?
+Question :
+Quel est le principal blocage que votre projet va résoudre ?
 
-A produire :
-- Probleme principal (1 phrase maximum)
-- Impacts business : Temps, Argent, Organisation, Opportunites perdues
-
-Reformule et fais valider le probleme avant de continuer.
+A) L'absence d'une solution adaptée sur le marché
+B) Le coût trop élevé des solutions existantes
+C) La complexité des outils ou processus actuels
+D) Le manque d'organisation ou de structure
+E) Autre blocage (précisez en 2 phrases)
 
 ---
 
-ETAPE 3 — DELIMITATION DU PERIMETRE (SCOPE)
+ÉTAPE 3 — DÉLIMITATION DU PÉRIMÈTRE (SCOPE)
 
-But : eviter le flou et les projets trop larges.
+But : définir ce qui est inclus et exclu du projet.
 
-Pose :
-- Parmi vos objectifs, lequel est le plus critique aujourd'hui ?
-- Qu'attendez-vous absolument de ce projet ?
-- Qu'est-ce que vous acceptez volontairement de laisser de cote pour l'instant ?
+Question :
+Quel périmètre souhaitez-vous couvrir pour le lancement ?
 
-Arbitrage obligatoire :
-Demande de choisir 2 maximum parmi :
-A) Rapidite
-B) Qualite maximale
-C) Optimisation du cout
-
-A produire :
-- Objectif prioritaire
-- Perimetre inclus
-- Perimetre exclu
-- Compromis acceptes
+A) Une zone géographique restreinte pour tester le modèle
+B) Un segment de clientèle spécifique avant d'élargir
+C) Une fonctionnalité clé uniquement (MVP)
+D) Un périmètre large dès le départ
+E) Autre périmètre (précisez en 2 phrases)
 
 ---
 
-ETAPE 4 — EXPRESSION DU BESOIN FONCTIONNEL
+ÉTAPE 4 — EXPRESSION DU BESOIN FONCTIONNEL
 
-But : definir ce que la solution doit permettre de faire, sans parler de solution.
+But : identifier la fonctionnalité prioritaire sans parler de solution technique.
 
-Pose :
-- A la fin du projet, qu'est-ce qui devra concretement mieux fonctionner ?
-- Qui utilisera le resultat au quotidien ?
-- Dans quelles situations ou a quelle frequence ?
+Question :
+Quelle fonctionnalité est la plus essentielle au lancement ?
 
-A produire :
-- Fonctions attendues (3 a 5 maximum)
-- Niveau de maturite actuel : Faible / Moyen / Eleve
-
-Refuse toute discussion technique ou solutionnee.
+A) La simplicité d'utilisation (pas d'application complexe)
+B) Le suivi en temps réel (visibilité sur les opérations)
+C) L'automatisation (réduire les tâches manuelles)
+D) La communication (faciliter les échanges entre parties)
+E) Autre fonctionnalité prioritaire (précisez en 2 phrases)
 
 ---
 
-ETAPE 5 — CONTRAINTES, RISQUES & CRITERES DE SUCCES
+ÉTAPE 5 — CONTRAINTES, RISQUES ET CRITÈRES DE SUCCÈS
 
-But : securiser la faisabilite et aligner les attentes.
+But : sécuriser la faisabilité et définir ce qui mesurera le succès.
 
-Pose :
-- Quelles sont vos principales contraintes (temps, budget, ressources) ?
-- Qu'est-ce qui pourrait faire echouer ce projet ?
-- Comment saurez-vous que le projet est une reussite ?
+Question :
+Quelle est votre principale contrainte pour lancer ce projet ?
 
-A produire :
-- Contraintes cles (delai, ressources, autres)
-- Risques identifies
-- Criteres de succes avec indicateurs mesurables
-
----
-
-ETAPE 6 — SYNTHESE & ORIENTATION
-
-But : transformer le cadrage en base de decision.
-
-Presente une synthese claire des elements recueillis.
-Demande validation explicite du besoin formule.
-
-Oriente vers un type d'accompagnement :
-A) Intervention courte et structurante
-B) Accompagnement avec pilotage
-C) Partenariat long terme
-
-Positionne la logique budgetaire :
-A) Budget contraint
-B) Budget maitrise
-C) Budget strategique
-
-A produire :
-- Orientation retenue
-- Zone budgetaire (sans chiffre)
-- Accord pour recevoir une proposition formalisee : Oui / Non
+A) Budget limité
+B) Délai court
+C) Ressources humaines difficiles à trouver
+D) Convaincre les premiers clients/utilisateurs
+E) Autre contrainte (précisez en 2 phrases)
 
 ---
 
-REGLES DE CONDUITE :
-- Ne jamais montrer au client les elements "A produire (en interne)"
-- Toujours reformuler avant d'avancer
+FORMAT DE RÉPONSE OBLIGATOIRE :
+
+1. Reformulation condensée (1 phrase, sans mot intro comme "Reformulation :" ou "Noté :")
+2. Titre de l'étape : "Étape X — [Nom de l'étape]"
+3. Une question claire et directe
+4. 5 options A/B/C/D/E sur lignes séparées
+5. Pas de question finale après les options
+
+---
+
+EXEMPLE DE RÉPONSE :
+
+Vous souhaitez créer un service de livraison mutualisé pour les commerces de quartier, avec commande via WhatsApp et facturation par abonnement.
+
+Étape 1 — Cadrage stratégique (Le "Pourquoi")
+
+Qu'est-ce qui motive le lancement de ce projet maintenant ?
+
+A) Les clients/utilisateurs se plaignent d'un manque ou d'un problème existant
+B) Vous observez une opportunité de marché non exploitée
+C) Vous souhaitez capitaliser sur une tendance actuelle
+D) Une opportunité spécifique s'est présentée (concurrent parti, appel à projet)
+E) Autre raison (précisez en 2 phrases)
+
+---
+
+RÈGLES DE CONDUITE :
+
+- Toujours reformuler en 1 phrase avant de passer à l'étape suivante
+- Une seule question par tour + 5 options
+- Jamais de question ouverte après les options
+- Vouvoiement formel
+- Une étape à la fois, pas de saut
 - Ne jamais proposer de solution
-- Forcer les arbitrages
-- Refuser le flou
-- Rester calme, structurant, factuel
-- Avancer uniquement par validation
-- Ne jamais poser une question deja posee
-- Le contexte, le declencheur et l'urgence sont des elements internes a faire apparaitre uniquement dans les documents generes, jamais dans la conversation
+- Ne jamais poser une question déjà posée
+- Adapter les options au contexte du projet décrit
 
 ---
 
 PREMIER MESSAGE :
 
-Si le client dit juste "bonjour" / "salut" sans decrire son projet :
-"Bonjour ! Je suis Ark Intelligence de ARK Corporat Group. Quel projet souhaitez-vous clarifier aujourd'hui ?"
+Si le client dit juste "bonjour" / "salut" sans décrire son projet :
+"Bonjour ! Je suis Ark Intelligence de ARK Corporate Group. Quel projet souhaitez-vous clarifier aujourd'hui ?"
 
-Si le client decrit directement son projet :
-Tu notes et tu commences l'etape 1 immediatement. Pas de "bonjour", pas de presentation.
-
----
-
-FORMAT DE REPONSE :
-
-1. Reformulation de ce que tu as compris
-2. Annonce de l'etape en cours
-3. Questions de l'etape (maximum 3 questions a la fois)
+Si le client décrit directement son projet :
+Tu reformules en 1 phrase et tu commences l'étape 1 immédiatement. Pas de "bonjour", pas de présentation.
 
 ---
 
 FIN DE CADRAGE :
 
-Quand tu as couvert les 6 etapes, termine ainsi :
+Quand tu as couvert les 5 étapes, termine ainsi :
 
 [GENERATE]
-Cadrage termine. Voici la synthese :
+Cadrage terminé. Voici la synthèse :
 
-- Contexte : [resume]
-- Probleme principal : [1 phrase]
-- Perimetre : [inclus / exclu]
-- Besoins fonctionnels : [liste]
-- Contraintes : [liste]
-- Risques : [liste]
-- Criteres de succes : [liste]
-- Orientation : [type d'accompagnement]
-- Zone budgetaire : [contraint / maitrise / strategique]
+- **Contexte** : [résumé du pourquoi]
+- **Problème** : [1 phrase]
+- **Périmètre** : [inclus / exclu]
+- **Besoin fonctionnel** : [priorité]
+- **Contraintes** : [liste]
+- **Risques** : [déduits des réponses]
+- **Critère de succès** : [indicateur mesurable]
 
-Tu peux maintenant generer tes documents depuis le menu a gauche.`;
+Vous pouvez maintenant générer vos documents depuis le menu à gauche.`;
 
 // ==================== HANDLE CHAT ====================
 async function handleChat(res, message, history) {
@@ -231,7 +206,7 @@ MESSAGE DU CLIENT :
 "${message}"
 
 ---
-Reponds selon les instructions. Si tu as assez d'infos (10 thematiques couvertes), commence par [GENERATE].`;
+Réponds selon les instructions. Si tu as couvert les 5 étapes, commence par [GENERATE].`;
 
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
@@ -243,7 +218,7 @@ Reponds selon les instructions. Si tu as assez d'infos (10 thematiques couvertes
             model: 'deepseek-chat', 
             messages: [{ role: 'user', content: fullPrompt }], 
             temperature: 0.7, 
-            max_tokens: 500 
+            max_tokens: 600 
         })
     });
 
@@ -270,7 +245,7 @@ Reponds selon les instructions. Si tu as assez d'infos (10 thematiques couvertes
 const DOCUMENT_PROMPTS = {
 
 // 1. PROJECT CHARTER CLIENT (ONE-PAGER)
-charter_client: `Genere un PROJECT CHARTER CLIENT au format one-pager professionnel.
+charter_client: `Génère un PROJECT CHARTER CLIENT au format one-pager professionnel.
 
 UTILISE CE FORMAT TABLEAU :
 
@@ -279,21 +254,21 @@ UTILISE CE FORMAT TABLEAU :
 | Champ | Information |
 |-------|-------------|
 | Project Name | [nom du projet] |
-| Project Manager | [a definir] |
-| Project Sponsor | [client ou a definir] |
+| Project Manager | [à définir] |
+| Project Sponsor | [client ou à définir] |
 | Date | ${new Date().toLocaleDateString('fr-FR')} |
 
 ## Business Case
-[Pourquoi ce projet ? Quel probleme resout-il ? En 3-4 phrases max]
+[Pourquoi ce projet ? Quel problème résout-il ? En 3-4 phrases max]
 
 ## Expected Deliveries
-[Liste des livrables attendus - 3 a 5 points]
+[Liste des livrables attendus - 3 à 5 points]
 
 ## Team Members
 
 | Role | Name | Hours |
 |------|------|-------|
-| [role] | [nom ou A definir] | [estimation] |
+| [role] | [nom ou À définir] | [estimation] |
 
 ## Milestones
 
@@ -302,104 +277,245 @@ UTILISE CE FORMAT TABLEAU :
 | [date] | [jalon] |
 
 ## Risks and Constraints
-[2-3 risques ou contraintes identifies]
+[2-3 risques ou contraintes identifiés]
 
 ---
-Document genere par Ark Intelligence - ARK Corporat Group`,
+Document généré par Ark Intelligence - ARK Corporate Group`,
 
 // 2. PROJECT CHARTER ARK (INTERNE)
-charter_ark: `Genere un PROJECT CHARTER ARK (version interne avec scoring).
+charter_ark: `Génère un PROJECT CHARTER ARK (version interne avec scoring).
 
 # PROJECT CHARTER ARK (INTERNE)
 
 ## Identification
 - Projet : [nom]
 - Client : [nom]
-- Consultant ARK : [a definir]
+- Consultant ARK : [à définir]
 - Date : ${new Date().toLocaleDateString('fr-FR')}
 
 ## Scoring Projet
 
-| Critere | Score | Commentaire |
+| Critère | Score | Commentaire |
 |---------|-------|-------------|
 | Urgence | [1-5] | [justification] |
-| Maturite client | [1-5] | [justification] |
-| Complexite | [1-5] | [justification] |
+| Maturité client | [1-5] | [justification] |
+| Complexité | [1-5] | [justification] |
 | Potentiel commercial | [1-5] | [justification] |
 
-Legende : 1=Faible, 3=Moyen, 5=Eleve
+Légende : 1=Faible, 3=Moyen, 5=Élevé
 
-## Synthese du besoin
-[Resume en 5 lignes max]
+## Synthèse du besoin
+[Résumé en 5 lignes max]
 
-## Diagnostic maturite client
+## Diagnostic maturité client
 
 | Domaine | Niveau |
 |---------|--------|
-| Organisation | Faible / Moyen / Eleve |
-| Processus | Faible / Moyen / Eleve |
-| Digital | Faible / Moyen / Eleve |
-| Pilotage | Faible / Moyen / Eleve |
+| Organisation | Faible / Moyen / Élevé |
+| Processus | Faible / Moyen / Élevé |
+| Digital | Faible / Moyen / Élevé |
+| Pilotage | Faible / Moyen / Élevé |
 
 ## Recommandation ARK
 
-Option recommandee :
+Option recommandée :
 - [ ] Diagnostic approfondi
-- [ ] Mission de cadrage structuree
-- [ ] Offre operationnelle ciblee
-- [ ] Mise en attente / reorientation
+- [ ] Mission de cadrage structurée
+- [ ] Offre opérationnelle ciblée
+- [ ] Mise en attente / réorientation
 
-Priorite : Faible / Moyenne / Elevee
+Priorité : Faible / Moyenne / Élevée
 
 ## Notes internes
-[Observations pour l'equipe ARK]
+[Observations pour l'équipe ARK]
 
 ---
-Document interne ARK Corporat Group - Ne pas diffuser`,
+Document interne ARK Corporate Group - Ne pas diffuser`,
 
-// 3. CAHIER DE CHARGE
-cahier_charge: `Genere un CAHIER DE CHARGE complet.
+// 3. CAHIER DES CHARGES
+cahier_charge: `Génère un CAHIER DES CHARGES complet basé sur la conversation.
 
-# CAHIER DE CHARGE
-
-## 1. Presentation du projet
-[Description generale]
-
-## 2. Contexte et objectifs
-### Contexte
-[Situation actuelle]
-
-### Objectifs
-[Liste des objectifs]
-
-## 3. Cible et marche
-[Description de la clientele visee]
-
-## 4. Description des services/produits
-[Detail de l'offre]
-
-## 5. Fonctionnalites et specifications
-[Liste detaillee]
-
-## 6. Organisation et ressources
-[Equipe, locaux, equipements]
-
-## 7. Budget estimatif
-[Fourchette budgetaire]
-
-## 8. Planning previsionnel
-[Grandes phases]
-
-## 9. Contraintes et risques
-[Elements identifies]
+RÈGLES :
+- Remplis chaque section avec les informations collectées
+- Si info non collectée → mets "À définir"
+- Si tu peux déduire logiquement → propose avec mention "(estimation)"
+- Adapté au contexte Congo-Brazzaville (FCFA, Mobile Money)
+- Style professionnel et structuré
 
 ---
-Document genere par Ark Intelligence - ARK Corporat Group`,
 
-// 4. BUDGET PREVISIONNEL
-budget: `Genere un BUDGET PREVISIONNEL detaille.
+# CAHIER DES CHARGES
+## [Nom du projet]
 
-# BUDGET PREVISIONNEL
+Date : ${new Date().toLocaleDateString('fr-FR')}
+
+---
+
+### 1. CONTEXTE ET OBJECTIFS
+
+**Présentation du projet**
+[Description générale du projet en 2-3 phrases]
+
+**Problème à résoudre**
+[Problème central identifié]
+
+**Objectifs généraux**
+- [Objectif 1]
+- [Objectif 2]
+
+**Objectifs spécifiques**
+- [Objectif mesurable 1]
+- [Objectif mesurable 2]
+
+---
+
+### 2. PÉRIMÈTRE DU PROJET
+
+**Ce qui est inclus**
+- [Élément inclus 1]
+- [Élément inclus 2]
+
+**Ce qui est exclu**
+- [Élément exclu 1]
+- [Élément exclu 2]
+
+**Limites fonctionnelles et opérationnelles**
+[Description des limites]
+
+---
+
+### 3. BESOINS FONCTIONNELS
+
+**Fonctions attendues**
+| Fonction | Priorité |
+|----------|----------|
+| [Fonction 1] | Haute |
+| [Fonction 2] | Moyenne |
+
+**Cas d'usage principal**
+[Description du parcours utilisateur type]
+
+**Livrables attendus**
+- [Livrable 1]
+- [Livrable 2]
+
+---
+
+### 4. EXIGENCES TECHNIQUES
+
+**Contraintes techniques**
+- [Contrainte ou "À définir"]
+
+**Normes et standards**
+- [Norme ou "À définir"]
+
+**Compatibilité et sécurité**
+- [Exigence ou "À définir"]
+
+---
+
+### 5. CONTRAINTES
+
+**Budget**
+[Montant en FCFA ou "À définir"]
+
+**Délais**
+[Durée ou date cible ou "À définir"]
+
+**Contraintes réglementaires**
+- [Contrainte ou "À définir"]
+
+**Contraintes géographiques**
+- [Zone concernée]
+
+**Contraintes organisationnelles**
+- [Contrainte ou "À définir"]
+
+---
+
+### 6. RESSOURCES
+
+**Ressources humaines**
+| Rôle | Nombre | Responsabilité |
+|------|--------|----------------|
+| [Rôle] | [X] | [Mission] |
+
+**Moyens matériels**
+- [Équipement ou "À définir"]
+
+**Moyens financiers**
+- [Source de financement ou "À définir"]
+
+---
+
+### 7. PLANNING PRÉVISIONNEL
+
+**Phases du projet**
+| Phase | Durée estimée |
+|-------|---------------|
+| Préparation | [X semaines] |
+| Mise en place | [X semaines] |
+| Lancement | [X semaines] |
+| Suivi | [X semaines] |
+
+**Jalons clés**
+| Jalon | Date estimée |
+|-------|--------------|
+| [Jalon 1] | [Date] |
+| [Jalon 2] | [Date] |
+
+---
+
+### 8. CRITÈRES DE PERFORMANCE ET DE QUALITÉ
+
+**Indicateurs de réussite**
+| Indicateur | Objectif |
+|------------|----------|
+| [Indicateur 1] | [Cible] |
+| [Indicateur 2] | [Cible] |
+
+**Niveaux de qualité attendus**
+- [Critère qualité ou "À définir"]
+
+**Modalités de validation**
+- [Processus ou "À définir"]
+
+---
+
+### 9. RISQUES ET HYPOTHÈSES
+
+**Risques identifiés**
+| Risque | Impact | Probabilité | Mitigation |
+|--------|--------|-------------|------------|
+| [Risque 1] | Élevé/Moyen/Faible | Élevée/Moyenne/Faible | [Action] |
+| [Risque 2] | Élevé/Moyen/Faible | Élevée/Moyenne/Faible | [Action] |
+
+**Hypothèses de départ**
+- [Hypothèse 1]
+- [Hypothèse 2]
+
+---
+
+### 10. MODALITÉS DE SUIVI ET DE VALIDATION
+
+**Gouvernance du projet**
+- Responsable projet : [Nom ou "À définir"]
+- Sponsor : [Nom ou "À définir"]
+
+**Processus de reporting**
+- [Fréquence et format ou "À définir"]
+
+**Conditions d'acceptation finale**
+- [Critères ou "À définir"]
+
+---
+
+Document généré par Ark Intelligence - ARK Corporate Group`,
+
+// 4. BUDGET PRÉVISIONNEL
+budget: `Génère un BUDGET PRÉVISIONNEL détaillé.
+
+# BUDGET PRÉVISIONNEL
 
 ## 1. Investissements initiaux
 
@@ -415,7 +531,7 @@ budget: `Genere un BUDGET PREVISIONNEL detaille.
 | [poste] | [montant] |
 | **TOTAL CHARGES/MOIS** | **[total]** |
 
-## 3. Previsions de revenus
+## 3. Prévisions de revenus
 
 | Source | Montant mensuel (FCFA) |
 |--------|------------------------|
@@ -423,136 +539,136 @@ budget: `Genere un BUDGET PREVISIONNEL detaille.
 | **TOTAL REVENUS/MOIS** | **[total]** |
 
 ## 4. Point mort
-[Analyse du seuil de rentabilite]
+[Analyse du seuil de rentabilité]
 
-## 5. Moyens de paiement prevus
+## 5. Moyens de paiement prévus
 - Mobile Money (Airtel Money, MTN MoMo)
-- Especes
+- Espèces
 - [autres]
 
 ---
-Document genere par Ark Intelligence - ARK Corporat Group`,
+Document généré par Ark Intelligence - ARK Corporate Group`,
 
 // 5. PLAN DE PROJET
-plan_projet: `Genere un PLAN DE PROJET structure.
+plan_projet: `Génère un PLAN DE PROJET structuré.
 
 # PLAN DE PROJET
 
-## Phase 1 : Preparation
-Duree : [X semaines]
+## Phase 1 : Préparation
+Durée : [X semaines]
 
-| Tache | Responsable | Echeance |
+| Tâche | Responsable | Échéance |
 |-------|-------------|----------|
-| [tache] | [qui] | [date] |
+| [tâche] | [qui] | [date] |
 
 ## Phase 2 : Mise en place
-Duree : [X semaines]
+Durée : [X semaines]
 
-| Tache | Responsable | Echeance |
+| Tâche | Responsable | Échéance |
 |-------|-------------|----------|
-| [tache] | [qui] | [date] |
+| [tâche] | [qui] | [date] |
 
 ## Phase 3 : Lancement
-Duree : [X semaines]
+Durée : [X semaines]
 
-| Tache | Responsable | Echeance |
+| Tâche | Responsable | Échéance |
 |-------|-------------|----------|
-| [tache] | [qui] | [date] |
+| [tâche] | [qui] | [date] |
 
 ## Phase 4 : Suivi post-lancement
-Duree : [X semaines]
+Durée : [X semaines]
 
-| Tache | Responsable | Echeance |
+| Tâche | Responsable | Échéance |
 |-------|-------------|----------|
-| [tache] | [qui] | [date] |
+| [tâche] | [qui] | [date] |
 
-## Jalons cles
+## Jalons clés
 
 | Date | Jalon |
 |------|-------|
 | [date] | [jalon] |
 
 ---
-Document genere par Ark Intelligence - ARK Corporat Group`,
+Document généré par Ark Intelligence - ARK Corporate Group`,
 
 // 6. CHECKLIST LANCEMENT
-checklist: `Genere une CHECKLIST DE LANCEMENT complete.
+checklist: `Génère une CHECKLIST DE LANCEMENT complète.
 
 # CHECKLIST DE LANCEMENT
 
 ## Administratif
-- [ ] [tache]
-- [ ] [tache]
+- [ ] [tâche]
+- [ ] [tâche]
 
-## Local et equipements
-- [ ] [tache]
-- [ ] [tache]
+## Local et équipements
+- [ ] [tâche]
+- [ ] [tâche]
 
 ## Ressources humaines
-- [ ] [tache]
-- [ ] [tache]
+- [ ] [tâche]
+- [ ] [tâche]
 
 ## Commercial et marketing
-- [ ] [tache]
-- [ ] [tache]
+- [ ] [tâche]
+- [ ] [tâche]
 
 ## Financier
-- [ ] [tache]
-- [ ] [tache]
+- [ ] [tâche]
+- [ ] [tâche]
 
 ## Jour J
-- [ ] [tache]
-- [ ] [tache]
+- [ ] [tâche]
+- [ ] [tâche]
 
 ---
-Document genere par Ark Intelligence - ARK Corporat Group`,
+Document généré par Ark Intelligence - ARK Corporate Group`,
 
 // 7. MATRICE DES RISQUES
-risques: `Genere une MATRICE DES RISQUES detaillee.
+risques: `Génère une MATRICE DES RISQUES détaillée.
 
 # MATRICE DES RISQUES
 
-## Risques eleves
+## Risques élevés
 
-| Risque | Impact | Probabilite | Mitigation |
+| Risque | Impact | Probabilité | Mitigation |
 |--------|--------|-------------|------------|
-| [risque] | Eleve | [prob] | [action] |
+| [risque] | Élevé | [prob] | [action] |
 
 ## Risques moyens
 
-| Risque | Impact | Probabilite | Mitigation |
+| Risque | Impact | Probabilité | Mitigation |
 |--------|--------|-------------|------------|
 | [risque] | Moyen | [prob] | [action] |
 
 ## Risques faibles
 
-| Risque | Impact | Probabilite | Mitigation |
+| Risque | Impact | Probabilité | Mitigation |
 |--------|--------|-------------|------------|
 | [risque] | Faible | [prob] | [action] |
 
-## Risques specifiques Congo-Brazzaville
+## Risques spécifiques Congo-Brazzaville
 - [risque local et mitigation]
 
 ## Plan de contingence
-[Actions en cas de materialisation des risques majeurs]
+[Actions en cas de matérialisation des risques majeurs]
 
 ---
-Document interne ARK Corporat Group`,
+Document interne ARK Corporate Group`,
 
 // 8. SOP CLIENTS
-sop_clients: `Genere les SOP CLIENTS (procedures operationnelles standards).
+sop_clients: `Génère les SOP CLIENTS (procédures opérationnelles standards).
 
-# SOP CLIENTS - PROCEDURES STANDARDS
+# SOP CLIENTS - PROCÉDURES STANDARDS
 
 ## 1. Processus d'accueil client
 
 ### Objectif
 [Description]
 
-### Etapes
-1. [etape]
-2. [etape]
-3. [etape]
+### Étapes
+1. [étape]
+2. [étape]
+3. [étape]
 
 ### Responsable
 [qui]
@@ -562,10 +678,10 @@ sop_clients: `Genere les SOP CLIENTS (procedures operationnelles standards).
 ### Objectif
 [Description]
 
-### Etapes
-1. [etape]
-2. [etape]
-3. [etape]
+### Étapes
+1. [étape]
+2. [étape]
+3. [étape]
 
 ### Responsable
 [qui]
@@ -575,67 +691,67 @@ sop_clients: `Genere les SOP CLIENTS (procedures operationnelles standards).
 ### Objectif
 [Description]
 
-### Etapes
-1. [etape]
-2. [etape]
-3. [etape]
+### Étapes
+1. [étape]
+2. [étape]
+3. [étape]
 
 ### Responsable
 [qui]
 
-## 4. Gestion des reclamations
+## 4. Gestion des réclamations
 
 ### Objectif
 [Description]
 
-### Etapes
-1. [etape]
-2. [etape]
-3. [etape]
+### Étapes
+1. [étape]
+2. [étape]
+3. [étape]
 
 ### Responsable
 [qui]
 
 ---
-Document genere par Ark Intelligence - ARK Corporat Group`,
+Document généré par Ark Intelligence - ARK Corporate Group`,
 
 // 9. SOP INTERNES
-sop_internes: `Genere les SOP INTERNES (procedures operationnelles internes ARK).
+sop_internes: `Génère les SOP INTERNES (procédures opérationnelles internes ARK).
 
-# SOP INTERNES - PROCEDURES ARK
+# SOP INTERNES - PROCÉDURES ARK
 
 ## 1. Processus de prise en charge projet
 
-### Declencheur
-[Quand ce processus demarre]
+### Déclencheur
+[Quand ce processus démarre]
 
-### Etapes
-1. [etape]
-2. [etape]
-3. [etape]
+### Étapes
+1. [étape]
+2. [étape]
+3. [étape]
 
 ### Livrables
-[Documents a produire]
+[Documents à produire]
 
 ## 2. Processus de validation interne
 
-### Criteres de validation
-- [critere]
-- [critere]
+### Critères de validation
+- [critère]
+- [critère]
 
-### Etapes
-1. [etape]
-2. [etape]
+### Étapes
+1. [étape]
+2. [étape]
 
-### Decideur
+### Décideur
 [qui valide]
 
 ## 3. Processus de suivi projet
 
-### Frequence
-[periodicite]
+### Fréquence
+[périodicité]
 
-### Points de controle
+### Points de contrôle
 - [point]
 - [point]
 
@@ -643,10 +759,10 @@ sop_internes: `Genere les SOP INTERNES (procedures operationnelles internes ARK)
 [format et destinataires]
 
 ---
-Document interne ARK Corporat Group - Ne pas diffuser`,
+Document interne ARK Corporate Group - Ne pas diffuser`,
 
 // 10. DIAGNOSTICS
-diagnostics: `Genere un DIAGNOSTIC complet du projet.
+diagnostics: `Génère un DIAGNOSTIC complet du projet.
 
 # DIAGNOSTIC PROJET
 
@@ -660,21 +776,21 @@ diagnostics: `Genere un DIAGNOSTIC complet du projet.
 - [faiblesse]
 - [faiblesse]
 
-### Opportunites
-- [opportunite]
-- [opportunite]
+### Opportunités
+- [opportunité]
+- [opportunité]
 
 ### Menaces
 - [menace]
 - [menace]
 
-## 2. Analyse du marche
+## 2. Analyse du marché
 
-### Taille du marche
+### Taille du marché
 [estimation]
 
 ### Tendances
-[evolutions observees]
+[évolutions observées]
 
 ### Concurrence
 [acteurs et positionnement]
@@ -687,35 +803,35 @@ diagnostics: `Genere un DIAGNOSTIC complet du projet.
 ### Ressources manquantes
 - [ressource]
 
-### Gap a combler
+### Gap à combler
 [analyse]
 
-## 4. Synthese du diagnostic
+## 4. Synthèse du diagnostic
 
-| Domaine | Etat | Priorite |
+| Domaine | État | Priorité |
 |---------|------|----------|
-| [domaine] | [etat] | [priorite] |
+| [domaine] | [état] | [priorité] |
 
 ---
-Document genere par Ark Intelligence - ARK Corporat Group`,
+Document généré par Ark Intelligence - ARK Corporate Group`,
 
 // 11. RECOMMANDATIONS
-recommandations: `Genere des RECOMMANDATIONS strategiques.
+recommandations: `Génère des RECOMMANDATIONS stratégiques.
 
-# RECOMMANDATIONS STRATEGIQUES
+# RECOMMANDATIONS STRATÉGIQUES
 
 ## 1. Recommandations prioritaires
 
 ### Recommandation 1
 - **Action** : [description]
 - **Justification** : [pourquoi]
-- **Delai** : [quand]
+- **Délai** : [quand]
 - **Ressources** : [quoi]
 
 ### Recommandation 2
 - **Action** : [description]
 - **Justification** : [pourquoi]
-- **Delai** : [quand]
+- **Délai** : [quand]
 - **Ressources** : [quoi]
 
 ## 2. Recommandations secondaires
@@ -727,26 +843,26 @@ recommandations: `Genere des RECOMMANDATIONS strategiques.
 [description et justification]
 
 ## 3. Quick wins (gains rapides)
-- [action rapide a impact immediat]
-- [action rapide a impact immediat]
+- [action rapide à impact immédiat]
+- [action rapide à impact immédiat]
 
-## 4. Actions a eviter
-- [piege a eviter]
-- [piege a eviter]
+## 4. Actions à éviter
+- [piège à éviter]
+- [piège à éviter]
 
-## 5. Prochaines etapes suggerees
+## 5. Prochaines étapes suggérées
 
-| Etape | Action | Echeance |
+| Étape | Action | Échéance |
 |-------|--------|----------|
 | 1 | [action] | [date] |
 | 2 | [action] | [date] |
 | 3 | [action] | [date] |
 
 ---
-Document genere par Ark Intelligence - ARK Corporat Group`,
+Document généré par Ark Intelligence - ARK Corporate Group`,
 
 // 12. DESIGN THINKING
-design_thinking: `Genere un document DESIGN THINKING.
+design_thinking: `Génère un document DESIGN THINKING.
 
 # DESIGN THINKING - ANALYSE PROJET
 
@@ -763,17 +879,17 @@ design_thinking: `Genere un document DESIGN THINKING.
 - [frustration]
 - [frustration]
 
-## 2. DEFINE (Definir)
+## 2. DEFINE (Définir)
 
-### Probleme a resoudre
-[Enonce clair du probleme]
+### Problème à résoudre
+[Énoncé clair du problème]
 
 ### Point de vue utilisateur
-"En tant que [utilisateur], je veux [action] pour [benefice]"
+"En tant que [utilisateur], je veux [action] pour [bénéfice]"
 
 ## 3. IDEATE (Imaginer)
 
-### Solutions envisagees
+### Solutions envisagées
 1. [solution]
 2. [solution]
 3. [solution]
@@ -786,25 +902,25 @@ design_thinking: `Genere un document DESIGN THINKING.
 ### MVP (Produit Minimum Viable)
 [Description du MVP]
 
-### Fonctionnalites essentielles
-- [fonctionnalite]
-- [fonctionnalite]
+### Fonctionnalités essentielles
+- [fonctionnalité]
+- [fonctionnalité]
 
 ## 5. TEST (Tester)
 
-### Hypotheses a valider
-- [hypothese]
-- [hypothese]
+### Hypothèses à valider
+- [hypothèse]
+- [hypothèse]
 
-### Metriques de succes
-- [metrique]
-- [metrique]
+### Métriques de succès
+- [métrique]
+- [métrique]
 
 ---
-Document genere par Ark Intelligence - ARK Corporat Group`,
+Document généré par Ark Intelligence - ARK Corporate Group`,
 
 // 13. BUSINESS MODEL
-business_model: `Genere un BUSINESS MODEL CANVAS.
+business_model: `Génère un BUSINESS MODEL CANVAS.
 
 # BUSINESS MODEL CANVAS
 
@@ -830,79 +946,79 @@ business_model: `Genere un BUSINESS MODEL CANVAS.
 ## 5. Sources de revenus
 [Comment gagnez-vous de l'argent ?]
 
-| Source | Modele | Estimation mensuelle |
+| Source | Modèle | Estimation mensuelle |
 |--------|--------|---------------------|
-| [source] | [modele] | [montant] FCFA |
+| [source] | [modèle] | [montant] FCFA |
 
-## 6. Ressources cles
+## 6. Ressources clés
 [De quoi avez-vous besoin ?]
 - [ressource]
 - [ressource]
 
-## 7. Activites cles
+## 7. Activités clés
 [Que devez-vous faire ?]
-- [activite]
-- [activite]
+- [activité]
+- [activité]
 
-## 8. Partenaires cles
+## 8. Partenaires clés
 [Avec qui travaillez-vous ?]
 - [partenaire]
 - [partenaire]
 
-## 9. Structure de couts
-[Quels sont vos couts ?]
+## 9. Structure de coûts
+[Quels sont vos coûts ?]
 
 | Poste | Type | Estimation |
 |-------|------|------------|
 | [poste] | Fixe/Variable | [montant] FCFA |
 
 ---
-Document genere par Ark Intelligence - ARK Corporat Group`,
+Document généré par Ark Intelligence - ARK Corporate Group`,
 
 // 14. LEAN STARTUP
-lean_startup: `Genere un document LEAN START UP.
+lean_startup: `Génère un document LEAN START UP.
 
 # LEAN START UP - PLAN DE VALIDATION
 
-## 1. Hypothese de valeur
-[Quelle valeur pensez-vous creer ?]
+## 1. Hypothèse de valeur
+[Quelle valeur pensez-vous créer ?]
 
-### Hypothese principale
+### Hypothèse principale
 "Nous croyons que [client] a besoin de [solution] car [raison]"
 
 ### Comment valider ?
-[methode de validation]
+[méthode de validation]
 
-## 2. Hypothese de croissance
+## 2. Hypothèse de croissance
 [Comment allez-vous grandir ?]
 
 ### Moteur de croissance
-- [ ] Viral (bouche-a-oreille)
-- [ ] Payant (publicite)
-- [ ] Sticky (retention)
+- [ ] Viral (bouche-à-oreille)
+- [ ] Payant (publicité)
+- [ ] Sticky (rétention)
 
 ## 3. MVP (Minimum Viable Product)
 
 ### Description du MVP
 [version minimale du produit]
 
-### Fonctionnalites incluses
-- [fonctionnalite]
-- [fonctionnalite]
+### Fonctionnalités incluses
+- [fonctionnalité]
+- [fonctionnalité]
 
-### Fonctionnalites exclues (pour plus tard)
-- [fonctionnalite]
-- [fonctionnalite]
+### Fonctionnalités exclues (pour plus tard)
+- [fonctionnalité]
+- [fonctionnalité]
 
-## 4. Metriques cles (AARRR)
+## 4. Métriques clés (AARRR)
 
-| Metrique | Objectif | Comment mesurer |
+| Métrique | Objectif | Comment mesurer |
 |----------|----------|-----------------|
-| Acquisition | [objectif] | [methode] |
-| Activation | [objectif] | [methode] |
-| Retention | [objectif] | [methode] |
-| Revenue | [objectif] | [methode] |
-| Referral | [objectif] | [methode] |
+| Acquisition | [objectif] | [méthode] |
+| Activation | [objectif] | [méthode] |
+| Rétention | [objectif] | [méthode] |
+| Revenue | [objectif] | [méthode] |
+| Referral | [objectif] | [méthode] |
 
 ## 5. Cycle Build-Measure-Learn
 
@@ -913,18 +1029,18 @@ lean_startup: `Genere un document LEAN START UP.
 [Ce qu'on va mesurer]
 
 ### Learn (Apprendre)
-[Questions auxquelles on veut repondre]
+[Questions auxquelles on veut répondre]
 
-## 6. Pivot ou Persevere ?
+## 6. Pivot ou Persévère ?
 
-### Criteres de pivot
+### Critères de pivot
 [Quand changer de direction ?]
 
-### Criteres de perseverance
+### Critères de persévérance
 [Quand continuer ?]
 
 ---
-Document genere par Ark Intelligence - ARK Corporat Group`
+Document généré par Ark Intelligence - ARK Corporate Group`
 };
 
 // ==================== HANDLE GENERATE ====================
@@ -945,13 +1061,13 @@ ${conversationText}
 MISSION :
 ${docPrompt}
 
-REGLES :
+RÈGLES :
 - Base-toi UNIQUEMENT sur la conversation
-- Si info manquante -> "A definir"
+- Si info manquante → "À définir"
 - Style professionnel et clair
-- Adapte au contexte Congo-Brazzaville (Mobile Money, FCFA)
+- Adapté au contexte Congo-Brazzaville (Mobile Money, FCFA)
 - Pas de blabla, que du concret
-- PAS d'emojis sauf pour le scoring interne`;
+- PAS d'émojis sauf pour le scoring interne`;
 
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
@@ -963,7 +1079,7 @@ REGLES :
             model: 'deepseek-chat', 
             messages: [{ role: 'user', content: generatePrompt }], 
             temperature: 0.7, 
-            max_tokens: 3500 
+            max_tokens: 4000 
         })
     });
 
