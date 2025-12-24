@@ -128,9 +128,7 @@ Cadrage terminé. Voici la synthèse :
 - **Besoin fonctionnel** : [priorité]
 - **Contraintes** : [liste]
 - **Risques** : [déduits]
-- **Critère de succès** : [indicateur]
-
-Vous pouvez maintenant générer vos documents depuis le menu à gauche.`;
+- **Critère de succès** : [indicateur]`;
 
 // ==================== HANDLE CHAT ====================
 async function handleChat(res, message, history) {
