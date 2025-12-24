@@ -1453,14 +1453,16 @@
             await sendToAPI(message);
         }
 
-        function addMessage(content, type) {
+        function addMessage(content, type, saveToHistory = true) {
             const div = document.createElement('div');
             div.className = `message ${type}`;
             div.innerHTML = `<div class="message-content">${formatMessage(content)}</div>`;
             elements.chatMessages.appendChild(div);
             scrollToBottom();
 
-            state.history.push({ type, content });
+            if (saveToHistory) {
+                state.history.push({ type, content });
+            }
         }
 
         function formatMessage(text) {
@@ -1509,14 +1511,61 @@
                 const data = await response.json();
 
                 if (data.action === 'generate') {
+                    // Afficher la synthèse (sauvegarder dans historique)
+                    addMessage(data.response, 'ai', true);
+                    
+                    // Afficher message de génération (ne pas sauvegarder)
+                    await delay(500);
+                    addMessage('Je vais générer vos documents...', 'ai', false);
+                    
+                    // Afficher typing indicator pendant la génération
+                    showTypingIndicator();
+                    
+                    // Générer les documents principaux en arrière-plan
+                    await generateDocumentsInBackground();
+                    
+                    // Cacher typing et afficher message de fin (ne pas sauvegarder)
+                    hideTypingIndicator();
                     enableDocuments();
+                    addMessage('✓ Les documents sont prêts ! Vous pouvez les consulter depuis le menu à gauche.', 'ai', false);
+                } else {
+                    addMessage(data.response, 'ai', true);
                 }
-
-                addMessage(data.response, 'ai');
 
             } catch (error) {
                 hideTypingIndicator();
-                addMessage('Erreur de connexion. Réessayez.', 'ai');
+                addMessage('Erreur de connexion. Réessayez.', 'ai', false);
+            }
+        }
+
+        // Fonction pour délai
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Générer les documents principaux en arrière-plan
+        async function generateDocumentsInBackground() {
+            const mainDocs = ['cahier_charge', 'charter_client', 'budget'];
+            
+            for (const docType of mainDocs) {
+                try {
+                    const response = await fetch(CONFIG.apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            mode: 'generate',
+                            docType,
+                            history: state.history
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    if (data.success) {
+                        state.documentCache[docType] = data.document;
+                    }
+                } catch (error) {
+                    console.error(`Erreur génération ${docType}:`, error);
+                }
             }
         }
 
