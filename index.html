@@ -380,6 +380,10 @@
             align-items: center;
             gap: 12px;
             flex-shrink: 0;
+            background: var(--bg-primary);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .chat-header-info {
@@ -403,6 +407,27 @@
             justify-content: center;
             font-size: 18px;
             transition: all 0.2s;
+        }
+
+        /* Bouton nouveau projet mobile */
+        .new-chat-btn-mobile {
+            width: 36px;
+            height: 36px;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: #0a0a0a;
+            transition: all 0.2s;
+        }
+
+        .new-chat-btn-mobile:hover {
+            background: var(--accent-hover);
         }
 
         .chat-messages {
@@ -518,6 +543,14 @@
 
         .chat-input:focus {
             border-color: var(--accent);
+        }
+
+        .chat-input:disabled {
+            cursor: not-allowed;
+        }
+
+        .chat-send:disabled {
+            cursor: not-allowed;
         }
 
         .chat-send {
@@ -916,6 +949,10 @@
                 display: flex;
             }
 
+            .new-chat-btn-mobile {
+                display: flex;
+            }
+
             .welcome-screen {
                 padding: 20px;
                 height: 100%;
@@ -1134,6 +1171,7 @@
                     <div class="chat-header-info">
                         <div class="chat-header-title">Ark Intelligence</div>
                     </div>
+                    <button class="new-chat-btn-mobile" id="newChatBtnMobile" title="Nouveau projet">+</button>
                     <button class="theme-btn-mobile" id="themeBtnMobile" title="Changer le thème">🎨</button>
                 </div>
                 <div class="chat-messages" id="chatMessages"></div>
@@ -1242,7 +1280,8 @@
             documentsReady: false,
             documentCache: {},
             currentDoc: null,
-            currentTheme: localStorage.getItem('ark-theme') || 'dark'
+            currentTheme: localStorage.getItem('ark-theme') || 'dark',
+            cadrageComplete: false
         };
 
         // ===== ELEMENTS =====
@@ -1257,6 +1296,7 @@
             chatInput: document.getElementById('chatInput'),
             chatSend: document.getElementById('chatSend'),
             newChatBtn: document.getElementById('newChatBtn'),
+            newChatBtnMobile: document.getElementById('newChatBtnMobile'),
             documentBack: document.getElementById('documentBack'),
             documentTitle: document.getElementById('documentTitle'),
             documentBody: document.getElementById('documentBody'),
@@ -1330,6 +1370,7 @@
             });
 
             elements.newChatBtn.addEventListener('click', resetChat);
+            elements.newChatBtnMobile.addEventListener('click', resetChat);
             elements.documentBack.addEventListener('click', () => switchScreen('chat'));
             elements.copyDoc.addEventListener('click', copyDocument);
             elements.shareWhatsApp.addEventListener('click', shareWhatsApp);
@@ -1443,6 +1484,9 @@
         }
 
         async function handleChatSend() {
+            // Bloquer si cadrage terminé
+            if (state.cadrageComplete || elements.chatInput.disabled) return;
+            
             const message = elements.chatInput.value.trim();
             if (!message) return;
 
@@ -1511,8 +1555,14 @@
                 const data = await response.json();
 
                 if (data.action === 'generate') {
+                    // Nettoyer [GENERATE] de la réponse
+                    const cleanResponse = data.response.replace('[GENERATE]', '').trim();
+                    
                     // Afficher la synthèse (sauvegarder dans historique)
-                    addMessage(data.response, 'ai', true);
+                    addMessage(cleanResponse, 'ai', true);
+                    
+                    // Désactiver l'input pendant la génération
+                    disableChatInput();
                     
                     // Afficher message de génération (ne pas sauvegarder)
                     await delay(500);
@@ -1528,6 +1578,9 @@
                     hideTypingIndicator();
                     enableDocuments();
                     addMessage('✓ Les documents sont prêts ! Vous pouvez les consulter depuis le menu à gauche.', 'ai', false);
+                    
+                    // Garder l'input désactivé (cadrage terminé)
+                    showCadrageComplete();
                 } else {
                     addMessage(data.response, 'ai', true);
                 }
@@ -1541,6 +1594,23 @@
         // Fonction pour délai
         function delay(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Désactiver l'input chat
+        function disableChatInput() {
+            elements.chatInput.disabled = true;
+            elements.chatSend.disabled = true;
+            elements.chatInput.placeholder = 'Cadrage en cours...';
+        }
+
+        // Afficher que le cadrage est terminé
+        function showCadrageComplete() {
+            state.cadrageComplete = true;
+            elements.chatInput.disabled = true;
+            elements.chatSend.disabled = true;
+            elements.chatInput.placeholder = 'Cadrage terminé — Consultez vos documents';
+            elements.chatInput.style.opacity = '0.6';
+            elements.chatSend.style.opacity = '0.6';
         }
 
         // Générer les documents principaux en arrière-plan
@@ -1738,9 +1808,17 @@
             state.documentsReady = false;
             state.documentCache = {};
             state.currentDoc = null;
+            state.cadrageComplete = false;
 
             elements.chatMessages.innerHTML = '';
             elements.welcomeInput.value = '';
+            
+            // Réactiver l'input chat
+            elements.chatInput.disabled = false;
+            elements.chatSend.disabled = false;
+            elements.chatInput.placeholder = 'Écrivez votre réponse...';
+            elements.chatInput.style.opacity = '1';
+            elements.chatSend.style.opacity = '1';
 
             document.querySelectorAll('.doc-item').forEach(item => {
                 item.classList.add('disabled');
