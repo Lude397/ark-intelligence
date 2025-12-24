@@ -270,13 +270,38 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
+            overflow: hidden;
         }
 
         .welcome-screen.hidden {
             display: none;
+        }
+
+        /* Header mobile pour welcome */
+        .welcome-header-mobile {
+            display: none;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-primary);
+        }
+
+        .welcome-header-info {
+            flex: 1;
+        }
+
+        .welcome-header-title {
+            font-weight: 600;
+        }
+
+        .welcome-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
         }
 
         .welcome-logo {
@@ -953,10 +978,24 @@
                 display: flex;
             }
 
+            .welcome-header-mobile {
+                display: flex;
+            }
+
+            .welcome-content .welcome-logo,
+            .welcome-content .welcome-title,
+            .welcome-content .welcome-subtitle {
+                display: none;
+            }
+
             .welcome-screen {
-                padding: 20px;
+                padding: 0;
                 height: 100%;
                 overflow-y: auto;
+            }
+
+            .welcome-content {
+                padding: 20px;
             }
 
             .welcome-logo {
@@ -1144,23 +1183,34 @@
         <main class="main-content">
             <!-- Welcome Screen -->
             <div class="welcome-screen" id="welcomeScreen">
-                <div class="welcome-logo">A</div>
-                <h1 class="welcome-title">Ark Intelligence</h1>
-                <p class="welcome-subtitle">Assistant de cadrage projet - ARK Corporate Group</p>
-                <div class="welcome-input-container">
-                    <textarea 
-                        class="welcome-textarea" 
-                        id="welcomeInput"
-                        placeholder="Décrivez votre projet en quelques mots..."
-                        rows="3"
-                    ></textarea>
-                    <button class="welcome-send" id="welcomeSend">
-                        C'est parti
-                        <svg viewBox="0 0 24 24">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                <!-- Header mobile pour welcome -->
+                <div class="welcome-header-mobile">
+                    <div class="logo-icon">A</div>
+                    <div class="welcome-header-info">
+                        <div class="welcome-header-title">Ark Intelligence</div>
+                    </div>
+                    <button class="theme-btn-mobile" id="themeBtnWelcome" title="Changer le thème">🎨</button>
+                </div>
+                
+                <div class="welcome-content">
+                    <div class="welcome-logo">A</div>
+                    <h1 class="welcome-title">Ark Intelligence</h1>
+                    <p class="welcome-subtitle">Assistant de cadrage projet - ARK Corporate Group</p>
+                    <div class="welcome-input-container">
+                        <textarea 
+                            class="welcome-textarea" 
+                            id="welcomeInput"
+                            placeholder="Décrivez votre projet en quelques mots..."
+                            rows="3"
+                        ></textarea>
+                        <button class="welcome-send" id="welcomeSend">
+                            C'est parti
+                            <svg viewBox="0 0 24 24">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
                             <polyline points="12 5 19 12 12 19"></polyline>
                         </svg>
                     </button>
+                </div>
                 </div>
             </div>
 
@@ -1308,6 +1358,7 @@
             mobileDocsList: document.getElementById('mobileDocsList'),
             themeBtnDesktop: document.getElementById('themeBtnDesktop'),
             themeBtnMobile: document.getElementById('themeBtnMobile'),
+            themeBtnWelcome: document.getElementById('themeBtnWelcome'),
             themeModal: document.getElementById('themeModal'),
             themeModalClose: document.getElementById('themeModalClose')
         };
@@ -1391,6 +1442,7 @@
             // Theme modal
             elements.themeBtnDesktop.addEventListener('click', openThemeModal);
             elements.themeBtnMobile.addEventListener('click', openThemeModal);
+            elements.themeBtnWelcome.addEventListener('click', openThemeModal);
             elements.themeModalClose.addEventListener('click', closeThemeModal);
             elements.themeModal.addEventListener('click', (e) => {
                 if (e.target === elements.themeModal) {
