@@ -25,6 +25,7 @@
             --border: #2a2a2a;
             --success: #22c55e;
             --sidebar-width: 280px;
+            --user-msg-bg: #1e1e1e;
         }
 
         /* Thème Clair */
@@ -37,6 +38,7 @@
             --accent: #c9a227;
             --accent-hover: #b8941f;
             --border: #d0d0d0;
+            --user-msg-bg: #e0e0e0;
         }
 
         /* Thème Bleu Nuit */
@@ -49,6 +51,59 @@
             --accent: #c9a227;
             --accent-hover: #d4af37;
             --border: #354759;
+            --user-msg-bg: #2d3e50;
+        }
+
+        /* Thème Émeraude */
+        [data-theme="emerald"] {
+            --bg-primary: #0a1612;
+            --bg-secondary: #0f211a;
+            --bg-tertiary: #162d23;
+            --text-primary: #e8f5e9;
+            --text-secondary: #a5d6a7;
+            --accent: #4caf50;
+            --accent-hover: #66bb6a;
+            --border: #1b5e20;
+            --user-msg-bg: #1a3a2a;
+        }
+
+        /* Thème Bordeaux */
+        [data-theme="bordeaux"] {
+            --bg-primary: #1a0a0a;
+            --bg-secondary: #2d1515;
+            --bg-tertiary: #3d1f1f;
+            --text-primary: #fce4ec;
+            --text-secondary: #f8bbd9;
+            --accent: #c62828;
+            --accent-hover: #e53935;
+            --border: #4a1c1c;
+            --user-msg-bg: #3a1818;
+        }
+
+        /* Thème Océan */
+        [data-theme="ocean"] {
+            --bg-primary: #0a1419;
+            --bg-secondary: #0f1e28;
+            --bg-tertiary: #162936;
+            --text-primary: #e0f7fa;
+            --text-secondary: #80deea;
+            --accent: #00bcd4;
+            --accent-hover: #26c6da;
+            --border: #00838f;
+            --user-msg-bg: #143642;
+        }
+
+        /* Thème Violet */
+        [data-theme="violet"] {
+            --bg-primary: #120a1a;
+            --bg-secondary: #1e1229;
+            --bg-tertiary: #2a1a3d;
+            --text-primary: #f3e5f5;
+            --text-secondary: #ce93d8;
+            --accent: #9c27b0;
+            --accent-hover: #ab47bc;
+            --border: #4a148c;
+            --user-msg-bg: #2d1540;
         }
 
         body {
@@ -514,9 +569,10 @@
         }
 
         .message.user .message-content {
-            background: var(--accent);
-            color: #0a0a0a;
+            background: var(--user-msg-bg);
+            color: var(--text-primary);
             border-bottom-right-radius: 4px;
+            border-left: 3px solid var(--accent);
         }
 
         .message.ai .message-content {
@@ -867,10 +923,11 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             z-index: 70;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(8px);
         }
 
         .theme-modal.visible {
@@ -879,74 +936,145 @@
 
         .theme-modal-content {
             background: var(--bg-secondary);
-            border-radius: 16px;
-            padding: 24px;
+            border-radius: 20px;
+            padding: 28px;
             width: 90%;
-            max-width: 320px;
+            max-width: 400px;
             transition: background 0.3s;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
 
         .theme-modal-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
             text-align: center;
+            color: var(--text-primary);
         }
 
         .theme-options {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
         }
 
         .theme-option {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
+            gap: 10px;
+            padding: 16px 12px;
             background: var(--bg-tertiary);
             border: 2px solid var(--border);
-            border-radius: 10px;
+            border-radius: 14px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s ease;
         }
 
         .theme-option:hover {
             border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
 
         .theme-option.active {
             border-color: var(--accent);
-            background: var(--accent);
-            color: #0a0a0a;
+            background: var(--bg-secondary);
+            box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.2);
+        }
+
+        .theme-option.active .theme-option-check {
+            display: flex;
         }
 
         .theme-option-preview {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            border: 2px solid var(--border);
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
         }
 
         .theme-option-preview.dark {
-            background: linear-gradient(135deg, #0a0a0a 50%, #141414 50%);
+            background: linear-gradient(135deg, #0a0a0a 0%, #141414 50%, #1a1a1a 100%);
         }
 
         .theme-option-preview.light {
-            background: linear-gradient(135deg, #f5f5f5 50%, #ffffff 50%);
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 50%, #e8e8e8 100%);
         }
 
         .theme-option-preview.navy {
-            background: linear-gradient(135deg, #0d1b2a 50%, #1b263b 50%);
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #243447 100%);
         }
 
+        .theme-option-preview.emerald {
+            background: linear-gradient(135deg, #0a1612 0%, #0f211a 50%, #162d23 100%);
+        }
+
+        .theme-option-preview.bordeaux {
+            background: linear-gradient(135deg, #1a0a0a 0%, #2d1515 50%, #3d1f1f 100%);
+        }
+
+        .theme-option-preview.ocean {
+            background: linear-gradient(135deg, #0a1419 0%, #0f1e28 50%, #162936 100%);
+        }
+
+        .theme-option-preview.violet {
+            background: linear-gradient(135deg, #120a1a 0%, #1e1229 50%, #2a1a3d 100%);
+        }
+
+        .theme-option-preview::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 4px;
+            right: 4px;
+            height: 6px;
+            border-radius: 3px;
+        }
+
+        .theme-option-preview.dark::after { background: #c9a227; }
+        .theme-option-preview.light::after { background: #c9a227; }
+        .theme-option-preview.navy::after { background: #c9a227; }
+        .theme-option-preview.emerald::after { background: #4caf50; }
+        .theme-option-preview.bordeaux::after { background: #c62828; }
+        .theme-option-preview.ocean::after { background: #00bcd4; }
+        .theme-option-preview.violet::after { background: #9c27b0; }
+
         .theme-option-name {
-            flex: 1;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .theme-option-check {
+            display: none;
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 18px;
+            height: 18px;
+            background: var(--accent);
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-option-check svg {
+            width: 12px;
+            height: 12px;
+            stroke: #0a0a0a;
+            stroke-width: 3;
+        }
+
+        .theme-option {
+            position: relative;
         }
 
         .theme-modal-close {
-            margin-top: 20px;
+            margin-top: 24px;
             width: 100%;
             padding: 12px;
             background: var(--bg-tertiary);
@@ -1032,8 +1160,11 @@
                 right: 0;
                 bottom: 0;
                 height: 100%;
-                display: flex;
                 flex-direction: column;
+            }
+
+            .chat-screen.visible {
+                display: flex;
             }
 
             .chat-screen .chat-header {
@@ -1321,14 +1452,51 @@
                 <div class="theme-option active" data-theme="dark">
                     <div class="theme-option-preview dark"></div>
                     <span class="theme-option-name">Sombre</span>
+                    <div class="theme-option-check">
+                        <svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
                 </div>
                 <div class="theme-option" data-theme="light">
                     <div class="theme-option-preview light"></div>
                     <span class="theme-option-name">Clair</span>
+                    <div class="theme-option-check">
+                        <svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
                 </div>
                 <div class="theme-option" data-theme="navy">
                     <div class="theme-option-preview navy"></div>
                     <span class="theme-option-name">Bleu Nuit</span>
+                    <div class="theme-option-check">
+                        <svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
+                </div>
+                <div class="theme-option" data-theme="emerald">
+                    <div class="theme-option-preview emerald"></div>
+                    <span class="theme-option-name">Émeraude</span>
+                    <div class="theme-option-check">
+                        <svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
+                </div>
+                <div class="theme-option" data-theme="bordeaux">
+                    <div class="theme-option-preview bordeaux"></div>
+                    <span class="theme-option-name">Bordeaux</span>
+                    <div class="theme-option-check">
+                        <svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
+                </div>
+                <div class="theme-option" data-theme="ocean">
+                    <div class="theme-option-preview ocean"></div>
+                    <span class="theme-option-name">Océan</span>
+                    <div class="theme-option-check">
+                        <svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
+                </div>
+                <div class="theme-option" data-theme="violet">
+                    <div class="theme-option-preview violet"></div>
+                    <span class="theme-option-name">Violet</span>
+                    <div class="theme-option-check">
+                        <svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
                 </div>
             </div>
             <button class="theme-modal-close" id="themeModalClose">Fermer</button>
@@ -1809,11 +1977,39 @@
             }
         }
 
+        function cleanMarkdownForWhatsApp(text) {
+            let clean = text;
+            // Supprimer les headers markdown
+            clean = clean.replace(/^###\s*/gm, '');
+            clean = clean.replace(/^##\s*/gm, '');
+            clean = clean.replace(/^#\s*/gm, '');
+            // Supprimer les séparateurs
+            clean = clean.replace(/^---+$/gm, '');
+            // Convertir les listes en tirets simples
+            clean = clean.replace(/^\*\s+/gm, '• ');
+            clean = clean.replace(/^-\s+/gm, '• ');
+            // Supprimer les tableaux markdown (garder le contenu)
+            clean = clean.replace(/^\|[-:|\s]+\|$/gm, '');
+            clean = clean.replace(/^\|(.+)\|$/gm, (match, content) => {
+                return content.split('|').map(c => c.trim()).filter(c => c).join(' | ');
+            });
+            // Supprimer le gras markdown (** ou __)
+            clean = clean.replace(/\*\*([^*]+)\*\*/g, '$1');
+            clean = clean.replace(/__([^_]+)__/g, '$1');
+            // Supprimer l'italique markdown (* ou _)
+            clean = clean.replace(/\*([^*]+)\*/g, '$1');
+            clean = clean.replace(/_([^_]+)_/g, '$1');
+            // Nettoyer les lignes vides multiples
+            clean = clean.replace(/\n{3,}/g, '\n\n');
+            return clean.trim();
+        }
+
         function shareWhatsApp() {
             if (state.currentDoc) {
+                const cleanContent = cleanMarkdownForWhatsApp(state.currentDoc.content);
                 const text = encodeURIComponent(
                     `*${DOC_NAMES[state.currentDoc.type]}*\n\n` +
-                    state.currentDoc.content +
+                    cleanContent +
                     '\n\n---\nGénéré par Ark Intelligence - ARK Corporate Group'
                 );
                 window.open(`https://wa.me/?text=${text}`, '_blank');
