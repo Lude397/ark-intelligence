@@ -1,3 +1,10 @@
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+    'https://kolwacpvfxdrptldipzj.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvbHdhY3B2ZnhkcnB0bGRpcHpqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE4MjYzOTMsImV4cCI6MjA3NzQwMjM5M30.cXXOxBkX9KaddhfY5JoAvMGz-ohxdCoh5iQlHMUGHqE'
+);
+
 // ==================== HANDLER ====================
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -7,14 +14,14 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
     try {
-        const { mode, message, history, docType } = req.body;
+        const { mode, message, history, docType, userId, projetNom } = req.body;
 
         if (mode === 'chat') {
             return await handleChat(res, message, history);
         }
         
         if (mode === 'generate') {
-            return await handleGenerate(res, history, docType);
+            return await handleGenerate(res, history, docType, userId, projetNom);
         }
 
         return res.status(400).json({ error: 'Mode invalide' });
@@ -61,9 +68,19 @@ Tu passes à la question suivante SEULEMENT si :
 
 RÈGLE DE STYLE IMPORTANTE :
 
-- N'utilise JAMAIS de majuscules inappropriées au milieu des phrases (écris "et" pas "ET", "ou" pas "OU")
+- N'utilise JAMAIS de majuscules inappropriées au milieu des phrases (écris "et" pas "ET", "ou" pas "OU", "pas" pas "PAS", "mais" pas "MAIS")
 - Utilise des minuscules pour les conjonctions et prépositions
 - Seuls les débuts de phrases et les noms propres prennent une majuscule
+
+---
+
+RÈGLE DE CORRECTION UTILISATEUR :
+
+Si l'utilisateur corrige une de ses réponses précédentes :
+- Prends en compte la correction
+- Mets à jour ta compréhension du projet
+- Continue avec la question suivante
+- IMPORTANT : La synthèse finale doit refléter la réponse CORRIGÉE, pas la réponse initiale
 
 ---
 
@@ -145,7 +162,7 @@ D) Une recommandation stratégique
 E) Autre livrable (précisez)
 
 Q8 - Hors périmètre
-Que ne doit PAS faire ce projet ?
+Que ne doit pas faire ce projet ?
 
 Exemples de réponses possibles :
 A) Concevoir la solution technique
@@ -239,18 +256,18 @@ Quand le client répond à la question 12, termine ainsi :
 [GENERATE]
 Cadrage terminé. Voici la synthèse de votre projet :
 
-- **Contexte** : [Q1]
-- **Problème** : [Q2]
-- **Bénéficiaire** : [Q3]
-- **Objectif** : [Q4]
-- **Besoin réel** : [Q5]
-- **Limites actuelles** : [Q6]
-- **Livrable attendu** : [Q7]
-- **Hors périmètre** : [Q8]
-- **Exigence fonctionnelle** : [Q9]
-- **Contrainte** : [Q10]
-- **Risque** : [Q11]
-- **Critère de succès** : [Q12]`;
+- **Contexte** : [Q1 - utilise la réponse CORRIGÉE si l'utilisateur a fait une correction]
+- **Problème** : [Q2 - utilise la réponse CORRIGÉE si l'utilisateur a fait une correction]
+- **Bénéficiaire** : [Q3 - utilise la réponse CORRIGÉE si l'utilisateur a fait une correction]
+- **Objectif** : [Q4 - utilise la réponse CORRIGÉE si l'utilisateur a fait une correction]
+- **Besoin réel** : [Q5 - utilise la réponse CORRIGÉE si l'utilisateur a fait une correction]
+- **Limites actuelles** : [Q6 - utilise la réponse CORRIGÉE si l'utilisateur a fait une correction]
+- **Livrable attendu** : [Q7 - utilise la réponse CORRIGÉE si l'utilisateur a fait une correction]
+- **Hors périmètre** : [Q8 - utilise la réponse CORRIGÉE si l'utilisateur a fait une correction]
+- **Exigence fonctionnelle** : [Q9 - utilise la réponse CORRIGÉE si l'utilisateur a fait une correction]
+- **Contrainte** : [Q10 - utilise la réponse CORRIGÉE si l'utilisateur a fait une correction]
+- **Risque** : [Q11 - utilise la réponse CORRIGÉE si l'utilisateur a fait une correction]
+- **Critère de succès** : [Q12 - utilise la réponse CORRIGÉE si l'utilisateur a fait une correction]`;
 
 // ==================== HANDLE CHAT ====================
 async function handleChat(res, message, history) {
@@ -284,8 +301,9 @@ INSTRUCTION : Analyse l'historique pour identifier la dernière question posée,
 - Si Q11 posée → pose Q12
 - Si Q12 posée → termine avec [GENERATE]
 
-NE RÉPÈTE JAMAIS une question déjà posée.
-RAPPEL : N'utilise jamais de majuscules inappropriées (écris "et" pas "ET").`;
+NE RÉPÈTE JAMAIS une question à laquelle l'utilisateur a déjà répondu correctement. Si l'utilisateur n'a pas répondu (réponse vague, hors sujet, ou option E sans précision), tu peux reposer la même question ou demander des précisions
+RAPPEL : N'utilise jamais de majuscules inappropriées (écris "et" pas "ET", "pas" pas "PAS").
+RAPPEL : Si l'utilisateur corrige une réponse, prends en compte la correction pour la synthèse finale.`;
 
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
@@ -318,6 +336,12 @@ RAPPEL : N'utilise jamais de majuscules inappropriées (écris "et" pas "ET").`;
         action: 'continue',
         response: aiResponse
     });
+}
+
+// ==================== FONCTION DATE ====================
+function getFormattedDate() {
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
+    return new Date().toLocaleDateString('fr-FR', options);
 }
 
 // ==================== PROMPTS DOCUMENTS ====================
@@ -353,77 +377,77 @@ MAPPING DES 12 QUESTIONS :
 # DÉFINITION DE PROJET
 ## [Nom du projet]
 
-Date : [date du jour]
+Date : {{DATE}}
 
 ---
 
-### 1. CONTEXTE
+### 1. Contexte
 
 [Développe la réponse Q1 en un paragraphe expliquant ce qui déclenche ce projet maintenant, le contexte général et pourquoi c'est le bon moment pour agir.]
 
 ---
 
-### 2. PROBLÈME À RÉSOUDRE
+### 2. Problème à résoudre
 
 [Développe la réponse Q2 en un paragraphe décrivant le problème principal que ce projet cherche à résoudre, ses manifestations et ses impacts sur l'activité.]
 
 ---
 
-### 3. BÉNÉFICIAIRE PRINCIPAL
+### 3. Bénéficiaire principal
 
 [Développe la réponse Q3 en un paragraphe identifiant clairement qui bénéficiera le plus de ce projet et comment ce bénéficiaire sera impacté positivement.]
 
 ---
 
-### 4. OBJECTIF STRATÉGIQUE
+### 4. Objectif stratégique
 
 [Développe la réponse Q4 en un paragraphe décrivant ce qui aura concrètement changé dans 12 mois si le projet réussit, les résultats attendus et leur impact.]
 
 ---
 
-### 5. BESOIN RÉEL
+### 5. Besoin réel
 
 [Développe la réponse Q5 en un paragraphe expliquant les informations nécessaires pour bien cadrer ce projet et pourquoi elles sont essentielles.]
 
 ---
 
-### 6. LIMITES ACTUELLES
+### 6. Limites actuelles
 
 [Développe la réponse Q6 en un paragraphe expliquant pourquoi ce problème n'a pas encore été résolu, les obstacles rencontrés et les blocages actuels.]
 
 ---
 
-### 7. LIVRABLE ATTENDU
+### 7. Livrable attendu
 
 [Développe la réponse Q7 en un paragraphe décrivant précisément ce que le projet doit produire concrètement à la fin, le format et l'utilisation prévue.]
 
 ---
 
-### 8. HORS PÉRIMÈTRE
+### 8. Hors périmètre
 
-[Développe la réponse Q8 en un paragraphe listant ce que ce projet ne fera PAS, les exclusions explicites et les limites posées pour éviter les dérives.]
+[Développe la réponse Q8 en un paragraphe listant ce que ce projet ne fera pas, les exclusions explicites et les limites posées pour éviter les dérives.]
 
 ---
 
-### 9. EXIGENCES FONCTIONNELLES
+### 9. Exigences fonctionnelles
 
 [Développe la réponse Q9 en un paragraphe décrivant la ou les fonctionnalités prioritaires que le projet doit absolument permettre.]
 
 ---
 
-### 10. CONTRAINTES
+### 10. Contraintes
 
 [Développe la réponse Q10 en un paragraphe détaillant les contraintes principales qui encadrent ce projet et doivent être respectées.]
 
 ---
 
-### 11. RISQUES
+### 11. Risques
 
 [Développe la réponse Q11 en un paragraphe identifiant les risques principaux qui pourraient compromettre le succès du projet et leurs impacts potentiels.]
 
 ---
 
-### 12. CRITÈRES DE SUCCÈS
+### 12. Critères de succès
 
 [Développe la réponse Q12 en un paragraphe définissant comment le succès du projet sera mesuré, les indicateurs clés et les seuils attendus.]
 
@@ -443,29 +467,29 @@ RÈGLES :
 # ORIENTATION DE SOLUTION
 ## [Nom du projet]
 
-Date : [date du jour]
+Date : {{DATE}}
 
 ---
 
-### 1. PROBLÈME VALIDÉ
+### 1. Problème validé
 
 [Développe en un paragraphe rappelant le problème principal validé lors des phases précédentes. Explique pourquoi ce problème est réel, prioritaire et mérite une solution maintenant.]
 
 ---
 
-### 2. UTILISATEUR PRIORITAIRE
+### 2. Utilisateur prioritaire
 
 [Développe en un paragraphe décrivant l'utilisateur sur lequel la solution va se concentrer en priorité. Explique pourquoi ce segment est choisi maintenant, même s'il en existe d'autres.]
 
 ---
 
-### 3. SOLUTION ENVISAGÉE (ORIENTATION PRINCIPALE)
+### 3. Solution envisagée (orientation principale)
 
 [Développe en un paragraphe décrivant la solution retenue. Explique ce que c'est, ce que ça fait concrètement et pourquoi cette solution est choisie parmi toutes les options possibles.]
 
 ---
 
-### 4. PHRASE D'ORIENTATION DE SOLUTION
+### 4. Phrase d'orientation de solution
 
 **Pour** [utilisateur prioritaire]
 **qui a besoin de** [besoin critique]
@@ -476,37 +500,37 @@ Date : [date du jour]
 
 ---
 
-### 5. ALTERNATIVES ÉCARTÉES (ET POURQUOI)
+### 5. Alternatives écartées (et pourquoi)
 
 [Développe en un paragraphe listant les autres solutions envisagées mais volontairement écartées. Explique pourquoi elles ne sont pas prioritaires maintenant (coût, complexité, timing, dépendances…).]
 
 ---
 
-### 6. NIVEAU DE COMPLEXITÉ DE LA SOLUTION
+### 6. Niveau de complexité de la solution
 
 [Développe en un paragraphe évaluant la complexité de la solution choisie (faible / moyenne / élevée). Explique les raisons de cette évaluation.]
 
 ---
 
-### 7. FAISABILITÉ IMMÉDIATE
+### 7. Faisabilité immédiate
 
 [Développe en un paragraphe expliquant si cette solution est faisable immédiatement avec les ressources actuelles. Précise ce qui est déjà disponible et ce qui manque.]
 
 ---
 
-### 8. PREMIER PAS CONCRET (ACTION N°1)
+### 8. Premier pas concret (action n°1)
 
 [Développe en un paragraphe décrivant la toute première action concrète à réaliser pour matérialiser cette solution. Cette action doit être simple, claire et réalisable rapidement.]
 
 ---
 
-### 9. CRITÈRE DE BON CHOIX
+### 9. Critère de bon choix
 
 [Développe en un paragraphe expliquant comment tu sauras que cette orientation était la bonne. Décris les signaux rapides qui confirmeront ou invalideront le choix.]
 
 ---
 
-### 10. DÉCISION FORMELLE
+### 10. Décision formelle
 
 [Développe en un paragraphe actant la décision : on s'engage sur cette solution, pour une période donnée, avec un objectif clair.]
 
@@ -527,23 +551,23 @@ RÈGLES :
 # FORMULATION DE SOLUTION
 ## [Nom du projet]
 
-Date : [date du jour]
+Date : {{DATE}}
 
 ---
 
-### 1. RAPPEL DU PROBLÈME CIBLÉ
+### 1. Rappel du problème ciblé
 
 [Développe en un paragraphe rappelant le problème précis que la solution vise à résoudre. Le problème doit être clair, concret, centré utilisateur et déjà validé lors des étapes précédentes.]
 
 ---
 
-### 2. UTILISATEUR CIBLE DE LA SOLUTION
+### 2. Utilisateur cible de la solution
 
 [Développe en un paragraphe décrivant l'utilisateur exact pour lequel la solution est formulée. Explique son contexte, son besoin prioritaire et pourquoi il est le cœur de la solution.]
 
 ---
 
-### 3. FORMULATION CENTRALE DE LA SOLUTION
+### 3. Formulation centrale de la solution
 
 **Pour** [utilisateur]
 **qui rencontre** [problème / besoin critique]
@@ -554,31 +578,31 @@ Date : [date du jour]
 
 ---
 
-### 4. EXPLICATION DE LA SOLUTION
+### 4. Explication de la solution
 
 [Développe en un paragraphe expliquant simplement comment la solution fonctionne. Décris ce que fait la solution, comment l'utilisateur l'utilise et ce qui change concrètement pour lui.]
 
 ---
 
-### 5. RÉSULTAT ATTENDU POUR L'UTILISATEUR
+### 5. Résultat attendu pour l'utilisateur
 
 [Développe en un paragraphe décrivant ce que l'utilisateur obtient réellement grâce à la solution. Explique le "avant / après" de manière concrète.]
 
 ---
 
-### 6. FRONTIÈRES DE LA SOLUTION (CE QU'ELLE NE FAIT PAS)
+### 6. Frontières de la solution (ce qu'elle ne fait pas)
 
 [Développe en un paragraphe listant clairement ce que la solution ne couvre pas volontairement. L'objectif est d'éviter la dispersion et la surcharge fonctionnelle.]
 
 ---
 
-### 7. CRITÈRE DE BONNE FORMULATION
+### 7. Critère de bonne formulation
 
 [Développe en un paragraphe expliquant comment savoir si la solution est bien formulée. Exemples de signaux : compréhension immédiate, capacité à la reformuler, adhésion rapide de l'utilisateur.]
 
 ---
 
-### 8. VERSION COURTE (PITCH 1 PHRASE)
+### 8. Version courte (pitch 1 phrase)
 
 [Réécris la formulation centrale de la solution en une seule phrase simple, utilisable dans un pitch oral, un chatbot ou une présentation.]
 
@@ -599,73 +623,73 @@ RÈGLES :
 # DESIGN THINKING
 ## [Nom du projet]
 
-Date : [date du jour]
+Date : {{DATE}}
 
 ---
 
-## PHASE 1 — EMPATHIE
+## Phase 1 — Empathie
 
-### 1. UTILISATEUR CIBLE
+### 1. Utilisateur cible
 
 [Développe en un paragraphe décrivant précisément pour qui cette solution est conçue. Explique qui est cet utilisateur, son contexte, son quotidien, ses contraintes et pourquoi il est concerné par ce projet.]
 
-### 2. PROBLÈMES & FRUSTRATIONS
+### 2. Problèmes et frustrations
 
 [Développe en un paragraphe expliquant les difficultés réelles rencontrées par cet utilisateur. Décris ce qui le bloque aujourd'hui, ce qui lui fait perdre du temps, de l'argent ou de l'énergie.]
 
-### 3. COMPORTEMENTS & HABITUDES
+### 3. Comportements et habitudes
 
 [Développe en un paragraphe décrivant comment l'utilisateur agit aujourd'hui pour résoudre son problème. Explique ses habitudes, ses solutions actuelles et leurs limites.]
 
 ---
 
-## PHASE 2 — DÉFINITION DU PROBLÈME
+## Phase 2 — Définition du problème
 
-### 4. PROBLÈME CENTRAL À RÉSOUDRE
+### 4. Problème central à résoudre
 
 [Développe en un paragraphe formulant clairement le problème principal à résoudre. Le problème doit être spécifique, centré sur l'utilisateur et formulé de manière actionnable.]
 
-### 5. IMPACT SI LE PROBLÈME PERSISTE
+### 5. Impact si le problème persiste
 
 [Développe en un paragraphe expliquant ce qui se passe si ce problème n'est pas résolu. Décris les conséquences pour l'utilisateur, son activité ou son quotidien.]
 
 ---
 
-## PHASE 3 — IDÉATION
+## Phase 3 — Idéation
 
-### 6. IDÉE DE SOLUTION PRINCIPALE
+### 6. Idée de solution principale
 
 [Développe en un paragraphe décrivant l'idée de solution envisagée. Explique comment cette idée répond au problème défini et en quoi elle améliore la situation de l'utilisateur.]
 
-### 7. ALTERNATIVES ENVISAGÉES
+### 7. Alternatives envisagées
 
 [Développe en un paragraphe présentant d'autres idées possibles ou variantes de la solution principale. Explique pourquoi certaines sont écartées ou mises en second plan.]
 
 ---
 
-## PHASE 4 — PROTOTYPAGE
+## Phase 4 — Prototypage
 
-### 8. FORME DU PROTOTYPE
+### 8. Forme du prototype
 
 [Développe en un paragraphe décrivant ce que sera concrètement le prototype. Explique le format choisi (maquette, formulaire, landing page, service manuel, MVP, etc.) et pourquoi ce format est pertinent.]
 
-### 9. OBJECTIF DU PROTOTYPE
+### 9. Objectif du prototype
 
 [Développe en un paragraphe expliquant ce que ce prototype doit permettre de vérifier. Décris ce que tu cherches à apprendre ou à valider auprès des utilisateurs.]
 
 ---
 
-## PHASE 5 — TEST
+## Phase 5 — Test
 
-### 10. UTILISATEURS TESTEURS
+### 10. Utilisateurs testeurs
 
 [Développe en un paragraphe décrivant qui testera le prototype. Explique pourquoi ces personnes sont pertinentes et comment elles seront sélectionnées.]
 
-### 11. MÉTHODE DE TEST
+### 11. Méthode de test
 
 [Développe en un paragraphe expliquant comment le prototype sera testé. Décris le déroulé du test, les interactions prévues et les retours attendus.]
 
-### 12. CRITÈRES DE VALIDATION
+### 12. Critères de validation
 
 [Développe en un paragraphe définissant comment tu sauras si la solution est validée ou non. Explique les signaux positifs, négatifs et les décisions qui en découleront.]
 
@@ -687,59 +711,59 @@ RÈGLES :
 # BUSINESS MODEL CANVAS
 ## [Nom du projet]
 
-Date : [date du jour]
+Date : {{DATE}}
 
 ---
 
-### 1. SEGMENTS DE CLIENTS
+### 1. Segments de clients
 
 [Développe en un paragraphe décrivant précisément qui sont les clients visés par ce projet. Explique leur profil, leur situation actuelle, leurs besoins prioritaires et pourquoi ce segment est stratégique.]
 
 ---
 
-### 2. PROPOSITION DE VALEUR
+### 2. Proposition de valeur
 
 [Développe en un paragraphe expliquant ce que le projet apporte concrètement aux clients. Décris le problème principal résolu, le bénéfice clé et la valeur perçue par le client.]
 
 ---
 
-### 3. CANAUX
+### 3. Canaux
 
 [Développe en un paragraphe décrivant comment la proposition de valeur est communiquée, distribuée et livrée aux clients. Explique comment les clients découvrent l'offre, comment ils y accèdent et comment ils l'utilisent.]
 
 ---
 
-### 4. RELATION CLIENT
+### 4. Relation client
 
 [Développe en un paragraphe expliquant le type de relation entretenue avec les clients. Décris comment les clients sont accompagnés, assistés, fidélisés ou suivis avant, pendant et après l'utilisation de la solution.]
 
 ---
 
-### 5. SOURCES DE REVENUS
+### 5. Sources de revenus
 
 [Développe en un paragraphe décrivant comment le projet génère des revenus. Explique ce que les clients paient, à quel moment, sous quelle forme (abonnement, commission, paiement unique, etc.) et pour quelle valeur.]
 
 ---
 
-### 6. RESSOURCES CLÉS
+### 6. Ressources clés
 
 [Développe en un paragraphe identifiant les ressources indispensables au fonctionnement du projet. Explique les ressources humaines, techniques, financières ou organisationnelles nécessaires pour délivrer la proposition de valeur.]
 
 ---
 
-### 7. ACTIVITÉS CLÉS
+### 7. Activités clés
 
 [Développe en un paragraphe décrivant les activités essentielles à réaliser pour que le modèle fonctionne. Explique ce qui doit absolument être exécuté pour créer, livrer et maintenir la valeur.]
 
 ---
 
-### 8. PARTENAIRES CLÉS
+### 8. Partenaires clés
 
 [Développe en un paragraphe identifiant les partenaires stratégiques du projet. Explique leur rôle, ce qu'ils apportent et pourquoi ces partenariats sont nécessaires ou utiles.]
 
 ---
 
-### 9. STRUCTURE DE COÛTS
+### 9. Structure de coûts
 
 [Développe en un paragraphe décrivant les principaux coûts liés au fonctionnement du modèle économique. Explique où vont les dépenses majeures et quelles sont les charges critiques à maîtriser.]
 
@@ -761,73 +785,73 @@ RÈGLES :
 # LEAN START UP
 ## [Nom du projet]
 
-Date : [date du jour]
+Date : {{DATE}}
 
 ---
 
-## ÉTAPE 1 — PROBLÈME
+## Étape 1 — Problème
 
-### 1. PROBLÈME PRINCIPAL À TESTER
+### 1. Problème principal à tester
 
 [Développe en un paragraphe décrivant le problème principal que tu cherches à valider. Explique pourquoi ce problème est critique pour l'utilisateur et pourquoi il mérite d'être testé maintenant.]
 
-### 2. UTILISATEUR CONCERNÉ
+### 2. Utilisateur concerné
 
 [Développe en un paragraphe décrivant précisément l'utilisateur ciblé par ce test. Explique son contexte, ses contraintes et pourquoi il est directement impacté par ce problème.]
 
-### 3. SOLUTIONS EXISTANTES
+### 3. Solutions existantes
 
 [Développe en un paragraphe expliquant comment l'utilisateur résout actuellement ce problème. Décris les solutions existantes, leurs limites et pourquoi elles ne sont pas pleinement satisfaisantes.]
 
 ---
 
-## ÉTAPE 2 — HYPOTHÈSES
+## Étape 2 — Hypothèses
 
-### 4. HYPOTHÈSE DE VALEUR
+### 4. Hypothèse de valeur
 
 [Développe en un paragraphe formulant l'hypothèse principale de valeur. Explique ce que tu penses que l'utilisateur va réellement apprécier ou adopter.]
 
-### 5. HYPOTHÈSE DE CROISSANCE
+### 5. Hypothèse de croissance
 
 [Développe en un paragraphe expliquant comment tu penses atteindre et faire croître ta base d'utilisateurs. Décris le canal principal et le mécanisme de diffusion envisagé.]
 
-### 6. HYPOTHÈSE DE MONÉTISATION
+### 6. Hypothèse de monétisation
 
 [Développe en un paragraphe expliquant comment tu penses générer des revenus. Explique ce que l'utilisateur serait prêt à payer et pourquoi.]
 
 ---
 
-## ÉTAPE 3 — MVP (MINIMUM VIABLE PRODUCT)
+## Étape 3 — MVP (minimum viable product)
 
-### 7. DESCRIPTION DU MVP
+### 7. Description du MVP
 
 [Développe en un paragraphe décrivant la version la plus simple possible de la solution à construire. Explique ce qu'elle fait, ce qu'elle ne fait pas et pourquoi elle est suffisante pour tester les hypothèses.]
 
-### 8. OBJECTIF DU MVP
+### 8. Objectif du MVP
 
 [Développe en un paragraphe expliquant ce que ce MVP doit permettre d'apprendre. Décris clairement l'hypothèse principale que ce MVP cherche à valider.]
 
 ---
 
-## ÉTAPE 4 — MESURE
+## Étape 4 — Mesure
 
-### 9. INDICATEUR CLÉ À MESURER
+### 9. Indicateur clé à mesurer
 
 [Développe en un paragraphe décrivant l'indicateur principal à suivre. Explique pourquoi cet indicateur est pertinent et ce qu'il dira sur la réussite ou l'échec du test.]
 
-### 10. SEUIL DE SUCCÈS
+### 10. Seuil de succès
 
 [Développe en un paragraphe définissant le seuil à partir duquel l'hypothèse sera considérée comme validée. Explique ce qui constitue un signal positif ou négatif.]
 
 ---
 
-## ÉTAPE 5 — APPRENTISSAGE & DÉCISION
+## Étape 5 — Apprentissage et décision
 
-### 11. ENSEIGNEMENTS ATTENDUS
+### 11. Enseignements attendus
 
 [Développe en un paragraphe expliquant ce que tu cherches à apprendre grâce au test. Décris les décisions que ces apprentissages pourraient déclencher.]
 
-### 12. DÉCISION STRATÉGIQUE
+### 12. Décision stratégique
 
 [Développe en un paragraphe indiquant la décision à prendre après le test : continuer, pivoter, ou arrêter. Explique pourquoi.]
 
@@ -849,69 +873,69 @@ RÈGLES :
 # AGILE
 ## [Nom du projet]
 
-Date : [date du jour]
+Date : {{DATE}}
 
 ---
 
-## PHASE 1 — VISION & PRIORITÉS
+## Phase 1 — Vision et priorités
 
-### 1. OBJECTIF DU PROJET (SPRINT GOAL GLOBAL)
+### 1. Objectif du projet (sprint goal global)
 
 [Développe en un paragraphe décrivant l'objectif principal du projet à ce stade. Explique ce que l'équipe cherche à accomplir concrètement sur une période courte (30 à 90 jours).]
 
-### 2. VALEUR À LIVRER EN PRIORITÉ
+### 2. Valeur à livrer en priorité
 
 [Développe en un paragraphe expliquant quelle valeur doit être livrée en premier à l'utilisateur. Décris ce qui est le plus important à délivrer maintenant et pourquoi.]
 
 ---
 
-## PHASE 2 — BACKLOG & PLANIFICATION
+## Phase 2 — Backlog et planification
 
-### 3. BACKLOG DES FONCTIONNALITÉS / TÂCHES
+### 3. Backlog des fonctionnalités / tâches
 
 [Développe en un paragraphe listant les fonctionnalités, tâches ou actions à réaliser. Explique comment elles sont priorisées et ce qui est inclus ou exclu à ce stade.]
 
-### 4. SPRINT EN COURS
+### 4. Sprint en cours
 
 [Développe en un paragraphe décrivant le sprint actuel : sa durée (ex. 1 à 2 semaines), son objectif et les livrables attendus à la fin du sprint.]
 
 ---
 
-## PHASE 3 — EXÉCUTION
+## Phase 3 — Exécution
 
-### 5. TÂCHES DU SPRINT
+### 5. Tâches du sprint
 
 [Développe en un paragraphe expliquant quelles tâches concrètes sont exécutées pendant ce sprint. Décris qui fait quoi et comment l'avancement est suivi.]
 
-### 6. OBSTACLES & BLOQUANTS
+### 6. Obstacles et bloquants
 
 [Développe en un paragraphe identifiant les obstacles rencontrés pendant l'exécution. Explique ce qui ralentit l'équipe et comment ces blocages sont traités.]
 
 ---
 
-## PHASE 4 — REVUE & FEEDBACK
+## Phase 4 — Revue et feedback
 
-### 7. LIVRABLES PRODUITS
+### 7. Livrables produits
 
 [Développe en un paragraphe décrivant ce qui a été livré à la fin du sprint. Explique ce qui est utilisable, testable ou montrable aux utilisateurs.]
 
-### 8. RETOURS UTILISATEURS / PARTIES PRENANTES
+### 8. Retours utilisateurs / parties prenantes
 
 [Développe en un paragraphe expliquant les retours obtenus. Décris ce qui fonctionne, ce qui ne fonctionne pas et ce que cela change pour la suite.]
 
 ---
 
-## PHASE 5 — AMÉLIORATION CONTINUE
+## Phase 5 — Amélioration continue
 
-### 9. ENSEIGNEMENTS DU SPRINT
+### 9. Enseignements du sprint
 
 [Développe en un paragraphe résumant les principaux apprentissages du sprint. Explique ce que l'équipe a compris sur le produit, l'utilisateur ou le process.]
 
-### 10. ACTIONS D'AMÉLIORATION
+### 10. Actions d'amélioration
 
 [Développe en un paragraphe décrivant les améliorations à mettre en place pour le prochain sprint. Explique ce qui sera fait différemment.]
 
-### 11. DÉCISION POUR LE SPRINT SUIVANT
+### 11. Décision pour le sprint suivant
 
 [Développe en un paragraphe indiquant la décision prise : continuer dans la même direction, ajuster les priorités ou revoir l'objectif.]
 
@@ -922,12 +946,16 @@ Méthode : Planifier → Construire → Tester → Ajuster`
 };
 
 // ==================== HANDLE GENERATE ====================
-async function handleGenerate(res, history, docType = 'definition_projet') {
+async function handleGenerate(res, history, docType = 'definition_projet', userId = null, projetNom = null) {
     const conversationText = history.map(h => 
         `${h.type === 'user' ? 'CLIENT' : 'CONSULTANT'}: ${h.content}`
     ).join('\n\n');
 
-    const docPrompt = DOCUMENT_PROMPTS[docType] || DOCUMENT_PROMPTS.definition_projet;
+    let docPrompt = DOCUMENT_PROMPTS[docType] || DOCUMENT_PROMPTS.definition_projet;
+    
+    // Remplacer {{DATE}} par la date actuelle
+    const currentDate = getFormattedDate();
+    docPrompt = docPrompt.replace(/\{\{DATE\}\}/g, currentDate);
 
     const generatePrompt = `Tu es un expert en gestion de projet PMI.
 
@@ -946,7 +974,8 @@ RÈGLES :
 - Adapté au contexte Congo-Brazzaville (Mobile Money, FCFA)
 - Pas de blabla, que du concret
 - PAS d'émojis
-- N'utilise JAMAIS de majuscules inappropriées au milieu des phrases (écris "et" pas "ET", "ou" pas "OU")`;
+- N'utilise JAMAIS de majuscules inappropriées au milieu des phrases (écris "et" pas "ET", "ou" pas "OU")
+- Les titres de sections doivent être en minuscules (sauf première lettre)`;
 
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
@@ -966,6 +995,20 @@ RÈGLES :
     
     const data = await response.json();
     const document = data.choices[0].message.content.trim();
+    
+    // Sauvegarder dans Supabase si userId est fourni
+    if (userId && projetNom) {
+        try {
+            await supabase.from('ark_documents').insert({
+                user_id: userId,
+                projet_nom: projetNom,
+                doc_type: docType,
+                contenu: document
+            });
+        } catch (error) {
+            console.error('Erreur sauvegarde document:', error);
+        }
+    }
     
     return res.status(200).json({ 
         success: true,
