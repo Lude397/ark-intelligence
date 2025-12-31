@@ -153,8 +153,8 @@
         }
 
         .logo-text {
-            font-size: 20px;
-            font-weight: 800;
+            font-size: 15px;
+            font-weight: 600;
         }
 
         .theme-btn {
@@ -230,8 +230,8 @@
             padding: 8px 10px;
             border-radius: 6px;
             transition: all 0.2s;
-            color: var(--text-secondary);
-            font-size: 15px;
+            color: var(--text-primary);
+            font-size: 18px;
             font-weight: 600;
         }
 
@@ -261,8 +261,8 @@
         }
 
         .folder-content .doc-item {
-            font-size: 18px;
-            padding: 12px 12px;
+            font-size: 16px;
+            padding: 10px 12px;
             margin-bottom: 4px;
         }
 
@@ -1084,7 +1084,7 @@
                 <!-- Ark Core -->
                 <div class="sidebar-section">
                     <div class="folder-item">
-                        <div class="folder-header" data-folder="ark-core">
+                        <div class="folder-header">
                             <span>Ark Core</span>
                         </div>
                         <div class="folder-content" id="folder-ark-core">
@@ -1107,7 +1107,7 @@
                 <!-- Ark Business -->
                 <div class="sidebar-section">
                     <div class="folder-item">
-                        <div class="folder-header" data-folder="ark-business">
+                        <div class="folder-header">
                             <span>Ark Business</span>
                         </div>
                         <div class="folder-content" id="folder-ark-business">
@@ -1296,7 +1296,8 @@
             documentCache: {},
             currentDoc: null,
             currentTheme: localStorage.getItem('ark-theme') || 'dark',
-            cadrageComplete: false
+            cadrageComplete: false,
+            projetNom: null
         };
 
         const elements = {
@@ -1385,14 +1386,6 @@
                 item.addEventListener('click', () => { if (!item.classList.contains('disabled')) generateDocument(item.dataset.doc); });
             });
 
-            document.querySelectorAll('.folder-header').forEach(header => {
-                header.addEventListener('click', () => {
-                    const content = document.getElementById('folder-' + header.dataset.folder);
-                    header.classList.toggle('open');
-                    content.classList.toggle('open');
-                });
-            });
-
             renderMobileDocsList();
             switchScreen('welcome');
         }
@@ -1429,6 +1422,10 @@
         async function handleWelcomeSend() {
             const message = elements.welcomeInput.value.trim();
             if (!message) return;
+            
+            // Capturer le nom du projet
+            state.projetNom = message.substring(0, 100);
+            
             switchScreen('chat');
             addMessage(message, 'user');
             elements.welcomeInput.value = '';
@@ -1530,12 +1527,21 @@
 
         async function generateDocumentsInBackground() {
             const mainDocs = ['definition_projet', 'orientation_solution', 'formulation_solution'];
+            const userData = JSON.parse(localStorage.getItem('ark_user'));
+            const userId = userData ? userData.id : null;
+            
             for (const docType of mainDocs) {
                 try {
                     const response = await fetch(CONFIG.apiUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ mode: 'generate', docType, history: state.history })
+                        body: JSON.stringify({ 
+                            mode: 'generate', 
+                            docType, 
+                            history: state.history,
+                            userId: userId,
+                            projetNom: state.projetNom
+                        })
                     });
                     const data = await response.json();
                     if (data.success) state.documentCache[docType] = data.document;
@@ -1558,11 +1564,21 @@
             }
             switchScreen('loading');
             elements.mobileDocsModal.classList.remove('visible');
+            
+            const userData = JSON.parse(localStorage.getItem('ark_user'));
+            const userId = userData ? userData.id : null;
+            
             try {
                 const response = await fetch(CONFIG.apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ mode: 'generate', docType, history: state.history })
+                    body: JSON.stringify({ 
+                        mode: 'generate', 
+                        docType, 
+                        history: state.history,
+                        userId: userId,
+                        projetNom: state.projetNom
+                    })
                 });
                 const data = await response.json();
                 if (data.success) {
@@ -1661,6 +1677,7 @@
             state.documentCache = {};
             state.currentDoc = null;
             state.cadrageComplete = false;
+            state.projetNom = null;
             elements.chatMessages.innerHTML = '';
             elements.welcomeInput.value = '';
             elements.chatInput.disabled = false;
