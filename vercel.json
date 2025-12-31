@@ -4,10 +4,6 @@
     {
       "src": "api/chat.js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "*.html",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -16,12 +12,8 @@
       "dest": "/api/chat.js"
     },
     {
-      "src": "/inscription.html",
-      "dest": "/inscription.html"
-    },
-    {
-      "src": "/connexion.html",
-      "dest": "/connexion.html"
+      "src": "/(.*)\\.html",
+      "dest": "/$1.html"
     },
     {
       "src": "/",
