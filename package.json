@@ -8,7 +8,9 @@
     "build": "vercel build",
     "start": "vercel dev"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
   "engines": {
     "node": ">=18"
   }
