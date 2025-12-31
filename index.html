@@ -1287,6 +1287,7 @@
         const user = localStorage.getItem('ark_user');
         if (!user) {
             window.location.href = 'connexion.html';
+            throw new Error('Redirect')
         }        
         const CONFIG = { apiUrl: '/api/chat' };
 
