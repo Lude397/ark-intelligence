@@ -1142,6 +1142,10 @@
                     <span>+</span>
                     <span>Nouveau projet</span>
                 </button>
+                <button class="new-chat-btn" id="logoutBtn" style="margin-top: 8px; background: #3d1f1f; border-color: #5a2d2d;">
+                    <span>↪</span>
+                    <span>Déconnexion</span>
+                </button>
             </div>
         </aside>
 
@@ -1675,6 +1679,12 @@
         }
 
         init();
+
+        // Déconnexion
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('ark_user');
+            window.location.href = 'connexion.html';
+        });
 
         if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', () => setTimeout(scrollToBottom, 100));
