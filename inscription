@@ -554,7 +554,13 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // Configuration Supabase
+        const SUPABASE_URL = 'https://kolwacpvfxdrptldipzj.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvbHdhY3B2ZnhkcnB0bGRpcHpqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE4MjYzOTMsImV4cCI6MjA3NzQwMjM5M30.cXXOxBkX9KaddhfY5JoAvMGz-ohxdCoh5iQlHMUGHqE';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         const form = document.getElementById('registerForm');
         const submitBtn = document.getElementById('submitBtn');
 
@@ -597,22 +603,24 @@
             const fullPhone = prefix + telephone.replace(/\s/g, '');
 
             try {
-                // TODO: Appel API Supabase
-                const userData = {
-                    nom,
-                    telephone: fullPhone,
-                    password,
-                    type_user: profil
-                };
+                // Appel fonction Supabase
+                const { data, error } = await supabase.rpc('ark_create_user', {
+                    p_nom: nom,
+                    p_telephone: fullPhone,
+                    p_password: password,
+                    p_type_user: profil
+                });
 
-                console.log('Inscription:', userData);
+                if (error) throw error;
 
-                // Simuler délai API
-                await new Promise(resolve => setTimeout(resolve, 1500));
-
-                // Redirection après succès
-                // window.location.href = 'index.html';
-                alert('Compte créé avec succès !');
+                if (data.success) {
+                    // Stocker l'utilisateur
+                    localStorage.setItem('ark_user', JSON.stringify(data.user));
+                    // Redirection
+                    window.location.href = 'index.html';
+                } else {
+                    alert(data.error || 'Erreur lors de l\'inscription');
+                }
 
             } catch (error) {
                 console.error('Erreur:', error);
