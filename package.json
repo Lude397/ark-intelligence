@@ -1,12 +1,15 @@
 {
   "name": "ark-intelligence",
-  "version": "1.0.0",
-  "description": "Assistant de cadrage projet - ARK Corporat Group",
-  "main": "api/chat.js",
+  "version": "2.0.0",
+  "description": "Assistant de cadrage projet",
+  "type": "module",
   "scripts": {
-    "start": "node api/chat.js"
+    "dev": "vercel dev",
+    "build": "vercel build",
+    "start": "vercel dev"
   },
-  "keywords": ["pmo", "ark", "congo", "deepseek"],
-  "author": "ARK Corporat Group",
-  "license": "ISC"
+  "dependencies": {},
+  "engines": {
+    "node": ">=18"
+  }
 }
