@@ -227,13 +227,12 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 10px;
+            padding: 8px 10px;
             border-radius: 6px;
-            cursor: pointer;
             transition: all 0.2s;
             color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 500;
+            font-size: 15px;
+            font-weight: 600;
         }
 
         .folder-header:hover {
@@ -252,7 +251,7 @@
         }
 
         .folder-content {
-            display: none;
+            display: block;
             padding-left: 12px;
             margin-top: 2px;
         }
@@ -262,9 +261,9 @@
         }
 
         .folder-content .doc-item {
-            font-size: 12px;
-            padding: 5px 10px;
-            margin-bottom: 1px;
+            font-size: 14px;
+            padding: 8px 10px;
+            margin-bottom: 2px;
         }
 
         .sidebar-footer {
@@ -1086,9 +1085,7 @@
                 <div class="sidebar-section">
                     <div class="folder-item">
                         <div class="folder-header" data-folder="ark-core">
-                            <span class="icon">📁</span>
                             <span>Ark Core</span>
-                            <span class="chevron">›</span>
                         </div>
                         <div class="folder-content" id="folder-ark-core">
                             <div class="doc-item disabled" data-doc="definition_projet">
@@ -1111,9 +1108,7 @@
                 <div class="sidebar-section">
                     <div class="folder-item">
                         <div class="folder-header" data-folder="ark-business">
-                            <span class="icon">📁</span>
                             <span>Ark Business</span>
-                            <span class="chevron">›</span>
                         </div>
                         <div class="folder-content" id="folder-ark-business">
                             <div class="doc-item disabled" data-doc="design_thinking">
