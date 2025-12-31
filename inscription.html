@@ -502,14 +502,17 @@
                     <label class="form-label">Numéro de téléphone</label>
                     <div class="phone-input-wrapper">
                         <input type="text" class="phone-prefix" value="+242" id="prefix" maxlength="5">
-                        <input type="tel" class="form-input phone-number" id="telephone" placeholder="06 XXX XX XX" required>
+                        <input type="tel" class="form-input phone-number" id="telephone" placeholder="01 234 56 78" required>
                     </div>
                     <span class="error-message">Veuillez entrer un numéro valide</span>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Mot de passe</label>
-                    <input type="password" class="form-input" id="password" placeholder="Minimum 6 caractères" required>
+                    <div style="position: relative;">
+                        <input type="password" class="form-input" id="password" placeholder="Minimum 6 caractères" required style="padding-right: 50px;">
+                        <button type="button" id="togglePassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 18px;">👁</button>
+                    </div>
                     <span class="error-message">Minimum 6 caractères requis</span>
                 </div>
 
@@ -524,7 +527,6 @@
                                     <div class="profile-name">Porteur de projet</div>
                                     <div class="profile-desc">Accès aux documents essentiels</div>
                                 </div>
-                                <span class="profile-badge">3 docs</span>
                             </div>
                         </label>
                         <label class="profile-option">
@@ -535,12 +537,17 @@
                                     <div class="profile-name">Entrepreneur</div>
                                     <div class="profile-desc">Accès complet à tous les outils</div>
                                 </div>
-                                <span class="profile-badge">7 docs</span>
                             </div>
                         </label>
                     </div>
                 </div>
 
+                <div class="form-group" id="codeEntrepreneurGroup" style="display: none;">
+                    <label class="form-label">Code d'accès entrepreneur</label>
+                    <input type="text" class="form-input" id="codeEntrepreneur" placeholder="Entrez votre code">
+                    <span class="error-message">Code invalide</span>
+                </div>
+                
                 <button type="submit" class="submit-btn" id="submitBtn">
                     Créer mon compte
                 </button>
