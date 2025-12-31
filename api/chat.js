@@ -26,7 +26,7 @@ export default async function handler(req, res) {
 }
 
 // ==================== SUPER PMO PROMPT ====================
-const SUPER_PMO_PROMPT = `Tu es Ark Intelligence, un facilitateur stratégique, un PMO senior mandaté par Ark Corporate Group.
+const SUPER_PMO_PROMPT = `Tu es Ark Intelligence, un facilitateur stratégique, un PMO senior.
 
 Ton rôle est de conduire un entretien de cadrage structuré en 5 phases et 12 questions.
 
@@ -59,12 +59,22 @@ Tu passes à la question suivante SEULEMENT si :
 
 ---
 
+RÈGLE DE STYLE IMPORTANTE :
+
+- N'utilise JAMAIS de majuscules inappropriées au milieu des phrases (écris "et" pas "ET", "ou" pas "OU")
+- Utilise des minuscules pour les conjonctions et prépositions
+- Seuls les débuts de phrases et les noms propres prennent une majuscule
+
+---
+
 LES 5 PHASES ET 12 QUESTIONS :
 
 === PHASE 1 — Cadrage stratégique (4 questions) ===
 
 Q1 - Contexte
 Qu'est-ce qui déclenche ce projet maintenant ?
+
+Exemples de réponses possibles :
 A) Un problème récurrent qui bloque les opérations
 B) Une opportunité de marché identifiée
 C) Une demande externe (client, partenaire, institution)
@@ -73,6 +83,8 @@ E) Autre raison (précisez)
 
 Q2 - Problème principal
 Quel problème cherchez-vous à résoudre ?
+
+Exemples de réponses possibles :
 A) Aucune solution existante ne répond au besoin
 B) Les solutions actuelles coûtent trop cher
 C) Les outils existants sont trop complexes
@@ -81,6 +93,8 @@ E) Autre problème (précisez)
 
 Q3 - Bénéficiaire principal
 Qui bénéficiera le plus de ce projet ?
+
+Exemples de réponses possibles :
 A) Votre organisation
 B) Vos clients
 C) Vos partenaires
@@ -88,6 +102,8 @@ D) Autre (précisez)
 
 Q4 - Objectif stratégique
 Dans 12 mois, si tout se passe bien, qu'est-ce qui aura changé ?
+
+Exemples de réponses possibles :
 A) Vous gagnez du temps
 B) Vous gagnez plus d'argent
 C) Votre organisation est mieux structurée
@@ -98,6 +114,8 @@ E) Autre changement (précisez)
 
 Q5 - Besoin réel
 De quelles informations avez-vous besoin pour avancer ?
+
+Exemples de réponses possibles :
 A) Comprendre le problème métier exact
 B) Connaître les objectifs visés
 C) Évaluer le niveau de maturité
@@ -106,6 +124,8 @@ E) Tout ce qui précède
 
 Q6 - Limites actuelles
 Pourquoi ce problème n'est-il pas encore résolu ?
+
+Exemples de réponses possibles :
 A) Le besoin est difficile à formuler
 B) Il n'y a pas de méthode établie
 C) La communication est trop informelle
@@ -116,6 +136,8 @@ E) Autre raison (précisez)
 
 Q7 - Livrable attendu
 Que voulez-vous obtenir concrètement à la fin ?
+
+Exemples de réponses possibles :
 A) Un document de cadrage
 B) Un outil fonctionnel
 C) Une procédure standardisée
@@ -124,6 +146,8 @@ E) Autre livrable (précisez)
 
 Q8 - Hors périmètre
 Que ne doit PAS faire ce projet ?
+
+Exemples de réponses possibles :
 A) Concevoir la solution technique
 B) Établir un budget détaillé
 C) Exécuter ou implémenter
@@ -134,6 +158,8 @@ E) Autre exclusion (précisez)
 
 Q9 - Exigences fonctionnelles
 Quelle capacité est prioritaire ?
+
+Exemples de réponses possibles :
 A) Guider l'expression du besoin
 B) Structurer les informations
 C) Détecter les incohérences
@@ -144,6 +170,8 @@ E) Autre capacité (précisez)
 
 Q10 - Contraintes
 Quelle contrainte est la plus importante ?
+
+Exemples de réponses possibles :
 A) Doit être simple et rapide
 B) Budget serré
 C) Délai court
@@ -152,6 +180,8 @@ E) Autre contrainte (précisez)
 
 Q11 - Risques
 Quel risque vous inquiète le plus ?
+
+Exemples de réponses possibles :
 A) Les gens ne l'utiliseront pas
 B) Les utilisateurs abandonneront en cours de route
 C) Les réponses seront superficielles
@@ -160,6 +190,8 @@ E) Autre risque (précisez)
 
 Q12 - Critères de succès
 Comment mesurerez-vous le succès ?
+
+Exemples de réponses possibles :
 A) Par le taux d'utilisation
 B) Par le temps gagné
 C) Par la qualité des livrables
@@ -170,13 +202,15 @@ E) Autre indicateur (précisez)
 
 FORMAT DE RÉPONSE :
 
-[Reformulation courte de la réponse du client]
+**Je reformule** : [reformulation courte de la réponse du client]
 
-Phase [N] — [Titre de la phase]
-Question [N] : [Titre de la question]
+**Phase [N] — [Titre de la phase]**
 
-[Question]
+**Question [N] : [Titre de la question]**
 
+**[Question]**
+
+Exemples de réponses possibles :
 A) [option]
 B) [option]
 C) [option]
@@ -188,7 +222,7 @@ E) [option]
 PREMIER MESSAGE :
 
 Au tout premier échange, commence TOUJOURS par te présenter :
-"Bonjour ! Je suis Ark Intelligence de ARK Corporate Group."
+"Bonjour ! Je suis Ark Intelligence."
 
 Ensuite :
 - Si le client a dit SEULEMENT "bonjour" / "salut" → ajoute "Quel projet souhaitez-vous clarifier aujourd'hui ?"
@@ -250,7 +284,8 @@ INSTRUCTION : Analyse l'historique pour identifier la dernière question posée,
 - Si Q11 posée → pose Q12
 - Si Q12 posée → termine avec [GENERATE]
 
-NE RÉPÈTE JAMAIS une question déjà posée.`;
+NE RÉPÈTE JAMAIS une question déjà posée.
+RAPPEL : N'utilise jamais de majuscules inappropriées (écris "et" pas "ET").`;
 
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
@@ -271,7 +306,6 @@ NE RÉPÈTE JAMAIS une question déjà posée.`;
     const data = await response.json();
     const aiResponse = data.choices[0].message.content.trim();
     
-    // Détecter [GENERATE] n'importe où dans la réponse
     if (aiResponse.includes('[GENERATE]')) {
         const cleanResponse = aiResponse.replace('[GENERATE]', '').trim();
         return res.status(200).json({ 
@@ -289,96 +323,8 @@ NE RÉPÈTE JAMAIS une question déjà posée.`;
 // ==================== PROMPTS DOCUMENTS ====================
 const DOCUMENT_PROMPTS = {
 
-// 1. PROJECT CHARTER CLIENT (ONE-PAGER)
-charter_client: `Génère un PROJECT CHARTER CLIENT au format one-pager professionnel.
-
-UTILISE CE FORMAT TABLEAU :
-
-# PROJECT CHARTER
-
-| Champ | Information |
-|-------|-------------|
-| Project Name | [nom du projet] |
-| Project Manager | [à définir] |
-| Project Sponsor | [client ou à définir] |
-| Date | ${new Date().toLocaleDateString('fr-FR')} |
-
-## Business Case
-[Pourquoi ce projet ? Quel problème résout-il ? En 3-4 phrases max]
-
-## Expected Deliveries
-[Liste des livrables attendus - 3 à 5 points]
-
-## Team Members
-
-| Role | Name | Hours |
-|------|------|-------|
-| [role] | [nom ou À définir] | [estimation] |
-
-## Milestones
-
-| Date | Goal |
-|------|------|
-| [date] | [jalon] |
-
-## Risks and Constraints
-[2-3 risques ou contraintes identifiés]
-
----
-Document généré par Ark Intelligence - ARK Corporate Group`,
-
-// 2. PROJECT CHARTER ARK (INTERNE)
-charter_ark: `Génère un PROJECT CHARTER ARK (version interne avec scoring).
-
-# PROJECT CHARTER ARK (INTERNE)
-
-## Identification
-- Projet : [nom]
-- Client : [nom]
-- Consultant ARK : [à définir]
-- Date : ${new Date().toLocaleDateString('fr-FR')}
-
-## Scoring Projet
-
-| Critère | Score | Commentaire |
-|---------|-------|-------------|
-| Urgence | [1-5] | [justification] |
-| Maturité client | [1-5] | [justification] |
-| Complexité | [1-5] | [justification] |
-| Potentiel commercial | [1-5] | [justification] |
-
-Légende : 1=Faible, 3=Moyen, 5=Élevé
-
-## Synthèse du besoin
-[Résumé en 5 lignes max]
-
-## Diagnostic maturité client
-
-| Domaine | Niveau |
-|---------|--------|
-| Organisation | Faible / Moyen / Élevé |
-| Processus | Faible / Moyen / Élevé |
-| Digital | Faible / Moyen / Élevé |
-| Pilotage | Faible / Moyen / Élevé |
-
-## Recommandation ARK
-
-Option recommandée :
-- [ ] Diagnostic approfondi
-- [ ] Mission de cadrage structurée
-- [ ] Offre opérationnelle ciblée
-- [ ] Mise en attente / réorientation
-
-Priorité : Faible / Moyenne / Élevée
-
-## Notes internes
-[Observations pour l'équipe ARK]
-
----
-Document interne ARK Corporate Group - Ne pas diffuser`,
-
-// 3. CAHIER DES CHARGES
-cahier_charge: `Génère un CAHIER DES CHARGES basé UNIQUEMENT sur les 12 questions du cadrage.
+// 1. DÉFINITION DE PROJET (12 sections)
+definition_projet: `Génère une DÉFINITION DE PROJET basée UNIQUEMENT sur les 12 questions du cadrage.
 
 RÈGLES STRICTES :
 - Utilise UNIQUEMENT les réponses des 12 questions collectées
@@ -386,6 +332,7 @@ RÈGLES STRICTES :
 - Développe chaque réponse en un paragraphe fluide et professionnel
 - Pas de mention de source (Q1, Q2...) dans le document final
 - Style professionnel, phrases complètes
+- N'utilise JAMAIS de majuscules inappropriées au milieu des phrases
 
 MAPPING DES 12 QUESTIONS :
 - Q1 (Contexte) → Section 1
@@ -403,10 +350,10 @@ MAPPING DES 12 QUESTIONS :
 
 ---
 
-# CAHIER DES CHARGES
+# DÉFINITION DE PROJET
 ## [Nom du projet]
 
-Date : ${new Date().toLocaleDateString('fr-FR')}
+Date : [date du jour]
 
 ---
 
@@ -482,547 +429,505 @@ Date : ${new Date().toLocaleDateString('fr-FR')}
 
 ---
 
-Document généré par Ark Intelligence - ARK Corporate Group
-Basé sur le cadrage en 5 étapes`,
+Document généré par Ark Intelligence`,
 
-// 4. BUDGET PRÉVISIONNEL
-budget: `Génère un BUDGET PRÉVISIONNEL détaillé.
+// 2. ORIENTATION DE SOLUTION (10 sections)
+orientation_solution: `Génère un document ORIENTATION DE SOLUTION basé sur les réponses du cadrage.
 
-# BUDGET PRÉVISIONNEL
-
-## 1. Investissements initiaux
-
-| Poste | Montant (FCFA) |
-|-------|----------------|
-| [poste] | [montant] |
-| **TOTAL INVESTISSEMENTS** | **[total]** |
-
-## 2. Charges mensuelles
-
-| Poste | Montant (FCFA) |
-|-------|----------------|
-| [poste] | [montant] |
-| **TOTAL CHARGES/MOIS** | **[total]** |
-
-## 3. Prévisions de revenus
-
-| Source | Montant mensuel (FCFA) |
-|--------|------------------------|
-| [source] | [montant] |
-| **TOTAL REVENUS/MOIS** | **[total]** |
-
-## 4. Point mort
-[Analyse du seuil de rentabilité]
-
-## 5. Moyens de paiement prévus
-- Mobile Money (Airtel Money, MTN MoMo)
-- Espèces
-- [autres]
+RÈGLES :
+- Style professionnel et orienté décision
+- N'utilise JAMAIS de majuscules inappropriées au milieu des phrases
 
 ---
-Document généré par Ark Intelligence - ARK Corporate Group`,
 
-// 5. PLAN DE PROJET
-plan_projet: `Génère un PLAN DE PROJET structuré.
+# ORIENTATION DE SOLUTION
+## [Nom du projet]
 
-# PLAN DE PROJET
-
-## Phase 1 : Préparation
-Durée : [X semaines]
-
-| Tâche | Responsable | Échéance |
-|-------|-------------|----------|
-| [tâche] | [qui] | [date] |
-
-## Phase 2 : Mise en place
-Durée : [X semaines]
-
-| Tâche | Responsable | Échéance |
-|-------|-------------|----------|
-| [tâche] | [qui] | [date] |
-
-## Phase 3 : Lancement
-Durée : [X semaines]
-
-| Tâche | Responsable | Échéance |
-|-------|-------------|----------|
-| [tâche] | [qui] | [date] |
-
-## Phase 4 : Suivi post-lancement
-Durée : [X semaines]
-
-| Tâche | Responsable | Échéance |
-|-------|-------------|----------|
-| [tâche] | [qui] | [date] |
-
-## Jalons clés
-
-| Date | Jalon |
-|------|-------|
-| [date] | [jalon] |
+Date : [date du jour]
 
 ---
-Document généré par Ark Intelligence - ARK Corporate Group`,
 
-// 6. CHECKLIST LANCEMENT
-checklist: `Génère une CHECKLIST DE LANCEMENT complète.
+### 1. PROBLÈME VALIDÉ
 
-# CHECKLIST DE LANCEMENT
-
-## Administratif
-- [ ] [tâche]
-- [ ] [tâche]
-
-## Local et équipements
-- [ ] [tâche]
-- [ ] [tâche]
-
-## Ressources humaines
-- [ ] [tâche]
-- [ ] [tâche]
-
-## Commercial et marketing
-- [ ] [tâche]
-- [ ] [tâche]
-
-## Financier
-- [ ] [tâche]
-- [ ] [tâche]
-
-## Jour J
-- [ ] [tâche]
-- [ ] [tâche]
+[Développe en un paragraphe rappelant le problème principal validé lors des phases précédentes. Explique pourquoi ce problème est réel, prioritaire et mérite une solution maintenant.]
 
 ---
-Document généré par Ark Intelligence - ARK Corporate Group`,
 
-// 7. MATRICE DES RISQUES
-risques: `Génère une MATRICE DES RISQUES détaillée.
+### 2. UTILISATEUR PRIORITAIRE
 
-# MATRICE DES RISQUES
-
-## Risques élevés
-
-| Risque | Impact | Probabilité | Mitigation |
-|--------|--------|-------------|------------|
-| [risque] | Élevé | [prob] | [action] |
-
-## Risques moyens
-
-| Risque | Impact | Probabilité | Mitigation |
-|--------|--------|-------------|------------|
-| [risque] | Moyen | [prob] | [action] |
-
-## Risques faibles
-
-| Risque | Impact | Probabilité | Mitigation |
-|--------|--------|-------------|------------|
-| [risque] | Faible | [prob] | [action] |
-
-## Risques spécifiques Congo-Brazzaville
-- [risque local et mitigation]
-
-## Plan de contingence
-[Actions en cas de matérialisation des risques majeurs]
+[Développe en un paragraphe décrivant l'utilisateur sur lequel la solution va se concentrer en priorité. Explique pourquoi ce segment est choisi maintenant, même s'il en existe d'autres.]
 
 ---
-Document interne ARK Corporate Group`,
 
-// 8. SOP CLIENTS
-sop_clients: `Génère les SOP CLIENTS (procédures opérationnelles standards).
+### 3. SOLUTION ENVISAGÉE (ORIENTATION PRINCIPALE)
 
-# SOP CLIENTS - PROCÉDURES STANDARDS
-
-## 1. Processus d'accueil client
-
-### Objectif
-[Description]
-
-### Étapes
-1. [étape]
-2. [étape]
-3. [étape]
-
-### Responsable
-[qui]
-
-## 2. Processus de vente/service
-
-### Objectif
-[Description]
-
-### Étapes
-1. [étape]
-2. [étape]
-3. [étape]
-
-### Responsable
-[qui]
-
-## 3. Processus de suivi client
-
-### Objectif
-[Description]
-
-### Étapes
-1. [étape]
-2. [étape]
-3. [étape]
-
-### Responsable
-[qui]
-
-## 4. Gestion des réclamations
-
-### Objectif
-[Description]
-
-### Étapes
-1. [étape]
-2. [étape]
-3. [étape]
-
-### Responsable
-[qui]
+[Développe en un paragraphe décrivant la solution retenue. Explique ce que c'est, ce que ça fait concrètement et pourquoi cette solution est choisie parmi toutes les options possibles.]
 
 ---
-Document généré par Ark Intelligence - ARK Corporate Group`,
 
-// 9. SOP INTERNES
-sop_internes: `Génère les SOP INTERNES (procédures opérationnelles internes ARK).
+### 4. PHRASE D'ORIENTATION DE SOLUTION
 
-# SOP INTERNES - PROCÉDURES ARK
+**Pour** [utilisateur prioritaire]
+**qui a besoin de** [besoin critique]
+**nous choisissons de développer** [solution retenue]
+**afin de** [résultat mesurable attendu]
 
-## 1. Processus de prise en charge projet
-
-### Déclencheur
-[Quand ce processus démarre]
-
-### Étapes
-1. [étape]
-2. [étape]
-3. [étape]
-
-### Livrables
-[Documents à produire]
-
-## 2. Processus de validation interne
-
-### Critères de validation
-- [critère]
-- [critère]
-
-### Étapes
-1. [étape]
-2. [étape]
-
-### Décideur
-[qui valide]
-
-## 3. Processus de suivi projet
-
-### Fréquence
-[périodicité]
-
-### Points de contrôle
-- [point]
-- [point]
-
-### Reporting
-[format et destinataires]
+[Explique ensuite en un paragraphe pourquoi cette orientation est claire, réaliste et alignée avec le problème.]
 
 ---
-Document interne ARK Corporate Group - Ne pas diffuser`,
 
-// 10. DIAGNOSTICS
-diagnostics: `Génère un DIAGNOSTIC complet du projet.
+### 5. ALTERNATIVES ÉCARTÉES (ET POURQUOI)
 
-# DIAGNOSTIC PROJET
-
-## 1. Analyse de la situation actuelle
-
-### Forces
-- [force]
-- [force]
-
-### Faiblesses
-- [faiblesse]
-- [faiblesse]
-
-### Opportunités
-- [opportunité]
-- [opportunité]
-
-### Menaces
-- [menace]
-- [menace]
-
-## 2. Analyse du marché
-
-### Taille du marché
-[estimation]
-
-### Tendances
-[évolutions observées]
-
-### Concurrence
-[acteurs et positionnement]
-
-## 3. Analyse des ressources
-
-### Ressources disponibles
-- [ressource]
-
-### Ressources manquantes
-- [ressource]
-
-### Gap à combler
-[analyse]
-
-## 4. Synthèse du diagnostic
-
-| Domaine | État | Priorité |
-|---------|------|----------|
-| [domaine] | [état] | [priorité] |
+[Développe en un paragraphe listant les autres solutions envisagées mais volontairement écartées. Explique pourquoi elles ne sont pas prioritaires maintenant (coût, complexité, timing, dépendances…).]
 
 ---
-Document généré par Ark Intelligence - ARK Corporate Group`,
 
-// 11. RECOMMANDATIONS
-recommandations: `Génère des RECOMMANDATIONS stratégiques.
+### 6. NIVEAU DE COMPLEXITÉ DE LA SOLUTION
 
-# RECOMMANDATIONS STRATÉGIQUES
-
-## 1. Recommandations prioritaires
-
-### Recommandation 1
-- **Action** : [description]
-- **Justification** : [pourquoi]
-- **Délai** : [quand]
-- **Ressources** : [quoi]
-
-### Recommandation 2
-- **Action** : [description]
-- **Justification** : [pourquoi]
-- **Délai** : [quand]
-- **Ressources** : [quoi]
-
-## 2. Recommandations secondaires
-
-### Recommandation 3
-[description et justification]
-
-### Recommandation 4
-[description et justification]
-
-## 3. Quick wins (gains rapides)
-- [action rapide à impact immédiat]
-- [action rapide à impact immédiat]
-
-## 4. Actions à éviter
-- [piège à éviter]
-- [piège à éviter]
-
-## 5. Prochaines étapes suggérées
-
-| Étape | Action | Échéance |
-|-------|--------|----------|
-| 1 | [action] | [date] |
-| 2 | [action] | [date] |
-| 3 | [action] | [date] |
+[Développe en un paragraphe évaluant la complexité de la solution choisie (faible / moyenne / élevée). Explique les raisons de cette évaluation.]
 
 ---
-Document généré par Ark Intelligence - ARK Corporate Group`,
 
-// 12. DESIGN THINKING
-design_thinking: `Génère un document DESIGN THINKING.
+### 7. FAISABILITÉ IMMÉDIATE
 
-# DESIGN THINKING - ANALYSE PROJET
-
-## 1. EMPATHIZE (Comprendre)
-
-### Qui est l'utilisateur ?
-[Description du persona principal]
-
-### Quels sont ses besoins ?
-- [besoin]
-- [besoin]
-
-### Quelles sont ses frustrations ?
-- [frustration]
-- [frustration]
-
-## 2. DEFINE (Définir)
-
-### Problème à résoudre
-[Énoncé clair du problème]
-
-### Point de vue utilisateur
-"En tant que [utilisateur], je veux [action] pour [bénéfice]"
-
-## 3. IDEATE (Imaginer)
-
-### Solutions envisagées
-1. [solution]
-2. [solution]
-3. [solution]
-
-### Solution retenue
-[description et justification]
-
-## 4. PROTOTYPE (Prototyper)
-
-### MVP (Produit Minimum Viable)
-[Description du MVP]
-
-### Fonctionnalités essentielles
-- [fonctionnalité]
-- [fonctionnalité]
-
-## 5. TEST (Tester)
-
-### Hypothèses à valider
-- [hypothèse]
-- [hypothèse]
-
-### Métriques de succès
-- [métrique]
-- [métrique]
+[Développe en un paragraphe expliquant si cette solution est faisable immédiatement avec les ressources actuelles. Précise ce qui est déjà disponible et ce qui manque.]
 
 ---
-Document généré par Ark Intelligence - ARK Corporate Group`,
 
-// 13. BUSINESS MODEL
-business_model: `Génère un BUSINESS MODEL CANVAS.
+### 8. PREMIER PAS CONCRET (ACTION N°1)
+
+[Développe en un paragraphe décrivant la toute première action concrète à réaliser pour matérialiser cette solution. Cette action doit être simple, claire et réalisable rapidement.]
+
+---
+
+### 9. CRITÈRE DE BON CHOIX
+
+[Développe en un paragraphe expliquant comment tu sauras que cette orientation était la bonne. Décris les signaux rapides qui confirmeront ou invalideront le choix.]
+
+---
+
+### 10. DÉCISION FORMELLE
+
+[Développe en un paragraphe actant la décision : on s'engage sur cette solution, pour une période donnée, avec un objectif clair.]
+
+---
+
+Document généré par Ark Intelligence`,
+
+// 3. FORMULATION DE SOLUTION (8 sections)
+formulation_solution: `Génère un document FORMULATION DE SOLUTION basé sur les réponses du cadrage.
+
+RÈGLES :
+- Style clair, sans jargon technique
+- Centré utilisateur
+- N'utilise JAMAIS de majuscules inappropriées au milieu des phrases
+
+---
+
+# FORMULATION DE SOLUTION
+## [Nom du projet]
+
+Date : [date du jour]
+
+---
+
+### 1. RAPPEL DU PROBLÈME CIBLÉ
+
+[Développe en un paragraphe rappelant le problème précis que la solution vise à résoudre. Le problème doit être clair, concret, centré utilisateur et déjà validé lors des étapes précédentes.]
+
+---
+
+### 2. UTILISATEUR CIBLE DE LA SOLUTION
+
+[Développe en un paragraphe décrivant l'utilisateur exact pour lequel la solution est formulée. Explique son contexte, son besoin prioritaire et pourquoi il est le cœur de la solution.]
+
+---
+
+### 3. FORMULATION CENTRALE DE LA SOLUTION
+
+**Pour** [utilisateur]
+**qui rencontre** [problème / besoin critique]
+**nous proposons** [solution formulée clairement]
+**afin de** [bénéfice principal mesurable ou observable]
+
+⚠️ La solution est formulée sans jargon, sans technologie imposée, et compréhensible par un non-expert.
+
+---
+
+### 4. EXPLICATION DE LA SOLUTION
+
+[Développe en un paragraphe expliquant simplement comment la solution fonctionne. Décris ce que fait la solution, comment l'utilisateur l'utilise et ce qui change concrètement pour lui.]
+
+---
+
+### 5. RÉSULTAT ATTENDU POUR L'UTILISATEUR
+
+[Développe en un paragraphe décrivant ce que l'utilisateur obtient réellement grâce à la solution. Explique le "avant / après" de manière concrète.]
+
+---
+
+### 6. FRONTIÈRES DE LA SOLUTION (CE QU'ELLE NE FAIT PAS)
+
+[Développe en un paragraphe listant clairement ce que la solution ne couvre pas volontairement. L'objectif est d'éviter la dispersion et la surcharge fonctionnelle.]
+
+---
+
+### 7. CRITÈRE DE BONNE FORMULATION
+
+[Développe en un paragraphe expliquant comment savoir si la solution est bien formulée. Exemples de signaux : compréhension immédiate, capacité à la reformuler, adhésion rapide de l'utilisateur.]
+
+---
+
+### 8. VERSION COURTE (PITCH 1 PHRASE)
+
+[Réécris la formulation centrale de la solution en une seule phrase simple, utilisable dans un pitch oral, un chatbot ou une présentation.]
+
+---
+
+Document généré par Ark Intelligence
+Rôle : Clarifier → Aligner → Préparer l'exécution`,
+
+// 4. DESIGN THINKING (5 phases, 12 sections)
+design_thinking: `Génère un document DESIGN THINKING basé sur les réponses du cadrage.
+
+RÈGLES :
+- Structure en 5 phases
+- N'utilise JAMAIS de majuscules inappropriées au milieu des phrases
+
+---
+
+# DESIGN THINKING
+## [Nom du projet]
+
+Date : [date du jour]
+
+---
+
+## PHASE 1 — EMPATHIE
+
+### 1. UTILISATEUR CIBLE
+
+[Développe en un paragraphe décrivant précisément pour qui cette solution est conçue. Explique qui est cet utilisateur, son contexte, son quotidien, ses contraintes et pourquoi il est concerné par ce projet.]
+
+### 2. PROBLÈMES & FRUSTRATIONS
+
+[Développe en un paragraphe expliquant les difficultés réelles rencontrées par cet utilisateur. Décris ce qui le bloque aujourd'hui, ce qui lui fait perdre du temps, de l'argent ou de l'énergie.]
+
+### 3. COMPORTEMENTS & HABITUDES
+
+[Développe en un paragraphe décrivant comment l'utilisateur agit aujourd'hui pour résoudre son problème. Explique ses habitudes, ses solutions actuelles et leurs limites.]
+
+---
+
+## PHASE 2 — DÉFINITION DU PROBLÈME
+
+### 4. PROBLÈME CENTRAL À RÉSOUDRE
+
+[Développe en un paragraphe formulant clairement le problème principal à résoudre. Le problème doit être spécifique, centré sur l'utilisateur et formulé de manière actionnable.]
+
+### 5. IMPACT SI LE PROBLÈME PERSISTE
+
+[Développe en un paragraphe expliquant ce qui se passe si ce problème n'est pas résolu. Décris les conséquences pour l'utilisateur, son activité ou son quotidien.]
+
+---
+
+## PHASE 3 — IDÉATION
+
+### 6. IDÉE DE SOLUTION PRINCIPALE
+
+[Développe en un paragraphe décrivant l'idée de solution envisagée. Explique comment cette idée répond au problème défini et en quoi elle améliore la situation de l'utilisateur.]
+
+### 7. ALTERNATIVES ENVISAGÉES
+
+[Développe en un paragraphe présentant d'autres idées possibles ou variantes de la solution principale. Explique pourquoi certaines sont écartées ou mises en second plan.]
+
+---
+
+## PHASE 4 — PROTOTYPAGE
+
+### 8. FORME DU PROTOTYPE
+
+[Développe en un paragraphe décrivant ce que sera concrètement le prototype. Explique le format choisi (maquette, formulaire, landing page, service manuel, MVP, etc.) et pourquoi ce format est pertinent.]
+
+### 9. OBJECTIF DU PROTOTYPE
+
+[Développe en un paragraphe expliquant ce que ce prototype doit permettre de vérifier. Décris ce que tu cherches à apprendre ou à valider auprès des utilisateurs.]
+
+---
+
+## PHASE 5 — TEST
+
+### 10. UTILISATEURS TESTEURS
+
+[Développe en un paragraphe décrivant qui testera le prototype. Explique pourquoi ces personnes sont pertinentes et comment elles seront sélectionnées.]
+
+### 11. MÉTHODE DE TEST
+
+[Développe en un paragraphe expliquant comment le prototype sera testé. Décris le déroulé du test, les interactions prévues et les retours attendus.]
+
+### 12. CRITÈRES DE VALIDATION
+
+[Développe en un paragraphe définissant comment tu sauras si la solution est validée ou non. Explique les signaux positifs, négatifs et les décisions qui en découleront.]
+
+---
+
+Document généré par Ark Intelligence
+Méthode : Comprendre → Définir → Imaginer → Tester → Décider`,
+
+// 5. BUSINESS MODEL CANVAS (9 sections)
+business_model: `Génère un BUSINESS MODEL CANVAS basé sur les réponses du cadrage.
+
+RÈGLES :
+- Les 9 blocs classiques du BMC
+- Adapté au contexte local (Mobile Money, FCFA si pertinent)
+- N'utilise JAMAIS de majuscules inappropriées au milieu des phrases
+
+---
 
 # BUSINESS MODEL CANVAS
+## [Nom du projet]
 
-## 1. Segments de clients
-[Qui sont vos clients ?]
-- [segment 1]
-- [segment 2]
-
-## 2. Proposition de valeur
-[Quelle valeur apportez-vous ?]
-- [valeur 1]
-- [valeur 2]
-
-## 3. Canaux de distribution
-[Comment atteignez-vous vos clients ?]
-- [canal 1]
-- [canal 2]
-
-## 4. Relations clients
-[Quel type de relation ?]
-- [type de relation]
-
-## 5. Sources de revenus
-[Comment gagnez-vous de l'argent ?]
-
-| Source | Modèle | Estimation mensuelle |
-|--------|--------|---------------------|
-| [source] | [modèle] | [montant] FCFA |
-
-## 6. Ressources clés
-[De quoi avez-vous besoin ?]
-- [ressource]
-- [ressource]
-
-## 7. Activités clés
-[Que devez-vous faire ?]
-- [activité]
-- [activité]
-
-## 8. Partenaires clés
-[Avec qui travaillez-vous ?]
-- [partenaire]
-- [partenaire]
-
-## 9. Structure de coûts
-[Quels sont vos coûts ?]
-
-| Poste | Type | Estimation |
-|-------|------|------------|
-| [poste] | Fixe/Variable | [montant] FCFA |
+Date : [date du jour]
 
 ---
-Document généré par Ark Intelligence - ARK Corporate Group`,
 
-// 14. LEAN STARTUP
-lean_startup: `Génère un document LEAN START UP.
+### 1. SEGMENTS DE CLIENTS
 
-# LEAN START UP - PLAN DE VALIDATION
-
-## 1. Hypothèse de valeur
-[Quelle valeur pensez-vous créer ?]
-
-### Hypothèse principale
-"Nous croyons que [client] a besoin de [solution] car [raison]"
-
-### Comment valider ?
-[méthode de validation]
-
-## 2. Hypothèse de croissance
-[Comment allez-vous grandir ?]
-
-### Moteur de croissance
-- [ ] Viral (bouche-à-oreille)
-- [ ] Payant (publicité)
-- [ ] Sticky (rétention)
-
-## 3. MVP (Minimum Viable Product)
-
-### Description du MVP
-[version minimale du produit]
-
-### Fonctionnalités incluses
-- [fonctionnalité]
-- [fonctionnalité]
-
-### Fonctionnalités exclues (pour plus tard)
-- [fonctionnalité]
-- [fonctionnalité]
-
-## 4. Métriques clés (AARRR)
-
-| Métrique | Objectif | Comment mesurer |
-|----------|----------|-----------------|
-| Acquisition | [objectif] | [méthode] |
-| Activation | [objectif] | [méthode] |
-| Rétention | [objectif] | [méthode] |
-| Revenue | [objectif] | [méthode] |
-| Referral | [objectif] | [méthode] |
-
-## 5. Cycle Build-Measure-Learn
-
-### Build (Construire)
-[Ce qu'on va construire en premier]
-
-### Measure (Mesurer)
-[Ce qu'on va mesurer]
-
-### Learn (Apprendre)
-[Questions auxquelles on veut répondre]
-
-## 6. Pivot ou Persévère ?
-
-### Critères de pivot
-[Quand changer de direction ?]
-
-### Critères de persévérance
-[Quand continuer ?]
+[Développe en un paragraphe décrivant précisément qui sont les clients visés par ce projet. Explique leur profil, leur situation actuelle, leurs besoins prioritaires et pourquoi ce segment est stratégique.]
 
 ---
-Document généré par Ark Intelligence - ARK Corporate Group`
+
+### 2. PROPOSITION DE VALEUR
+
+[Développe en un paragraphe expliquant ce que le projet apporte concrètement aux clients. Décris le problème principal résolu, le bénéfice clé et la valeur perçue par le client.]
+
+---
+
+### 3. CANAUX
+
+[Développe en un paragraphe décrivant comment la proposition de valeur est communiquée, distribuée et livrée aux clients. Explique comment les clients découvrent l'offre, comment ils y accèdent et comment ils l'utilisent.]
+
+---
+
+### 4. RELATION CLIENT
+
+[Développe en un paragraphe expliquant le type de relation entretenue avec les clients. Décris comment les clients sont accompagnés, assistés, fidélisés ou suivis avant, pendant et après l'utilisation de la solution.]
+
+---
+
+### 5. SOURCES DE REVENUS
+
+[Développe en un paragraphe décrivant comment le projet génère des revenus. Explique ce que les clients paient, à quel moment, sous quelle forme (abonnement, commission, paiement unique, etc.) et pour quelle valeur.]
+
+---
+
+### 6. RESSOURCES CLÉS
+
+[Développe en un paragraphe identifiant les ressources indispensables au fonctionnement du projet. Explique les ressources humaines, techniques, financières ou organisationnelles nécessaires pour délivrer la proposition de valeur.]
+
+---
+
+### 7. ACTIVITÉS CLÉS
+
+[Développe en un paragraphe décrivant les activités essentielles à réaliser pour que le modèle fonctionne. Explique ce qui doit absolument être exécuté pour créer, livrer et maintenir la valeur.]
+
+---
+
+### 8. PARTENAIRES CLÉS
+
+[Développe en un paragraphe identifiant les partenaires stratégiques du projet. Explique leur rôle, ce qu'ils apportent et pourquoi ces partenariats sont nécessaires ou utiles.]
+
+---
+
+### 9. STRUCTURE DE COÛTS
+
+[Développe en un paragraphe décrivant les principaux coûts liés au fonctionnement du modèle économique. Explique où vont les dépenses majeures et quelles sont les charges critiques à maîtriser.]
+
+---
+
+Document généré par Ark Intelligence
+Objectif : Clarifier → Structurer → Décider`,
+
+// 6. LEAN START UP (5 étapes, 12 sections)
+lean_startup: `Génère un document LEAN START UP basé sur les réponses du cadrage.
+
+RÈGLES :
+- Structure en 5 étapes
+- Orienté test et validation
+- N'utilise JAMAIS de majuscules inappropriées au milieu des phrases
+
+---
+
+# LEAN START UP
+## [Nom du projet]
+
+Date : [date du jour]
+
+---
+
+## ÉTAPE 1 — PROBLÈME
+
+### 1. PROBLÈME PRINCIPAL À TESTER
+
+[Développe en un paragraphe décrivant le problème principal que tu cherches à valider. Explique pourquoi ce problème est critique pour l'utilisateur et pourquoi il mérite d'être testé maintenant.]
+
+### 2. UTILISATEUR CONCERNÉ
+
+[Développe en un paragraphe décrivant précisément l'utilisateur ciblé par ce test. Explique son contexte, ses contraintes et pourquoi il est directement impacté par ce problème.]
+
+### 3. SOLUTIONS EXISTANTES
+
+[Développe en un paragraphe expliquant comment l'utilisateur résout actuellement ce problème. Décris les solutions existantes, leurs limites et pourquoi elles ne sont pas pleinement satisfaisantes.]
+
+---
+
+## ÉTAPE 2 — HYPOTHÈSES
+
+### 4. HYPOTHÈSE DE VALEUR
+
+[Développe en un paragraphe formulant l'hypothèse principale de valeur. Explique ce que tu penses que l'utilisateur va réellement apprécier ou adopter.]
+
+### 5. HYPOTHÈSE DE CROISSANCE
+
+[Développe en un paragraphe expliquant comment tu penses atteindre et faire croître ta base d'utilisateurs. Décris le canal principal et le mécanisme de diffusion envisagé.]
+
+### 6. HYPOTHÈSE DE MONÉTISATION
+
+[Développe en un paragraphe expliquant comment tu penses générer des revenus. Explique ce que l'utilisateur serait prêt à payer et pourquoi.]
+
+---
+
+## ÉTAPE 3 — MVP (MINIMUM VIABLE PRODUCT)
+
+### 7. DESCRIPTION DU MVP
+
+[Développe en un paragraphe décrivant la version la plus simple possible de la solution à construire. Explique ce qu'elle fait, ce qu'elle ne fait pas et pourquoi elle est suffisante pour tester les hypothèses.]
+
+### 8. OBJECTIF DU MVP
+
+[Développe en un paragraphe expliquant ce que ce MVP doit permettre d'apprendre. Décris clairement l'hypothèse principale que ce MVP cherche à valider.]
+
+---
+
+## ÉTAPE 4 — MESURE
+
+### 9. INDICATEUR CLÉ À MESURER
+
+[Développe en un paragraphe décrivant l'indicateur principal à suivre. Explique pourquoi cet indicateur est pertinent et ce qu'il dira sur la réussite ou l'échec du test.]
+
+### 10. SEUIL DE SUCCÈS
+
+[Développe en un paragraphe définissant le seuil à partir duquel l'hypothèse sera considérée comme validée. Explique ce qui constitue un signal positif ou négatif.]
+
+---
+
+## ÉTAPE 5 — APPRENTISSAGE & DÉCISION
+
+### 11. ENSEIGNEMENTS ATTENDUS
+
+[Développe en un paragraphe expliquant ce que tu cherches à apprendre grâce au test. Décris les décisions que ces apprentissages pourraient déclencher.]
+
+### 12. DÉCISION STRATÉGIQUE
+
+[Développe en un paragraphe indiquant la décision à prendre après le test : continuer, pivoter, ou arrêter. Explique pourquoi.]
+
+---
+
+Document généré par Ark Intelligence
+Méthode : Tester → Mesurer → Apprendre → Décider`,
+
+// 7. AGILE (5 phases, 11 sections)
+agile: `Génère un document AGILE basé sur les réponses du cadrage.
+
+RÈGLES :
+- Structure en 5 phases
+- Orienté sprint et itération
+- N'utilise JAMAIS de majuscules inappropriées au milieu des phrases
+
+---
+
+# AGILE
+## [Nom du projet]
+
+Date : [date du jour]
+
+---
+
+## PHASE 1 — VISION & PRIORITÉS
+
+### 1. OBJECTIF DU PROJET (SPRINT GOAL GLOBAL)
+
+[Développe en un paragraphe décrivant l'objectif principal du projet à ce stade. Explique ce que l'équipe cherche à accomplir concrètement sur une période courte (30 à 90 jours).]
+
+### 2. VALEUR À LIVRER EN PRIORITÉ
+
+[Développe en un paragraphe expliquant quelle valeur doit être livrée en premier à l'utilisateur. Décris ce qui est le plus important à délivrer maintenant et pourquoi.]
+
+---
+
+## PHASE 2 — BACKLOG & PLANIFICATION
+
+### 3. BACKLOG DES FONCTIONNALITÉS / TÂCHES
+
+[Développe en un paragraphe listant les fonctionnalités, tâches ou actions à réaliser. Explique comment elles sont priorisées et ce qui est inclus ou exclu à ce stade.]
+
+### 4. SPRINT EN COURS
+
+[Développe en un paragraphe décrivant le sprint actuel : sa durée (ex. 1 à 2 semaines), son objectif et les livrables attendus à la fin du sprint.]
+
+---
+
+## PHASE 3 — EXÉCUTION
+
+### 5. TÂCHES DU SPRINT
+
+[Développe en un paragraphe expliquant quelles tâches concrètes sont exécutées pendant ce sprint. Décris qui fait quoi et comment l'avancement est suivi.]
+
+### 6. OBSTACLES & BLOQUANTS
+
+[Développe en un paragraphe identifiant les obstacles rencontrés pendant l'exécution. Explique ce qui ralentit l'équipe et comment ces blocages sont traités.]
+
+---
+
+## PHASE 4 — REVUE & FEEDBACK
+
+### 7. LIVRABLES PRODUITS
+
+[Développe en un paragraphe décrivant ce qui a été livré à la fin du sprint. Explique ce qui est utilisable, testable ou montrable aux utilisateurs.]
+
+### 8. RETOURS UTILISATEURS / PARTIES PRENANTES
+
+[Développe en un paragraphe expliquant les retours obtenus. Décris ce qui fonctionne, ce qui ne fonctionne pas et ce que cela change pour la suite.]
+
+---
+
+## PHASE 5 — AMÉLIORATION CONTINUE
+
+### 9. ENSEIGNEMENTS DU SPRINT
+
+[Développe en un paragraphe résumant les principaux apprentissages du sprint. Explique ce que l'équipe a compris sur le produit, l'utilisateur ou le process.]
+
+### 10. ACTIONS D'AMÉLIORATION
+
+[Développe en un paragraphe décrivant les améliorations à mettre en place pour le prochain sprint. Explique ce qui sera fait différemment.]
+
+### 11. DÉCISION POUR LE SPRINT SUIVANT
+
+[Développe en un paragraphe indiquant la décision prise : continuer dans la même direction, ajuster les priorités ou revoir l'objectif.]
+
+---
+
+Document généré par Ark Intelligence
+Méthode : Planifier → Construire → Tester → Ajuster`
 };
 
 // ==================== HANDLE GENERATE ====================
-async function handleGenerate(res, history, docType = 'cahier_charge') {
+async function handleGenerate(res, history, docType = 'definition_projet') {
     const conversationText = history.map(h => 
         `${h.type === 'user' ? 'CLIENT' : 'CONSULTANT'}: ${h.content}`
     ).join('\n\n');
 
-    const docPrompt = DOCUMENT_PROMPTS[docType] || DOCUMENT_PROMPTS.cahier_charge;
+    const docPrompt = DOCUMENT_PROMPTS[docType] || DOCUMENT_PROMPTS.definition_projet;
 
     const generatePrompt = `Tu es un expert en gestion de projet PMI.
 
@@ -1040,7 +945,8 @@ RÈGLES :
 - Style professionnel et clair
 - Adapté au contexte Congo-Brazzaville (Mobile Money, FCFA)
 - Pas de blabla, que du concret
-- PAS d'émojis sauf pour le scoring interne`;
+- PAS d'émojis
+- N'utilise JAMAIS de majuscules inappropriées au milieu des phrases (écris "et" pas "ET", "ou" pas "OU")`;
 
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
