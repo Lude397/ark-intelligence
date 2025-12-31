@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription | Ark Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0b0f;
+            --bg-secondary: #12141a;
+            --bg-card: #1a1c24;
+            --bg-input: #0d0e12;
+            --border-color: #2a2d38;
+            --border-focus: #d4a853;
+            --text-primary: #ffffff;
+            --text-secondary: #8a8f9c;
+            --text-muted: #5a5f6d;
+            --accent: #d4a853;
+            --accent-hover: #e5b964;
+            --accent-glow: rgba(212, 168, 83, 0.15);
+            --error: #e74c3c;
+            --success: #2ecc71;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Fond subtil avec gradient */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(212, 168, 83, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(212, 168, 83, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 460px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header avec logo */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent) 0%, #b8943f 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--bg-primary);
+            box-shadow: 0 4px 20px rgba(212, 168, 83, 0.25);
+        }
+
+        .logo-text {
+            font-family: 'Sora', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .header-subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        /* Card principale */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.1),
+                0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            font-family: 'Sora', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        /* Formulaire */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-input:hover {
+            border-color: #3a3d48;
+        }
+
+        .form-input:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        /* Input téléphone avec préfixe */
+        .phone-input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        .phone-prefix {
+            width: 90px;
+            padding: 14px 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 15px;
+            text-align: center;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .phone-prefix:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .phone-number {
+            flex: 1;
+        }
+
+        /* Sélection du profil */
+        .profile-section {
+            margin-bottom: 28px;
+        }
+
+        .profile-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        .profile-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .profile-option {
+            position: relative;
+        }
+
+        .profile-option input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .profile-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .profile-card:hover {
+            border-color: #3a3d48;
+            background: var(--bg-secondary);
+        }
+
+        .profile-option input:checked + .profile-card {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+        }
+
+        .profile-radio {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .profile-option input:checked + .profile-card .profile-radio {
+            border-color: var(--accent);
+        }
+
+        .profile-radio::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+            transform: scale(0);
+            transition: transform 0.2s ease;
+        }
+
+        .profile-option input:checked + .profile-card .profile-radio::after {
+            transform: scale(1);
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .profile-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .profile-badge {
+            padding: 4px 10px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .profile-option input:checked + .profile-card .profile-badge {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        /* Bouton submit */
+        .submit-btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, var(--accent) 0%, #c49b4a 100%);
+            border: none;
+            border-radius: 12px;
+            color: var(--bg-primary);
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 168, 83, 0.35);
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .footer-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
+        }
+
+        /* Message d'erreur */
+        .error-message {
+            display: none;
+            color: var(--error);
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .form-group.error .form-input {
+            border-color: var(--error);
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        /* Animation de chargement */
+        .loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--bg-primary);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Animations d'entrée */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .card {
+            animation: fadeInUp 0.6s ease 0.1s forwards;
+            opacity: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .card {
+                padding: 28px 24px;
+                border-radius: 16px;
+            }
+
+            .card-title {
+                font-size: 20px;
+            }
+
+            .logo-icon {
+                width: 42px;
+                height: 42px;
+                font-size: 18px;
+            }
+
+            .logo-text {
+                font-size: 22px;
+            }
+
+            .profile-card {
+                padding: 14px 16px;
+            }
+
+            .profile-badge {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">A</div>
+                <span class="logo-text">Ark Intelligence</span>
+            </div>
+            <p class="header-subtitle">Assistant de cadrage projet</p>
+        </header>
+
+        <div class="card">
+            <h1 class="card-title">Créer votre compte</h1>
+            <p class="card-description">Accédez à vos outils de cadrage et structurez vos projets efficacement.</p>
+
+            <form id="registerForm" autocomplete="off">
+                <div class="form-group">
+                    <label class="form-label">Nom complet</label>
+                    <input type="text" class="form-input" id="nom" placeholder="Entrez votre nom" required>
+                    <span class="error-message">Veuillez entrer votre nom</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Numéro de téléphone</label>
+                    <div class="phone-input-wrapper">
+                        <input type="text" class="phone-prefix" value="+242" id="prefix" maxlength="5">
+                        <input type="tel" class="form-input phone-number" id="telephone" placeholder="06 XXX XX XX" required>
+                    </div>
+                    <span class="error-message">Veuillez entrer un numéro valide</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Mot de passe</label>
+                    <input type="password" class="form-input" id="password" placeholder="Minimum 6 caractères" required>
+                    <span class="error-message">Minimum 6 caractères requis</span>
+                </div>
+
+                <div class="profile-section">
+                    <label class="profile-label">Votre profil</label>
+                    <div class="profile-options">
+                        <label class="profile-option">
+                            <input type="radio" name="profil" value="projet" checked>
+                            <div class="profile-card">
+                                <div class="profile-radio"></div>
+                                <div class="profile-info">
+                                    <div class="profile-name">Porteur de projet</div>
+                                    <div class="profile-desc">Accès aux documents essentiels</div>
+                                </div>
+                                <span class="profile-badge">3 docs</span>
+                            </div>
+                        </label>
+                        <label class="profile-option">
+                            <input type="radio" name="profil" value="entrepreneur">
+                            <div class="profile-card">
+                                <div class="profile-radio"></div>
+                                <div class="profile-info">
+                                    <div class="profile-name">Entrepreneur</div>
+                                    <div class="profile-desc">Accès complet à tous les outils</div>
+                                </div>
+                                <span class="profile-badge">7 docs</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Créer mon compte
+                </button>
+            </form>
+
+            <footer class="footer">
+                <p class="footer-text">
+                    Déjà inscrit ? <a href="connexion.html" class="footer-link">Se connecter</a>
+                </p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('registerForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Reset errors
+            document.querySelectorAll('.form-group').forEach(g => g.classList.remove('error'));
+            
+            const nom = document.getElementById('nom').value.trim();
+            const prefix = document.getElementById('prefix').value.trim();
+            const telephone = document.getElementById('telephone').value.trim();
+            const password = document.getElementById('password').value;
+            const profil = document.querySelector('input[name="profil"]:checked').value;
+
+            // Validation
+            let hasError = false;
+
+            if (!nom) {
+                document.getElementById('nom').closest('.form-group').classList.add('error');
+                hasError = true;
+            }
+
+            if (!telephone || telephone.length < 6) {
+                document.getElementById('telephone').closest('.form-group').classList.add('error');
+                hasError = true;
+            }
+
+            if (!password || password.length < 6) {
+                document.getElementById('password').closest('.form-group').classList.add('error');
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            // Submit
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading"><span class="spinner"></span> Création en cours...</span>';
+
+            const fullPhone = prefix + telephone.replace(/\s/g, '');
+
+            try {
+                // TODO: Appel API Supabase
+                const userData = {
+                    nom,
+                    telephone: fullPhone,
+                    password,
+                    type_user: profil
+                };
+
+                console.log('Inscription:', userData);
+
+                // Simuler délai API
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                // Redirection après succès
+                // window.location.href = 'index.html';
+                alert('Compte créé avec succès !');
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue. Veuillez réessayer.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Créer mon compte';
+            }
+        });
+
+        // Format numéro de téléphone
+        document.getElementById('telephone').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 9) value = value.slice(0, 9);
+            
+            // Format: XX XXX XX XX
+            if (value.length > 2) {
+                value = value.slice(0, 2) + ' ' + value.slice(2);
+            }
+            if (value.length > 6) {
+                value = value.slice(0, 6) + ' ' + value.slice(6);
+            }
+            if (value.length > 9) {
+                value = value.slice(0, 9) + ' ' + value.slice(9);
+            }
+            
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
