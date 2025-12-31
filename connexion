@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion | Ark Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0b0f;
+            --bg-secondary: #12141a;
+            --bg-card: #1a1c24;
+            --bg-input: #0d0e12;
+            --border-color: #2a2d38;
+            --border-focus: #d4a853;
+            --text-primary: #ffffff;
+            --text-secondary: #8a8f9c;
+            --text-muted: #5a5f6d;
+            --accent: #d4a853;
+            --accent-hover: #e5b964;
+            --accent-glow: rgba(212, 168, 83, 0.15);
+            --error: #e74c3c;
+            --success: #2ecc71;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(212, 168, 83, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(212, 168, 83, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent) 0%, #b8943f 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--bg-primary);
+            box-shadow: 0 4px 20px rgba(212, 168, 83, 0.25);
+        }
+
+        .logo-text {
+            font-family: 'Sora', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .header-subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.1),
+                0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            font-family: 'Sora', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-input:hover {
+            border-color: #3a3d48;
+        }
+
+        .form-input:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .phone-input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        .phone-prefix {
+            width: 90px;
+            padding: 14px 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 15px;
+            text-align: center;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .phone-prefix:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .phone-number {
+            flex: 1;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, var(--accent) 0%, #c49b4a 100%);
+            border: none;
+            border-radius: 12px;
+            color: var(--bg-primary);
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 168, 83, 0.35);
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .footer-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
+        }
+
+        .error-message {
+            display: none;
+            color: var(--error);
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .form-group.error .form-input,
+        .form-group.error .phone-prefix {
+            border-color: var(--error);
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        .alert {
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert-error {
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            color: var(--error);
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--bg-primary);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .card {
+            animation: fadeInUp 0.6s ease 0.1s forwards;
+            opacity: 0;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 28px 24px;
+                border-radius: 16px;
+            }
+
+            .card-title {
+                font-size: 20px;
+            }
+
+            .logo-icon {
+                width: 42px;
+                height: 42px;
+                font-size: 18px;
+            }
+
+            .logo-text {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">A</div>
+                <span class="logo-text">Ark Intelligence</span>
+            </div>
+            <p class="header-subtitle">Assistant de cadrage projet</p>
+        </header>
+
+        <div class="card">
+            <h1 class="card-title">Connexion</h1>
+            <p class="card-description">Accédez à votre espace et retrouvez vos projets.</p>
+
+            <div class="alert alert-error" id="alertError">
+                Identifiants incorrects. Veuillez réessayer.
+            </div>
+
+            <form id="loginForm" autocomplete="off">
+                <div class="form-group">
+                    <label class="form-label">Numéro de téléphone</label>
+                    <div class="phone-input-wrapper">
+                        <input type="text" class="phone-prefix" value="+242" id="prefix" maxlength="5">
+                        <input type="tel" class="form-input phone-number" id="telephone" placeholder="06 XXX XX XX" required>
+                    </div>
+                    <span class="error-message">Veuillez entrer votre numéro</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Mot de passe</label>
+                    <input type="password" class="form-input" id="password" placeholder="Votre mot de passe" required>
+                    <span class="error-message">Veuillez entrer votre mot de passe</span>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Se connecter
+                </button>
+            </form>
+
+            <footer class="footer">
+                <p class="footer-text">
+                    Pas encore de compte ? <a href="inscription.html" class="footer-link">S'inscrire</a>
+                </p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const alertError = document.getElementById('alertError');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Reset
+            document.querySelectorAll('.form-group').forEach(g => g.classList.remove('error'));
+            alertError.classList.remove('show');
+            
+            const prefix = document.getElementById('prefix').value.trim();
+            const telephone = document.getElementById('telephone').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Validation
+            let hasError = false;
+
+            if (!telephone || telephone.length < 6) {
+                document.getElementById('telephone').closest('.form-group').classList.add('error');
+                hasError = true;
+            }
+
+            if (!password) {
+                document.getElementById('password').closest('.form-group').classList.add('error');
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            // Submit
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading"><span class="spinner"></span> Connexion...</span>';
+
+            const fullPhone = prefix + telephone.replace(/\s/g, '');
+
+            try {
+                // TODO: Appel API Supabase
+                const credentials = {
+                    telephone: fullPhone,
+                    password
+                };
+
+                console.log('Connexion:', credentials);
+
+                // Simuler délai API
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                // Redirection après succès
+                // window.location.href = 'index.html';
+                alert('Connexion réussie !');
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                alertError.classList.add('show');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Se connecter';
+            }
+        });
+
+        // Format numéro de téléphone
+        document.getElementById('telephone').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 9) value = value.slice(0, 9);
+            
+            if (value.length > 2) {
+                value = value.slice(0, 2) + ' ' + value.slice(2);
+            }
+            if (value.length > 6) {
+                value = value.slice(0, 6) + ' ' + value.slice(6);
+            }
+            if (value.length > 9) {
+                value = value.slice(0, 9) + ' ' + value.slice(9);
+            }
+            
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
