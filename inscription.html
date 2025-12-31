@@ -609,27 +609,64 @@
 
             const fullPhone = prefix + telephone.replace(/\s/g, '');
 
-            try {
-                // Appel fonction Supabase
-                const { data, error } = await sb.rpc('ark_create_user', {
-                    p_nom: nom,
-                    p_telephone: fullPhone,
-                    p_password: password,
-                    p_type_user: profil
-                });
+           try {
+    // Si entrepreneur, vérifier le code
+    if (profil === 'entrepreneur') {
+        const codeValue = document.getElementById('codeEntrepreneur').value.trim();
+        
+        if (!codeValue) {
+            document.getElementById('codeEntrepreneurGroup').classList.add('error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Créer mon compte';
+            return;
+        }
 
-                if (error) throw error;
+        // Vérifier le code dans Supabase
+        const { data: codeData, error: codeError } = await sb
+            .from('ark_codes')
+            .select('*')
+            .eq('code', codeValue)
+            .eq('active', true)
+            .eq('utilise', false)
+            .single();
 
-                if (data.success) {
-                    // Stocker l'utilisateur
-                    localStorage.setItem('ark_user', JSON.stringify(data.user));
-                    // Redirection
-                    window.location.href = 'index.html';
-                } else {
-                    alert(data.error || 'Erreur lors de l\'inscription');
-                }
+        if (codeError || !codeData) {
+            document.getElementById('codeEntrepreneurGroup').classList.add('error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Créer mon compte';
+            return;
+        }
+    }
 
-            } catch (error) {
+    // Appel fonction Supabase
+    const { data, error } = await sb.rpc('ark_create_user', {
+        p_nom: nom,
+        p_telephone: fullPhone,
+        p_password: password,
+        p_type_user: profil
+    });
+
+    if (error) throw error;
+
+    if (data.success) {
+        // Si entrepreneur, marquer le code comme utilisé
+        if (profil === 'entrepreneur') {
+            const codeValue = document.getElementById('codeEntrepreneur').value.trim();
+            await sb
+                .from('ark_codes')
+                .update({ utilise: true, utilise_par: data.user.id })
+                .eq('code', codeValue);
+        }
+
+        // Stocker l'utilisateur
+        localStorage.setItem('ark_user', JSON.stringify(data.user));
+        // Redirection
+        window.location.href = 'index.html';
+    } else {
+        alert(data.error || 'Erreur lors de l\'inscription');
+    }
+
+} catch (error) {
                 console.error('Erreur:', error);
                 alert('Une erreur est survenue. Veuillez réessayer.');
             } finally {
@@ -638,24 +675,41 @@
             }
         });
 
-        // Format numéro de téléphone
-        document.getElementById('telephone').addEventListener('input', (e) => {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 9) value = value.slice(0, 9);
-            
-            // Format: XX XXX XX XX
-            if (value.length > 2) {
-                value = value.slice(0, 2) + ' ' + value.slice(2);
-            }
-            if (value.length > 6) {
-                value = value.slice(0, 6) + ' ' + value.slice(6);
-            }
-            if (value.length > 9) {
-                value = value.slice(0, 9) + ' ' + value.slice(9);
-            }
-            
-            e.target.value = value;
-        });
+        // Format numéro de téléphone (01 234 5678)
+document.getElementById('telephone').addEventListener('input', (e) => {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 9) value = value.slice(0, 9);
+    
+    if (value.length > 2) {
+        value = value.slice(0, 2) + ' ' + value.slice(2);
+    }
+    if (value.length > 5) {
+        value = value.slice(0, 6) + ' ' + value.slice(6);
+    }
+    
+    e.target.value = value;
+});
+
+// Voir/cacher mot de passe
+document.getElementById('togglePassword').addEventListener('click', () => {
+    const pwd = document.getElementById('password');
+    const btn = document.getElementById('togglePassword');
+    if (pwd.type === 'password') {
+        pwd.type = 'text';
+        btn.textContent = '🙈';
+    } else {
+        pwd.type = 'password';
+        btn.textContent = '👁';
+    }
+});
+
+// Afficher champ code si Entrepreneur
+document.querySelectorAll('input[name="profil"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        const codeGroup = document.getElementById('codeEntrepreneurGroup');
+        codeGroup.style.display = e.target.value === 'entrepreneur' ? 'block' : 'none';
+    });
+});
     </script>
 </body>
 </html>
