@@ -1283,6 +1283,11 @@
     </div>
 
     <script>
+        // Vérifier si l'utilisateur est connecté
+        const user = localStorage.getItem('ark_user');
+        if (!user) {
+            window.location.href = 'connexion.html';
+        }        
         const CONFIG = { apiUrl: '/api/chat' };
 
         const state = {
