@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
     <title>Ark Intelligence</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23c9a227'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='%230a0a0a' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23c9a227'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='%230a0a0a' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+    <link rel="icon" type="image/png" id="favicon" href="">
+    <link rel="apple-touch-icon" id="appleTouchIcon" href="">
     <style>
         * {
             margin: 0;
@@ -15,89 +15,61 @@
 
         /* ===== THÈMES ===== */
         :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #141414;
-            --bg-tertiary: #1a1a1a;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0a0;
-            --accent: #c9a227;
-            --accent-hover: #d4af37;
-            --border: #2a2a2a;
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #252525;
+            --text-primary: #e5e5e5;
+            --text-secondary: #888888;
+            --border: #333333;
             --success: #22c55e;
             --sidebar-width: 280px;
-            --user-msg-bg: #1e1e1e;
+            --user-msg-bg: #252525;
+            --btn-primary: #3a3a3a;
+            --btn-primary-hover: #4a4a4a;
+            --btn-primary-text: #e5e5e5;
         }
 
         [data-theme="light"] {
-            --bg-primary: #f5f5f5;
+            --bg-primary: #f8f8f8;
             --bg-secondary: #ffffff;
-            --bg-tertiary: #e8e8e8;
-            --text-primary: #1a1a1a;
-            --text-secondary: #666666;
-            --accent: #c9a227;
-            --accent-hover: #b8941f;
-            --border: #d0d0d0;
-            --user-msg-bg: #e0e0e0;
+            --bg-tertiary: #efefef;
+            --text-primary: #2a2a2a;
+            --text-secondary: #777777;
+            --border: #e0e0e0;
+            --user-msg-bg: #f0f0f0;
+            --btn-primary: #e0e0e0;
+            --btn-primary-hover: #d0d0d0;
+            --btn-primary-text: #2a2a2a;
         }
 
-        [data-theme="navy"] {
-            --bg-primary: #0d1b2a;
-            --bg-secondary: #1b263b;
-            --bg-tertiary: #243447;
-            --text-primary: #e0e1dd;
-            --text-secondary: #9ba4b0;
-            --accent: #c9a227;
-            --accent-hover: #d4af37;
-            --border: #354759;
-            --user-msg-bg: #2d3e50;
+        [data-theme="vert"] {
+            --bg-primary: #f0f9f4;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e8f5e9;
+            --text-primary: #2e7d32;
+            --text-secondary: #66bb6a;
+            --border: #e8f5e9;
+            --success: #22c55e;
+            --sidebar-width: 280px;
+            --user-msg-bg: #e8f5e9;
+            --btn-primary: #c8e6c9;
+            --btn-primary-hover: #a5d6a7;
+            --btn-primary-text: #1b5e20;
         }
 
-        [data-theme="emerald"] {
-            --bg-primary: #0a1612;
-            --bg-secondary: #0f211a;
-            --bg-tertiary: #162d23;
-            --text-primary: #e8f5e9;
-            --text-secondary: #a5d6a7;
-            --accent: #4caf50;
-            --accent-hover: #66bb6a;
-            --border: #1b5e20;
-            --user-msg-bg: #1a3a2a;
-        }
-
-        [data-theme="bordeaux"] {
-            --bg-primary: #1a0a0a;
-            --bg-secondary: #2d1515;
-            --bg-tertiary: #3d1f1f;
-            --text-primary: #fce4ec;
-            --text-secondary: #f8bbd9;
-            --accent: #c62828;
-            --accent-hover: #e53935;
-            --border: #4a1c1c;
-            --user-msg-bg: #3a1818;
-        }
-
-        [data-theme="ocean"] {
-            --bg-primary: #0a1419;
-            --bg-secondary: #0f1e28;
-            --bg-tertiary: #162936;
-            --text-primary: #e0f7fa;
-            --text-secondary: #80deea;
-            --accent: #00bcd4;
-            --accent-hover: #26c6da;
-            --border: #00838f;
-            --user-msg-bg: #143642;
-        }
-
-        [data-theme="violet"] {
-            --bg-primary: #120a1a;
-            --bg-secondary: #1e1229;
-            --bg-tertiary: #2a1a3d;
-            --text-primary: #f3e5f5;
-            --text-secondary: #ce93d8;
-            --accent: #9c27b0;
-            --accent-hover: #ab47bc;
-            --border: #4a148c;
-            --user-msg-bg: #2d1540;
+        [data-theme="bleu"] {
+            --bg-primary: #f0f7fb;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e3f2fd;
+            --text-primary: #1976d2;
+            --text-secondary: #42a5f5;
+            --border: #e3f2fd;
+            --success: #22c55e;
+            --sidebar-width: 280px;
+            --user-msg-bg: #e3f2fd;
+            --btn-primary: #bbdefb;
+            --btn-primary-hover: #90caf9;
+            --btn-primary-text: #0d47a1;
         }
 
         body {
@@ -112,6 +84,26 @@
         .app-container {
             display: flex;
             height: 100vh;
+        }
+
+        /* ===== SIDEBAR OVERLAY (Mobile) ===== */
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 98;
+            display: none;
+            backdrop-filter: blur(2px);
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         /* ===== SIDEBAR ===== */
@@ -142,14 +134,16 @@
         .logo-icon {
             width: 34px;
             height: 34px;
-            background: var(--accent);
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            font-size: 17px;
-            color: #0a0a0a;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .logo-text {
@@ -157,22 +151,30 @@
             font-weight: 600;
         }
 
-        .theme-btn {
+        .home-btn {
             width: 32px;
             height: 32px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            border-radius: 6px;
+            background: var(--btn-primary);
+            border: none;
+            border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 15px;
             transition: all 0.2s;
         }
 
-        .theme-btn:hover {
-            border-color: var(--accent);
+        .home-btn:hover {
+            background: var(--btn-primary-hover);
+            transform: scale(1.05);
+        }
+
+        .home-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--btn-primary-text);
+            stroke-width: 2;
+            fill: none;
         }
 
         .sidebar-content {
@@ -188,13 +190,14 @@
         .doc-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 6px 10px;
+            justify-content: space-between;
+            padding: 10px 12px;
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s;
             color: var(--text-secondary);
-            font-size: 13px;
+            font-size: 14px;
+            margin-bottom: 4px;
         }
 
         .doc-item:hover {
@@ -203,13 +206,19 @@
         }
 
         .doc-item.active {
-            background: var(--accent);
-            color: #0a0a0a;
+            background: var(--btn-primary);
+            color: var(--btn-primary-text);
         }
 
         .doc-item.disabled {
-            opacity: 0.4;
+            opacity: 0.6;
             cursor: not-allowed;
+        }
+
+        .doc-item .doc-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .doc-item .icon {
@@ -219,8 +228,17 @@
             font-size: 8px;
         }
 
+        .badge-soon {
+            font-size: 10px;
+            padding: 2px 6px;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
         .folder-item {
-            margin-bottom: 2px;
+            margin-bottom: 8px;
         }
 
         .folder-header {
@@ -229,25 +247,9 @@
             gap: 8px;
             padding: 8px 10px;
             border-radius: 6px;
-            transition: all 0.2s;
             color: var(--text-primary);
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
-        }
-
-        .folder-header:hover {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        .folder-header .chevron {
-            margin-left: auto;
-            transition: transform 0.2s;
-            font-size: 10px;
-        }
-
-        .folder-header.open .chevron {
-            transform: rotate(90deg);
         }
 
         .folder-content {
@@ -256,22 +258,12 @@
             margin-top: 2px;
         }
 
-        .folder-content.open {
-            display: block;
-        }
-
-        .folder-content .doc-item {
-            font-size: 16px;
-            padding: 10px 12px;
-            margin-bottom: 4px;
-        }
-
         .sidebar-footer {
             padding: 10px;
             border-top: 1px solid var(--border);
         }
 
-        .new-chat-btn {
+        .my-docs-btn-sidebar {
             width: 100%;
             padding: 10px;
             background: var(--bg-tertiary);
@@ -285,10 +277,32 @@
             justify-content: center;
             gap: 6px;
             transition: all 0.2s;
+            margin-bottom: 8px;
         }
 
-        .new-chat-btn:hover {
+        .my-docs-btn-sidebar:hover {
             background: var(--border);
+        }
+
+        .settings-btn {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .settings-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
         }
 
         /* ===== MAIN CONTENT ===== */
@@ -299,6 +313,7 @@
             overflow: hidden;
         }
 
+        /* ===== WELCOME SCREEN ===== */
         .welcome-screen {
             flex: 1;
             display: flex;
@@ -310,13 +325,60 @@
             display: none;
         }
 
-        .welcome-header-mobile {
-            display: none;
+        .welcome-header {
             padding: 16px 20px;
             border-bottom: 1px solid var(--border);
+            display: flex;
             align-items: center;
             gap: 12px;
             background: var(--bg-primary);
+        }
+
+        .hamburger-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-tertiary);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 8px;
+            transition: all 0.2s;
+        }
+
+        .hamburger-btn span {
+            width: 20px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .hamburger-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        .welcome-header-logo {
+            width: 34px;
+            height: 34px;
+        }
+
+        .welcome-header-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .welcome-header-info {
@@ -325,6 +387,31 @@
 
         .welcome-header-title {
             font-weight: 600;
+        }
+
+        .welcome-header-subtitle {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .new-project-btn-mobile {
+            width: 36px;
+            height: 36px;
+            background: var(--btn-primary);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--btn-primary-text);
+            transition: all 0.2s;
+        }
+
+        .new-project-btn-mobile:active {
+            transform: scale(0.95);
         }
 
         .welcome-content {
@@ -339,15 +426,20 @@
         .welcome-logo {
             width: 80px;
             height: 80px;
-            background: var(--accent);
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border);
             border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
-            font-weight: 700;
-            color: #0a0a0a;
             margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .welcome-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .welcome-title {
@@ -365,6 +457,11 @@
         .welcome-input-container {
             width: 100%;
             max-width: 600px;
+            display: none;
+        }
+
+        .welcome-input-container.visible {
+            display: block;
         }
 
         .welcome-textarea {
@@ -384,17 +481,17 @@
         }
 
         .welcome-textarea:focus {
-            border-color: var(--accent);
+            border-color: var(--text-secondary);
         }
 
         .welcome-send {
             margin-top: 16px;
             width: 100%;
             padding: 14px;
-            background: var(--accent);
+            background: var(--btn-primary);
             border: none;
             border-radius: 10px;
-            color: #0a0a0a;
+            color: var(--btn-primary-text);
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
@@ -406,7 +503,7 @@
         }
 
         .welcome-send:hover {
-            background: var(--accent-hover);
+            background: var(--btn-primary-hover);
         }
 
         .welcome-send svg {
@@ -440,6 +537,17 @@
             background: var(--bg-primary);
         }
 
+        .chat-header-logo {
+            width: 34px;
+            height: 34px;
+        }
+
+        .chat-header-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
         .chat-header-info {
             flex: 1;
         }
@@ -448,24 +556,15 @@
             font-weight: 600;
         }
 
-        .theme-btn-mobile {
-            width: 36px;
-            height: 36px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            transition: all 0.2s;
+        .chat-header-subtitle {
+            font-size: 12px;
+            color: var(--text-secondary);
         }
 
         .new-chat-btn-mobile {
             width: 36px;
             height: 36px;
-            background: var(--accent);
+            background: var(--btn-primary);
             border: none;
             border-radius: 8px;
             cursor: pointer;
@@ -474,12 +573,12 @@
             justify-content: center;
             font-size: 22px;
             font-weight: bold;
-            color: #0a0a0a;
+            color: var(--btn-primary-text);
             transition: all 0.2s;
         }
 
         .new-chat-btn-mobile:hover {
-            background: var(--accent-hover);
+            background: var(--btn-primary-hover);
         }
 
         .chat-messages {
@@ -541,7 +640,7 @@
             background: var(--user-msg-bg);
             color: var(--text-primary);
             border-bottom-right-radius: 4px;
-            border-left: 3px solid var(--accent);
+            border-left: 3px solid var(--text-secondary);
         }
 
         .message.ai .message-content {
@@ -550,19 +649,10 @@
             transition: background 0.3s;
         }
 
-        .message.ai .message-content p {
-            margin-bottom: 8px;
-        }
-
-        .message.ai .message-content p:last-child {
-            margin-bottom: 0;
-        }
-
         .chat-input-container {
             padding: 16px 20px;
             border-top: 1px solid var(--border);
             background: var(--bg-primary);
-            transition: background 0.3s;
         }
 
         .chat-input-wrapper {
@@ -584,22 +674,16 @@
             min-height: 44px;
             line-height: 1.4;
             overflow: hidden;
-            transition: background 0.3s, border-color 0.3s, color 0.3s;
         }
 
         .chat-input:focus {
-            border-color: var(--accent);
-        }
-
-        .chat-input:disabled,
-        .chat-send:disabled {
-            cursor: not-allowed;
+            border-color: var(--text-secondary);
         }
 
         .chat-send {
             width: 44px;
             height: 44px;
-            background: var(--accent);
+            background: var(--btn-primary);
             border: none;
             border-radius: 12px;
             cursor: pointer;
@@ -607,19 +691,141 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            transition: background 0.2s;
         }
 
         .chat-send:hover {
-            background: var(--accent-hover);
+            background: var(--btn-primary-hover);
         }
 
         .chat-send svg {
             width: 20px;
             height: 20px;
-            stroke: #0a0a0a;
+            stroke: var(--btn-primary-text);
             stroke-width: 2;
             fill: none;
+        }
+
+        /* ===== MES DOCUMENTS SCREEN ===== */
+        .mydocs-screen {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .mydocs-screen.visible {
+            display: flex;
+        }
+
+        .mydocs-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-primary);
+        }
+
+        .mydocs-header-logo {
+            width: 34px;
+            height: 34px;
+        }
+
+        .mydocs-header-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .mydocs-header-info {
+            flex: 1;
+        }
+
+        .mydocs-header-title {
+            font-weight: 600;
+        }
+
+        .mydocs-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .mydocs-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .mydocs-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .mydocs-empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .doc-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .doc-card:hover {
+            border-color: var(--text-secondary);
+            transform: translateY(-2px);
+        }
+
+        .doc-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .doc-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .doc-card-type {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .doc-card-btn {
+            padding: 6px 12px;
+            background: var(--btn-primary);
+            border: none;
+            border-radius: 6px;
+            color: var(--btn-primary-text);
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .doc-card-btn:hover {
+            background: var(--btn-primary-hover);
+        }
+
+        .doc-card-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .doc-card-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         /* ===== LOADING SCREEN ===== */
@@ -646,7 +852,7 @@
             width: 48px;
             height: 48px;
             border: 3px solid var(--border);
-            border-top-color: var(--accent);
+            border-top-color: var(--text-primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 16px;
@@ -664,7 +870,6 @@
             display: none;
             flex-direction: column;
             z-index: 50;
-            transition: background 0.3s;
         }
 
         .document-screen.visible {
@@ -718,20 +923,12 @@
             color: var(--text-primary);
             font-size: 14px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
-        }
-
-        .document-actions button:hover {
-            background: var(--bg-tertiary);
         }
 
         .document-actions button.primary {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: #0a0a0a;
+            background: var(--btn-primary);
+            border-color: var(--btn-primary);
+            color: var(--btn-primary-text);
         }
 
         .document-content {
@@ -747,13 +944,12 @@
             border-radius: 12px;
             padding: 32px;
             line-height: 1.7;
-            transition: background 0.3s;
         }
 
         .document-body h1 {
             font-size: 24px;
             margin-bottom: 8px;
-            color: var(--accent);
+            color: var(--text-primary);
         }
 
         .document-body h2 {
@@ -768,7 +964,7 @@
             font-size: 16px;
             margin-top: 24px;
             margin-bottom: 12px;
-            color: var(--accent);
+            color: var(--text-secondary);
         }
 
         .document-body p {
@@ -801,89 +997,8 @@
             font-weight: 600;
         }
 
-        /* ===== MOBILE DOCS BUTTON ===== */
-        .mobile-docs-btn {
-            display: none;
-            position: fixed;
-            bottom: 100px;
-            right: 20px;
-            width: 56px;
-            height: 56px;
-            background: var(--accent);
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 90;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        .mobile-docs-btn svg {
-            width: 24px;
-            height: 24px;
-            stroke: #0a0a0a;
-            stroke-width: 2;
-            fill: none;
-        }
-
-        .mobile-docs-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 60;
-            align-items: flex-end;
-        }
-
-        .mobile-docs-modal.visible {
-            display: flex;
-        }
-
-        .mobile-docs-content {
-            width: 100%;
-            max-height: 70vh;
-            background: var(--bg-secondary);
-            border-radius: 20px 20px 0 0;
-            padding: 20px;
-            overflow-y: auto;
-            transition: background 0.3s;
-        }
-
-        .mobile-docs-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-        }
-
-        .mobile-docs-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .mobile-docs-close {
-            width: 32px;
-            height: 32px;
-            background: var(--bg-tertiary);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-primary);
-        }
-
-        .mobile-docs-close svg {
-            width: 18px;
-            height: 18px;
-            stroke: currentColor;
-            stroke-width: 2;
-        }
-
-        /* ===== THEME MODAL ===== */
-        .theme-modal {
+        /* ===== SETTINGS MODAL ===== */
+        .settings-modal {
             display: none;
             position: fixed;
             inset: 0;
@@ -894,211 +1009,269 @@
             backdrop-filter: blur(8px);
         }
 
-        .theme-modal.visible {
+        .settings-modal.visible {
             display: flex;
         }
 
-        .theme-modal-content {
+        .settings-modal-content {
             background: var(--bg-secondary);
-            border-radius: 20px;
-            padding: 28px;
+            border-radius: 16px;
+            padding: 20px;
             width: 90%;
-            max-width: 400px;
-            transition: background 0.3s;
+            max-width: 320px;
             border: 1px solid var(--border);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
 
-        .theme-modal-title {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 24px;
-            text-align: center;
-            color: var(--text-primary);
-        }
-
-        .theme-options {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .theme-option {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            padding: 16px 12px;
-            background: var(--bg-tertiary);
-            border: 2px solid var(--border);
-            border-radius: 14px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            position: relative;
-        }
-
-        .theme-option:hover {
-            border-color: var(--accent);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-
-        .theme-option.active {
-            border-color: var(--accent);
-            background: var(--bg-secondary);
-            box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.2);
-        }
-
-        .theme-option.active .theme-option-check {
-            display: flex;
-        }
-
-        .theme-option-preview {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            border: 2px solid rgba(255,255,255,0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .theme-option-preview.dark { background: linear-gradient(135deg, #0a0a0a 0%, #141414 50%, #1a1a1a 100%); }
-        .theme-option-preview.light { background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 50%, #e8e8e8 100%); }
-        .theme-option-preview.navy { background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #243447 100%); }
-        .theme-option-preview.emerald { background: linear-gradient(135deg, #0a1612 0%, #0f211a 50%, #162d23 100%); }
-        .theme-option-preview.bordeaux { background: linear-gradient(135deg, #1a0a0a 0%, #2d1515 50%, #3d1f1f 100%); }
-        .theme-option-preview.ocean { background: linear-gradient(135deg, #0a1419 0%, #0f1e28 50%, #162936 100%); }
-        .theme-option-preview.violet { background: linear-gradient(135deg, #120a1a 0%, #1e1229 50%, #2a1a3d 100%); }
-
-        .theme-option-preview::after {
-            content: '';
-            position: absolute;
-            bottom: 4px;
-            left: 4px;
-            right: 4px;
-            height: 6px;
-            border-radius: 3px;
-        }
-
-        .theme-option-preview.dark::after, .theme-option-preview.light::after, .theme-option-preview.navy::after { background: #c9a227; }
-        .theme-option-preview.emerald::after { background: #4caf50; }
-        .theme-option-preview.bordeaux::after { background: #c62828; }
-        .theme-option-preview.ocean::after { background: #00bcd4; }
-        .theme-option-preview.violet::after { background: #9c27b0; }
-
-        .theme-option-name {
+        .settings-modal-title {
+            font-size: 16px;
             font-weight: 600;
-            font-size: 13px;
-            color: var(--text-primary);
+            margin-bottom: 16px;
+            text-align: center;
         }
 
-        .theme-option-check {
-            display: none;
-            position: absolute;
-            top: 6px;
-            right: 6px;
-            width: 18px;
-            height: 18px;
-            background: var(--accent);
-            border-radius: 50%;
-            align-items: center;
+        .settings-section {
+            margin-bottom: 12px;
+        }
+
+        .settings-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .theme-toggle {
+            display: flex;
+            gap: 10px;
             justify-content: center;
         }
 
-        .theme-option-check svg {
-            width: 12px;
-            height: 12px;
-            stroke: #0a0a0a;
-            stroke-width: 3;
+        .theme-icon-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
         }
 
-        .theme-modal-close {
-            margin-top: 24px;
-            width: 100%;
+        .theme-icon-btn:hover {
+            border-color: var(--text-secondary);
+        }
+
+        .theme-icon-btn.active {
+            border-color: var(--text-primary);
+            background: var(--btn-primary);
+        }
+
+        .profile-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             padding: 12px;
             background: var(--bg-tertiary);
-            border: 1px solid var(--border);
             border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 14px;
-            cursor: pointer;
         }
 
-        /* ===== RESPONSIVE ===== */
+        .profile-avatar-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .profile-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--btn-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--btn-primary-text);
+        }
+
+        .profile-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            padding: 8px 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--text-secondary);
+        }
+
+        .save-profile-btn {
+            padding: 8px;
+            background: var(--btn-primary);
+            border: none;
+            border-radius: 6px;
+            color: var(--btn-primary-text);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .save-profile-btn:hover {
+            background: var(--btn-primary-hover);
+        }
+
+        .profile-type {
+            padding: 6px 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .settings-footer-btns {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .logout-btn-modal {
+            flex: 1;
+            padding: 8px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn-modal:hover {
+            background: var(--border);
+        }
+
+        .settings-modal-close {
+            flex: 1;
+            padding: 8px;
+            background: var(--btn-primary);
+            border: none;
+            border-radius: 6px;
+            color: var(--btn-primary-text);
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .settings-modal-close:hover {
+            background: var(--btn-primary-hover);
+        }
+
+        /* ===== MOBILE ===== */
         @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .mobile-docs-btn { display: flex; }
-            .theme-btn-mobile { display: flex; }
-            .new-chat-btn-mobile { display: flex; }
-            .welcome-header-mobile { display: flex; }
-
-            .welcome-content .welcome-logo,
-            .welcome-content .welcome-title,
-            .welcome-content .welcome-subtitle { display: none; }
-
-            .welcome-screen { padding: 0; height: 100%; overflow-y: auto; }
-            .welcome-content { padding: 20px; }
-            .welcome-logo { width: 60px; height: 60px; font-size: 30px; }
-            .welcome-title { font-size: 22px; }
-            .welcome-textarea { min-height: 80px; }
-            .message { max-width: 90%; }
-            .document-body { padding: 20px; }
-
-            .main-content { height: 100dvh; height: 100vh; display: flex; flex-direction: column; }
-
-            .chat-screen {
+            .sidebar {
                 position: fixed;
-                top: 0; left: 0; right: 0; bottom: 0;
-                height: 100%;
-                flex-direction: column;
+                top: 0;
+                left: -280px;
+                height: 100vh;
+                z-index: 99;
+                box-shadow: 2px 0 16px rgba(0, 0, 0, 0.15);
+                transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s, border-color 0.3s;
             }
 
-            .chat-screen.visible { display: flex; }
-            .chat-screen .chat-header { flex-shrink: 0; background: var(--bg-primary); z-index: 10; }
-            .chat-messages { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-            .chat-input-container {
-                flex-shrink: 0;
-                background: var(--bg-primary);
-                border-top: 1px solid var(--border);
-                padding: 12px 16px;
-                padding-bottom: max(12px, env(safe-area-inset-bottom));
+            .sidebar.active {
+                left: 0;
             }
-            .chat-input { min-height: 44px; }
-            .welcome-input-container { padding-bottom: 20px; }
+
+            .hamburger-btn {
+                display: flex;
+            }
+
+            .new-project-btn-mobile {
+                display: flex;
+            }
+
+            .new-chat-btn-mobile {
+                display: flex;
+            }
+
+            .message {
+                max-width: 90%;
+            }
         }
     </style>
 </head>
-<body data-theme="dark">
+<body data-theme="vert">
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <div class="app-container">
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-logo">
-                    <div class="logo-icon">A</div>
+                    <div class="logo-icon">
+                        <img class="app-logo" alt="Ark">
+                    </div>
                     <div class="logo-text">Ark Intelligence</div>
                 </div>
-                <button class="theme-btn" id="themeBtnDesktop" title="Changer le thème">🎨</button>
+                <button class="home-btn" id="homeBtn" title="Accueil">
+                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                </button>
             </div>
 
             <div class="sidebar-content">
-                <!-- Ark Core -->
+                <!-- Ark Project -->
                 <div class="sidebar-section">
                     <div class="folder-item">
                         <div class="folder-header">
-                            <span>Ark Core</span>
+                            <span>Ark Project</span>
                         </div>
-                        <div class="folder-content" id="folder-ark-core">
-                            <div class="doc-item disabled" data-doc="definition_projet">
-                                <span class="icon">•</span>
-                                <span>Définition de projet</span>
+                        <div class="folder-content">
+                            <div class="doc-item" data-doc="definition_projet">
+                                <div class="doc-left">
+                                    <span class="icon">•</span>
+                                    <span>Définition de projet</span>
+                                </div>
                             </div>
                             <div class="doc-item disabled" data-doc="orientation_solution">
-                                <span class="icon">•</span>
-                                <span>Orientation de solution</span>
+                                <div class="doc-left">
+                                    <span class="icon">•</span>
+                                    <span>Orientation de solution</span>
+                                </div>
+                                <span class="badge-soon">Bientôt</span>
                             </div>
                             <div class="doc-item disabled" data-doc="formulation_solution">
-                                <span class="icon">•</span>
-                                <span>Formulation de solution</span>
+                                <div class="doc-left">
+                                    <span class="icon">•</span>
+                                    <span>Formulation de solution</span>
+                                </div>
+                                <span class="badge-soon">Bientôt</span>
                             </div>
                         </div>
                     </div>
@@ -1110,22 +1283,34 @@
                         <div class="folder-header">
                             <span>Ark Business</span>
                         </div>
-                        <div class="folder-content" id="folder-ark-business">
+                        <div class="folder-content">
                             <div class="doc-item disabled" data-doc="design_thinking">
-                                <span class="icon">•</span>
-                                <span>Design Thinking</span>
+                                <div class="doc-left">
+                                    <span class="icon">•</span>
+                                    <span>Design Thinking</span>
+                                </div>
+                                <span class="badge-soon">Bientôt</span>
                             </div>
                             <div class="doc-item disabled" data-doc="business_model">
-                                <span class="icon">•</span>
-                                <span>Business Model Canvas</span>
+                                <div class="doc-left">
+                                    <span class="icon">•</span>
+                                    <span>Business Model Canvas</span>
+                                </div>
+                                <span class="badge-soon">Bientôt</span>
                             </div>
                             <div class="doc-item disabled" data-doc="lean_startup">
-                                <span class="icon">•</span>
-                                <span>Lean Start Up</span>
+                                <div class="doc-left">
+                                    <span class="icon">•</span>
+                                    <span>Lean Start Up</span>
+                                </div>
+                                <span class="badge-soon">Bientôt</span>
                             </div>
                             <div class="doc-item disabled" data-doc="agile">
-                                <span class="icon">•</span>
-                                <span>Agile</span>
+                                <div class="doc-left">
+                                    <span class="icon">•</span>
+                                    <span>Agile</span>
+                                </div>
+                                <span class="badge-soon">Bientôt</span>
                             </div>
                         </div>
                     </div>
@@ -1133,34 +1318,43 @@
             </div>
 
             <div class="sidebar-footer">
-                <button class="new-chat-btn" id="newChatBtn">
-                    <span>+</span>
-                    <span>Nouveau projet</span>
+                <button class="my-docs-btn-sidebar" id="myDocsBtnSidebar">
+                    <span>📄</span>
+                    <span>Mes documents</span>
                 </button>
-                <button class="new-chat-btn" id="logoutBtn" style="margin-top: 8px; background: #3d1f1f; border-color: #5a2d2d;">
-                    <span>↪</span>
-                    <span>Déconnexion</span>
+                <button class="settings-btn" id="settingsBtn">
+                    <span>⚙️</span>
+                    <span>Paramètres</span>
                 </button>
             </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Welcome Screen -->
+            <!-- Welcome Screen (Accueil) -->
             <div class="welcome-screen" id="welcomeScreen">
-                <div class="welcome-header-mobile">
-                    <div class="logo-icon">A</div>
-                    <div class="welcome-header-info">
-                        <div class="welcome-header-title">Ark Intelligence</div>
+                <div class="welcome-header">
+                    <button class="hamburger-btn" id="hamburgerBtnWelcome">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <div class="welcome-header-logo">
+                        <img class="app-logo" alt="Ark">
                     </div>
-                    <button class="theme-btn-mobile" id="themeBtnWelcome" title="Changer le thème">🎨</button>
+                    <div class="welcome-header-info">
+                        <div class="welcome-header-title" id="welcomePageTitle">Accueil</div>
+                    </div>
+                    <button class="new-project-btn-mobile" id="newProjectBtnWelcome">+</button>
                 </div>
                 
                 <div class="welcome-content">
-                    <div class="welcome-logo">A</div>
+                    <div class="welcome-logo">
+                        <img class="app-logo" alt="Ark Intelligence">
+                    </div>
                     <h1 class="welcome-title">Ark Intelligence</h1>
-                    <p class="welcome-subtitle">Assistant de cadrage projet</p>
-                    <div class="welcome-input-container">
+                    <p class="welcome-subtitle" id="welcomeMessage">Bienvenue sur Ark Intelligence</p>
+                    <div class="welcome-input-container" id="welcomeInputContainer">
                         <textarea class="welcome-textarea" id="welcomeInput" placeholder="Décrivez votre projet en quelques mots..." rows="3"></textarea>
                         <button class="welcome-send" id="welcomeSend">
                             C'est parti
@@ -1173,12 +1367,19 @@
             <!-- Chat Screen -->
             <div class="chat-screen" id="chatScreen">
                 <div class="chat-header">
-                    <div class="logo-icon">A</div>
+                    <button class="hamburger-btn" id="hamburgerBtnChat">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <div class="chat-header-logo">
+                        <img class="app-logo" alt="Ark">
+                    </div>
                     <div class="chat-header-info">
-                        <div class="chat-header-title">Ark Intelligence</div>
+                        <div class="chat-header-title" id="chatTitle">Définition de projet</div>
+                        <div class="chat-header-subtitle" id="chatSubtitle">Ark Project</div>
                     </div>
                     <button class="new-chat-btn-mobile" id="newChatBtnMobile" title="Nouveau projet">+</button>
-                    <button class="theme-btn-mobile" id="themeBtnMobile" title="Changer le thème">🎨</button>
                 </div>
                 <div class="chat-messages" id="chatMessages"></div>
                 <div class="chat-input-container">
@@ -1188,6 +1389,26 @@
                             <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                         </button>
                     </div>
+                </div>
+            </div>
+
+            <!-- Mes Documents Screen -->
+            <div class="mydocs-screen" id="mydocsScreen">
+                <div class="mydocs-header">
+                    <button class="hamburger-btn" id="hamburgerBtnMyDocs">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <div class="mydocs-header-logo">
+                        <img class="app-logo" alt="Ark">
+                    </div>
+                    <div class="mydocs-header-info">
+                        <div class="mydocs-header-title">Mes documents</div>
+                    </div>
+                </div>
+                <div class="mydocs-content">
+                    <div class="mydocs-list" id="mydocsList"></div>
                 </div>
             </div>
         </main>
@@ -1218,76 +1439,86 @@
         </div>
     </div>
 
-    <!-- Mobile Docs Button -->
-    <button class="mobile-docs-btn" id="mobileDocsBtn">
-        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-    </button>
-
-    <!-- Mobile Docs Modal -->
-    <div class="mobile-docs-modal" id="mobileDocsModal">
-        <div class="mobile-docs-content">
-            <div class="mobile-docs-header">
-                <div class="mobile-docs-title">Documents</div>
-                <button class="mobile-docs-close" id="mobileDocsClose">
-                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-            </div>
-            <div id="mobileDocsList"></div>
-        </div>
-    </div>
-
-    <!-- Theme Modal -->
-    <div class="theme-modal" id="themeModal">
-        <div class="theme-modal-content">
-            <div class="theme-modal-title">Choisir un thème</div>
-            <div class="theme-options">
-                <div class="theme-option active" data-theme="dark">
-                    <div class="theme-option-preview dark"></div>
-                    <span class="theme-option-name">Sombre</span>
-                    <div class="theme-option-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-                </div>
-                <div class="theme-option" data-theme="light">
-                    <div class="theme-option-preview light"></div>
-                    <span class="theme-option-name">Clair</span>
-                    <div class="theme-option-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-                </div>
-                <div class="theme-option" data-theme="navy">
-                    <div class="theme-option-preview navy"></div>
-                    <span class="theme-option-name">Bleu Nuit</span>
-                    <div class="theme-option-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-                </div>
-                <div class="theme-option" data-theme="emerald">
-                    <div class="theme-option-preview emerald"></div>
-                    <span class="theme-option-name">Émeraude</span>
-                    <div class="theme-option-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-                </div>
-                <div class="theme-option" data-theme="bordeaux">
-                    <div class="theme-option-preview bordeaux"></div>
-                    <span class="theme-option-name">Bordeaux</span>
-                    <div class="theme-option-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-                </div>
-                <div class="theme-option" data-theme="ocean">
-                    <div class="theme-option-preview ocean"></div>
-                    <span class="theme-option-name">Océan</span>
-                    <div class="theme-option-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-                </div>
-                <div class="theme-option" data-theme="violet">
-                    <div class="theme-option-preview violet"></div>
-                    <span class="theme-option-name">Violet</span>
-                    <div class="theme-option-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-modal-content">
+            <div class="settings-modal-title">Paramètres</div>
+            
+            <!-- Profil Section -->
+            <div class="settings-section">
+                <div class="settings-section-title">Profil</div>
+                <div class="profile-form">
+                    <div class="profile-avatar-container">
+                        <div class="profile-avatar" id="profileAvatar">U</div>
+                    </div>
+                    <div class="profile-fields">
+                        <div class="form-group">
+                            <label for="profileNameInput">Nom</label>
+                            <input type="text" id="profileNameInput" placeholder="Votre nom">
+                        </div>
+                        <div class="form-group">
+                            <label for="profilePhoneInput">Téléphone</label>
+                            <input type="tel" id="profilePhoneInput" placeholder="Votre téléphone">
+                        </div>
+                        <div class="form-group">
+                            <label for="profileEmailInput">Email</label>
+                            <input type="email" id="profileEmailInput" placeholder="Votre email">
+                        </div>
+                        <div class="form-group">
+                            <label>Type de compte</label>
+                            <div class="profile-type" id="profileType">Porteur de projet</div>
+                        </div>
+                        <button class="save-profile-btn" id="saveProfileBtn">Enregistrer</button>
+                    </div>
                 </div>
             </div>
-            <button class="theme-modal-close" id="themeModalClose">Fermer</button>
+            
+            <!-- Thème Section -->
+            <div class="settings-section">
+                <div class="settings-section-title">Thème</div>
+                <div class="theme-toggle">
+                    <button class="theme-icon-btn" data-theme="dark" title="Sombre">
+                        🌙
+                    </button>
+                    <button class="theme-icon-btn" data-theme="light" title="Clair">
+                        ☀️
+                    </button>
+                    <button class="theme-icon-btn active" data-theme="vert" title="Vert menthe">
+                        🍃
+                    </button>
+                    <button class="theme-icon-btn" data-theme="bleu" title="Bleu ciel">
+                        ☁️
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Boutons en bas -->
+            <div class="settings-footer-btns">
+                <button class="logout-btn-modal" id="logoutBtnModal">Déconnexion</button>
+                <button class="settings-modal-close" id="settingsModalClose">Fermer</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Vérifier si l'utilisateur est connecté
+        // ===== CENTRALISATION DU LOGO =====
+        const LOGO_BASE64 = "data:image/webp;base64,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";
+
+        function applyLogo() {
+            document.getElementById('favicon').href = LOGO_BASE64;
+            document.getElementById('appleTouchIcon').href = LOGO_BASE64;
+            document.querySelectorAll('.app-logo').forEach(img => img.src = LOGO_BASE64);
+        }
+
+        applyLogo();
+
+        // ===== VÉRIFICATION CONNEXION =====
         const user = localStorage.getItem('ark_user');
         if (!user) {
             window.location.href = 'connexion.html';
-            throw new Error('Redirect')
-        }        
+            throw new Error('Redirect');
+        }
+        
         const CONFIG = { apiUrl: '/api/chat' };
 
         const state = {
@@ -1295,37 +1526,46 @@
             documentsReady: false,
             documentCache: {},
             currentDoc: null,
-            currentTheme: localStorage.getItem('ark-theme') || 'dark',
+            currentDocType: null,
+            currentTheme: localStorage.getItem('ark-theme') || 'vert',
             cadrageComplete: false,
-            projetNom: null
+            projetNom: null,
+            currentScreen: 'welcome'
         };
 
         const elements = {
             welcomeScreen: document.getElementById('welcomeScreen'),
             chatScreen: document.getElementById('chatScreen'),
+            mydocsScreen: document.getElementById('mydocsScreen'),
             loadingScreen: document.getElementById('loadingScreen'),
             documentScreen: document.getElementById('documentScreen'),
             welcomeInput: document.getElementById('welcomeInput'),
             welcomeSend: document.getElementById('welcomeSend'),
+            welcomeInputContainer: document.getElementById('welcomeInputContainer'),
+            welcomePageTitle: document.getElementById('welcomePageTitle'),
+            welcomeMessage: document.getElementById('welcomeMessage'),
             chatMessages: document.getElementById('chatMessages'),
             chatInput: document.getElementById('chatInput'),
             chatSend: document.getElementById('chatSend'),
-            newChatBtn: document.getElementById('newChatBtn'),
+            chatTitle: document.getElementById('chatTitle'),
+            chatSubtitle: document.getElementById('chatSubtitle'),
             newChatBtnMobile: document.getElementById('newChatBtnMobile'),
             documentBack: document.getElementById('documentBack'),
             documentTitle: document.getElementById('documentTitle'),
             documentBody: document.getElementById('documentBody'),
             copyDoc: document.getElementById('copyDoc'),
             shareWhatsApp: document.getElementById('shareWhatsApp'),
-            mobileDocsBtn: document.getElementById('mobileDocsBtn'),
-            mobileDocsModal: document.getElementById('mobileDocsModal'),
-            mobileDocsClose: document.getElementById('mobileDocsClose'),
-            mobileDocsList: document.getElementById('mobileDocsList'),
-            themeBtnDesktop: document.getElementById('themeBtnDesktop'),
-            themeBtnMobile: document.getElementById('themeBtnMobile'),
-            themeBtnWelcome: document.getElementById('themeBtnWelcome'),
-            themeModal: document.getElementById('themeModal'),
-            themeModalClose: document.getElementById('themeModalClose')
+            mydocsList: document.getElementById('mydocsList'),
+            settingsBtn: document.getElementById('settingsBtn'),
+            settingsModal: document.getElementById('settingsModal'),
+            settingsModalClose: document.getElementById('settingsModalClose'),
+            homeBtn: document.getElementById('homeBtn'),
+            sidebar: document.getElementById('sidebar'),
+            sidebarOverlay: document.getElementById('sidebarOverlay'),
+            hamburgerBtnWelcome: document.getElementById('hamburgerBtnWelcome'),
+            hamburgerBtnChat: document.getElementById('hamburgerBtnChat'),
+            hamburgerBtnMyDocs: document.getElementById('hamburgerBtnMyDocs'),
+            newProjectBtnWelcome: document.getElementById('newProjectBtnWelcome')
         };
 
         const DOC_NAMES = {
@@ -1337,6 +1577,66 @@
             lean_startup: 'Lean Start Up',
             agile: 'Agile'
         };
+
+        const DOC_FOLDERS = {
+            definition_projet: 'Ark Project',
+            orientation_solution: 'Ark Project',
+            formulation_solution: 'Ark Project',
+            design_thinking: 'Ark Business',
+            business_model: 'Ark Business',
+            lean_startup: 'Ark Business',
+            agile: 'Ark Business'
+        };
+
+        // ===== HAMBURGER MENU =====
+        function toggleSidebar() {
+            const isActive = elements.sidebar.classList.toggle('active');
+            elements.sidebarOverlay.classList.toggle('active');
+            
+            // Toggle hamburger animation
+            [elements.hamburgerBtnWelcome, elements.hamburgerBtnChat, elements.hamburgerBtnMyDocs].forEach(btn => {
+                if (btn) btn.classList.toggle('active');
+            });
+        }
+
+        function closeSidebar() {
+            elements.sidebar.classList.remove('active');
+            elements.sidebarOverlay.classList.remove('active');
+            [elements.hamburgerBtnWelcome, elements.hamburgerBtnChat, elements.hamburgerBtnMyDocs].forEach(btn => {
+                if (btn) btn.classList.remove('active');
+            });
+        }
+
+        // Hamburger buttons
+        if (elements.hamburgerBtnWelcome) elements.hamburgerBtnWelcome.addEventListener('click', toggleSidebar);
+        if (elements.hamburgerBtnChat) elements.hamburgerBtnChat.addEventListener('click', toggleSidebar);
+        if (elements.hamburgerBtnMyDocs) elements.hamburgerBtnMyDocs.addEventListener('click', toggleSidebar);
+
+        // Close sidebar when clicking overlay
+        elements.sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // New project button mobile
+        if (elements.newProjectBtnWelcome) {
+            elements.newProjectBtnWelcome.addEventListener('click', () => {
+                closeSidebar();
+                goToHome();
+            });
+        }
+
+        // ===== FONCTION POUR METTRE À JOUR LE TITRE =====
+        function updatePageTitle(docType) {
+            if (docType === null) {
+                elements.welcomePageTitle.textContent = 'Accueil';
+                elements.welcomeInputContainer.classList.remove('visible');
+                elements.welcomeMessage.textContent = 'Bienvenue sur Ark Intelligence';
+            } else {
+                elements.welcomePageTitle.textContent = DOC_NAMES[docType];
+                elements.chatTitle.textContent = DOC_NAMES[docType];
+                elements.chatSubtitle.textContent = DOC_FOLDERS[docType];
+                elements.welcomeInputContainer.classList.add('visible');
+                elements.welcomeMessage.textContent = '';
+            }
+        }
 
         function init() {
             applyTheme(state.currentTheme);
@@ -1354,51 +1654,217 @@
             elements.welcomeInput.addEventListener('input', () => autoResize(elements.welcomeInput, 200));
             elements.chatInput.addEventListener('input', () => autoResize(elements.chatInput, 150));
 
-            elements.chatInput.addEventListener('focus', () => {
-                setTimeout(() => { scrollToBottom(); elements.chatInput.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, 300);
-            });
-
-            elements.welcomeInput.addEventListener('focus', () => {
-                setTimeout(() => { elements.welcomeInput.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300);
-            });
-
-            elements.newChatBtn.addEventListener('click', resetChat);
-            elements.newChatBtnMobile.addEventListener('click', resetChat);
-            elements.documentBack.addEventListener('click', () => switchScreen('chat'));
+            elements.newChatBtnMobile.addEventListener('click', goToHome);
+            elements.documentBack.addEventListener('click', () => switchScreen('mydocs'));
             elements.copyDoc.addEventListener('click', copyDocument);
             elements.shareWhatsApp.addEventListener('click', shareWhatsApp);
 
-            elements.mobileDocsBtn.addEventListener('click', () => elements.mobileDocsModal.classList.add('visible'));
-            elements.mobileDocsClose.addEventListener('click', () => elements.mobileDocsModal.classList.remove('visible'));
-            elements.mobileDocsModal.addEventListener('click', (e) => { if (e.target === elements.mobileDocsModal) elements.mobileDocsModal.classList.remove('visible'); });
+            // Settings
+            elements.settingsBtn.addEventListener('click', openSettingsModal);
+            elements.settingsModalClose.addEventListener('click', closeSettingsModal);
+            elements.settingsModal.addEventListener('click', (e) => { if (e.target === elements.settingsModal) closeSettingsModal(); });
 
-            elements.themeBtnDesktop.addEventListener('click', openThemeModal);
-            elements.themeBtnMobile.addEventListener('click', openThemeModal);
-            elements.themeBtnWelcome.addEventListener('click', openThemeModal);
-            elements.themeModalClose.addEventListener('click', closeThemeModal);
-            elements.themeModal.addEventListener('click', (e) => { if (e.target === elements.themeModal) closeThemeModal(); });
-
-            document.querySelectorAll('.theme-option').forEach(option => {
-                option.addEventListener('click', () => { applyTheme(option.dataset.theme); closeThemeModal(); });
+            document.querySelectorAll('.theme-icon-btn').forEach(btn => {
+                btn.addEventListener('click', () => { applyTheme(btn.dataset.theme); });
             });
 
             document.querySelectorAll('.doc-item').forEach(item => {
-                item.addEventListener('click', () => { if (!item.classList.contains('disabled')) generateDocument(item.dataset.doc); });
+                item.addEventListener('click', () => { 
+                    if (!item.classList.contains('disabled')) {
+                        selectDocument(item.dataset.doc);
+                        closeSidebar();
+                    }
+                });
             });
 
-            renderMobileDocsList();
+            // Home button
+            elements.homeBtn.addEventListener('click', () => {
+                goToHome();
+                closeSidebar();
+            });
+
+            // Logout
+            document.getElementById('logoutBtnModal').addEventListener('click', () => {
+                localStorage.removeItem('ark_user');
+                window.location.href = 'connexion.html';
+            });
+
+            // Sauvegarder le profil
+            document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
+
+            // Mes documents
+            document.getElementById('myDocsBtnSidebar').addEventListener('click', () => {
+                showMyDocuments();
+                closeSidebar();
+            });
+
             switchScreen('welcome');
+            updatePageTitle(null);
         }
 
-        function openThemeModal() { elements.themeModal.classList.add('visible'); }
-        function closeThemeModal() { elements.themeModal.classList.remove('visible'); }
+        function goToHome() {
+            state.history = [];
+            state.documentsReady = false;
+            state.documentCache = {};
+            state.currentDoc = null;
+            state.currentDocType = null;
+            state.cadrageComplete = false;
+            state.projetNom = null;
+            elements.chatMessages.innerHTML = '';
+            elements.welcomeInput.value = '';
+            elements.chatInput.disabled = false;
+            elements.chatSend.disabled = false;
+            elements.chatInput.placeholder = 'Écrivez votre réponse...';
+            elements.chatInput.style.opacity = '1';
+            elements.chatSend.style.opacity = '1';
+            
+            document.querySelectorAll('.doc-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            switchScreen('welcome');
+            updatePageTitle(null);
+        }
+
+        function selectDocument(docType) {
+            state.currentDocType = docType;
+            
+            document.querySelectorAll('.doc-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.doc === docType) {
+                    item.classList.add('active');
+                }
+            });
+            
+            updatePageTitle(docType);
+            
+            if (state.documentCache[docType]) {
+                showDocument(docType, state.documentCache[docType]);
+                return;
+            }
+            
+            if (state.history.length === 0) {
+                switchScreen('welcome');
+                elements.welcomeInput.focus();
+                return;
+            }
+            
+            generateDocument(docType);
+        }
+
+        function showMyDocuments() {
+            closeSettingsModal();
+            
+            const docs = Object.keys(state.documentCache).map(docType => ({
+                doc_type: docType,
+                projet_nom: state.projetNom || 'Projet en cours',
+                contenu: state.documentCache[docType],
+                created_at: new Date().toISOString()
+            }));
+            
+            renderMyDocuments(docs);
+            switchScreen('mydocs');
+        }
+
+        function renderMyDocuments(docs) {
+            if (docs.length === 0) {
+                elements.mydocsList.innerHTML = `
+                    <div class="mydocs-empty">
+                        <div class="mydocs-empty-icon">📄</div>
+                        <div>Vous n'avez pas encore de documents générés</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            docs.forEach(doc => {
+                const date = new Date(doc.created_at).toLocaleDateString('fr-FR');
+                html += `
+                    <div class="doc-card" onclick="openDocFromCache('${doc.doc_type}')">
+                        <div class="doc-card-header">
+                            <div>
+                                <div class="doc-card-title">${doc.projet_nom || 'Sans titre'}</div>
+                                <div class="doc-card-type">${DOC_NAMES[doc.doc_type] || doc.doc_type}</div>
+                            </div>
+                            <button class="doc-card-btn" onclick="event.stopPropagation(); openDocFromCache('${doc.doc_type}')">Voir</button>
+                        </div>
+                        <div class="doc-card-meta">
+                            <div class="doc-card-meta-item">
+                                <span>📅</span>
+                                <span>${date}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            elements.mydocsList.innerHTML = html;
+        }
+
+        function openDocFromCache(docType) {
+            if (state.documentCache[docType]) {
+                showDocument(docType, state.documentCache[docType]);
+            }
+        }
+
+        function openSettingsModal() { 
+            elements.settingsModal.classList.add('visible');
+            const userData = JSON.parse(localStorage.getItem('ark_user'));
+            if (userData) {
+                const nameInput = document.getElementById('profileNameInput');
+                const phoneInput = document.getElementById('profilePhoneInput');
+                const emailInput = document.getElementById('profileEmailInput');
+                const typeEl = document.getElementById('profileType');
+                const avatarEl = document.getElementById('profileAvatar');
+                
+                if (userData.nom) {
+                    nameInput.value = userData.nom;
+                    avatarEl.textContent = userData.nom.charAt(0).toUpperCase();
+                }
+                if (userData.telephone) phoneInput.value = userData.telephone;
+                if (userData.email) emailInput.value = userData.email;
+                if (userData.type_user) {
+                    typeEl.textContent = userData.type_user === 'Ark Operational Specialist' ? 'Ark Operational Specialist' : 'Porteur de projet';
+                }
+            }
+        }
+        
+        function closeSettingsModal() { elements.settingsModal.classList.remove('visible'); }
+
+        function saveProfile() {
+            const nameInput = document.getElementById('profileNameInput');
+            const phoneInput = document.getElementById('profilePhoneInput');
+            const emailInput = document.getElementById('profileEmailInput');
+            const avatarEl = document.getElementById('profileAvatar');
+            
+            const userData = JSON.parse(localStorage.getItem('ark_user')) || {};
+            userData.nom = nameInput.value.trim();
+            userData.telephone = phoneInput.value.trim();
+            userData.email = emailInput.value.trim();
+            
+            localStorage.setItem('ark_user', JSON.stringify(userData));
+            
+            if (userData.nom) {
+                avatarEl.textContent = userData.nom.charAt(0).toUpperCase();
+            }
+            
+            const btn = document.getElementById('saveProfileBtn');
+            btn.textContent = 'Enregistré ✓';
+            btn.style.background = '#22c55e';
+            btn.style.color = '#fff';
+            setTimeout(() => {
+                btn.textContent = 'Enregistrer';
+                btn.style.background = '';
+                btn.style.color = '';
+            }, 2000);
+        }
 
         function applyTheme(theme) {
             document.body.setAttribute('data-theme', theme);
             state.currentTheme = theme;
             localStorage.setItem('ark-theme', theme);
-            document.querySelectorAll('.theme-option').forEach(option => {
-                option.classList.toggle('active', option.dataset.theme === theme);
+            document.querySelectorAll('.theme-icon-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.theme === theme);
             });
         }
 
@@ -1410,22 +1876,33 @@
         function switchScreen(screen) {
             elements.welcomeScreen.classList.add('hidden');
             elements.chatScreen.classList.remove('visible');
+            elements.mydocsScreen.classList.remove('visible');
             elements.loadingScreen.classList.remove('visible');
             elements.documentScreen.classList.remove('visible');
 
-            if (screen === 'welcome') elements.welcomeScreen.classList.remove('hidden');
-            else if (screen === 'chat') elements.chatScreen.classList.add('visible');
-            else if (screen === 'loading') elements.loadingScreen.classList.add('visible');
-            else if (screen === 'document') elements.documentScreen.classList.add('visible');
+            if (screen === 'welcome') {
+                elements.welcomeScreen.classList.remove('hidden');
+                state.currentScreen = 'welcome';
+            } else if (screen === 'chat') {
+                elements.chatScreen.classList.add('visible');
+                state.currentScreen = 'chat';
+            } else if (screen === 'mydocs') {
+                elements.mydocsScreen.classList.add('visible');
+                state.currentScreen = 'mydocs';
+            } else if (screen === 'loading') {
+                elements.loadingScreen.classList.add('visible');
+                state.currentScreen = 'loading';
+            } else if (screen === 'document') {
+                elements.documentScreen.classList.add('visible');
+                state.currentScreen = 'document';
+            }
         }
 
         async function handleWelcomeSend() {
             const message = elements.welcomeInput.value.trim();
-            if (!message) return;
+            if (!message || !state.currentDocType) return;
             
-            // Capturer le nom du projet
             state.projetNom = message.substring(0, 100);
-            
             switchScreen('chat');
             addMessage(message, 'user');
             elements.welcomeInput.value = '';
@@ -1553,8 +2030,12 @@
 
         function enableDocuments() {
             state.documentsReady = true;
-            document.querySelectorAll('.doc-item').forEach(item => item.classList.remove('disabled'));
-            renderMobileDocsList();
+            document.querySelectorAll('.doc-item').forEach(item => {
+                const docType = item.dataset.doc;
+                if (['definition_projet', 'orientation_solution', 'formulation_solution'].includes(docType)) {
+                    item.classList.remove('disabled');
+                }
+            });
         }
 
         async function generateDocument(docType) {
@@ -1562,8 +2043,8 @@
                 showDocument(docType, state.documentCache[docType]);
                 return;
             }
+            
             switchScreen('loading');
-            elements.mobileDocsModal.classList.remove('visible');
             
             const userData = JSON.parse(localStorage.getItem('ark_user'));
             const userId = userData ? userData.id : null;
@@ -1586,11 +2067,11 @@
                     showDocument(docType, data.document);
                 } else {
                     alert('Erreur lors de la génération');
-                    switchScreen('chat');
+                    switchScreen(state.currentScreen);
                 }
             } catch (error) {
                 alert('Erreur de connexion');
-                switchScreen('chat');
+                switchScreen(state.currentScreen);
             }
         }
 
@@ -1651,60 +2132,7 @@
             }
         }
 
-        function renderMobileDocsList() {
-            const sections = [
-                { title: 'Ark Core', docs: ['definition_projet', 'orientation_solution', 'formulation_solution'] },
-                { title: 'Ark Business', docs: ['design_thinking', 'business_model', 'lean_startup', 'agile'] }
-            ];
-            let html = '';
-            sections.forEach(section => {
-                html += `<div style="margin-bottom: 12px;"><div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; text-transform: uppercase;">${section.title}</div>`;
-                section.docs.forEach(doc => {
-                    const disabled = state.documentsReady ? '' : 'disabled';
-                    html += `<div class="doc-item ${disabled}" data-doc="${doc}"><span class="icon">•</span><span>${DOC_NAMES[doc]}</span></div>`;
-                });
-                html += '</div>';
-            });
-            elements.mobileDocsList.innerHTML = html;
-            elements.mobileDocsList.querySelectorAll('.doc-item').forEach(item => {
-                item.addEventListener('click', () => { if (!item.classList.contains('disabled')) generateDocument(item.dataset.doc); });
-            });
-        }
-
-        function resetChat() {
-            state.history = [];
-            state.documentsReady = false;
-            state.documentCache = {};
-            state.currentDoc = null;
-            state.cadrageComplete = false;
-            state.projetNom = null;
-            elements.chatMessages.innerHTML = '';
-            elements.welcomeInput.value = '';
-            elements.chatInput.disabled = false;
-            elements.chatSend.disabled = false;
-            elements.chatInput.placeholder = 'Écrivez votre réponse...';
-            elements.chatInput.style.opacity = '1';
-            elements.chatSend.style.opacity = '1';
-            document.querySelectorAll('.doc-item').forEach(item => item.classList.add('disabled'));
-            renderMobileDocsList();
-            switchScreen('welcome');
-        }
-
         init();
-
-        // Déconnexion
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            localStorage.removeItem('ark_user');
-            window.location.href = 'connexion.html';
-        });
-
-        if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', () => setTimeout(scrollToBottom, 100));
-        }
-
-        elements.chatInput.addEventListener('focus', () => {
-            setTimeout(() => elements.chatInput.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
-        });
     </script>
 </body>
 </html>
