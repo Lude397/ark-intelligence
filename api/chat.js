@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 // ==================== CONFIGURATION ====================
 const supabase = createClient(
     'https://ehaxnltgapcfxhwpqhyb.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVoYXhubHRnYXBjZnhod3BxaHliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjczNDg1NjksImV4cCI6MjA4MjkyNDU2OX0.-XLe5c2sgzGxv9Olc13Lu3S0hTHjSbs2brbvVC556Ec'
+    'COLLER_VOTRE_BASE64_ICI'
 );
 
 const MISTRAL_API_KEY = 'pnpx3zcKxb9xR2RK4kxyyOXNLDQ1paE4';
@@ -71,6 +71,44 @@ async function findSimilarExamples(projectDescription) {
             return null;
         }
 
+        // ==================== SOLUTION 4 : NETTOYAGE DES RÉFÉRENCES GÉOGRAPHIQUES ====================
+        if (similarExamples && similarExamples.length > 0) {
+            similarExamples.forEach(example => {
+                // Liste des villes du Congo à neutraliser
+                const villes = [
+                    'Brazzaville', 'Pointe-Noire', 'Dolisie', 'Loubomo', 
+                    'Nkayi', 'Ouesso', 'Owando', 'Ewo', 'Impfondo', 
+                    'Makoua', 'Djambala', 'Gamboma', 'Kinkala',
+                    'Kindamba', 'Sibiti', 'Loutété', 'Madingou'
+                ];
+                
+                // Remplacer chaque ville par [VILLE]
+                villes.forEach(ville => {
+                    const regex = new RegExp(ville, 'gi');
+                    example.contenu = example.contenu.replace(regex, '[VILLE]');
+                });
+                
+                // Nettoyer les autres références contextuelles
+                example.contenu = example.contenu
+                    .replace(/Congo-Brazzaville/gi, '[PAYS]')
+                    .replace(/République du Congo/gi, '[PAYS]')
+                    .replace(/FCFA/gi, '[DEVISE]')
+                    .replace(/Franc CFA/gi, '[DEVISE]')
+                    .replace(/Airtel Money/gi, '[MOBILE MONEY]')
+                    .replace(/MTN Mobile Money/gi, '[MOBILE MONEY]')
+                    .replace(/Poto-Poto/gi, '[QUARTIER]')
+                    .replace(/Bacongo/gi, '[QUARTIER]')
+                    .replace(/Mpila/gi, '[QUARTIER]')
+                    .replace(/Moungali/gi, '[QUARTIER]')
+                    .replace(/Lumumba/gi, '[QUARTIER]')
+                    .replace(/Tie-Tie/gi, '[QUARTIER]')
+                    .replace(/marché Total/gi, '[MARCHÉ LOCAL]');
+                
+                console.log('✅ Exemple nettoyé:', example.projet_type);
+            });
+        }
+        // ==================== FIN NETTOYAGE ====================
+
         return similarExamples;
 
     } catch (error) {
@@ -84,19 +122,53 @@ function buildPromptWithRAG(similarExamples, projectDescription) {
     let examplesSection = '';
     
     if (similarExamples && similarExamples.length > 0) {
+        // ==================== SOLUTION 4 : INSTRUCTION CLAIRE ====================
         examplesSection = `
 ---
-EXEMPLES DE QUESTIONS ADAPTÉES (inspire-toi de ces exemples pour formuler tes questions) :
+📚 EXEMPLES DE QUESTIONS ADAPTÉES (références géographiques neutralisées)
+
+⚠️ IMPORTANT : Les exemples ci-dessous utilisent des placeholders comme :
+   • [VILLE] = toute ville (pas de mention de ville spécifique)
+   • [PAYS] = tout pays
+   • [DEVISE] = toute monnaie
+   • [MOBILE MONEY] = tout moyen de paiement mobile
+   • [QUARTIER] = tout quartier
+   • [MARCHÉ LOCAL] = tout marché
+
+👉 Inspire-toi UNIQUEMENT de la STRUCTURE et du STYLE des questions.
+👉 Génère des options UNIVERSELLES et GÉNÉRIQUES, applicables partout.
+👉 NE MENTIONNE AUCUNE ville, pays, devise ou lieu spécifique.
 
 ${similarExamples.map((ex, i) => `
 ### Exemple ${i + 1} : ${ex.projet_type}
 ${ex.contenu}
 `).join('\n')}
+
+➡️ Tes questions doivent être GÉNÉRIQUES et adaptables à n'importe quel contexte.
 ---
 `;
+        // ==================== FIN INSTRUCTION ====================
     }
 
     return `Tu es Ark Intelligence, expert en cadrage de projet.
+
+**ÉTAPE 0 - CLASSIFICATION (OBLIGATOIRE au premier message) :**
+Analyse le message du client AVANT de poser des questions :
+
+1. QUESTION SUR L'APPLICATION ("c'est quoi", "comment ça marche", "à quoi ça sert", "qui a créé")
+   → Réponds brièvement : Ark Intelligence aide à structurer les projets via 12 questions de cadrage.
+   → Puis demande : "Décrivez-moi votre projet pour commencer !"
+
+2. HORS SUJET (météo, blagues, politique, sujets non liés aux projets)
+   → Réponds : "Je suis spécialisé dans le cadrage de projets entrepreneuriaux. Décrivez-moi votre idée et je vous guiderai !"
+
+3. MESSAGE VAGUE ("j'ai une idée", "je veux entreprendre", "aide-moi")
+   → Réponds : "Super ! Pouvez-vous me décrire votre projet plus précisément ? Par exemple : Je veux ouvrir une boulangerie, Je développe une application mobile..."
+
+4. PROJET DÉTECTÉ (description d'activité, business, idée entrepreneuriale claire)
+   → Passe directement à la MISSION ci-dessous
+
+---
 
 MISSION : Poser 12 questions de cadrage sous forme de QCM ADAPTÉ au projet du client.
 
@@ -105,11 +177,12 @@ ${examplesSection}
 RÈGLES IMPORTANTES :
 1. Chaque question doit avoir 5 options (A, B, C, D, E)
 2. Les options doivent être SPÉCIFIQUES au type de projet du client
-3. Adapte les exemples au contexte local (Congo, FCFA, Mobile Money)
-4. Une question à la fois
-5. Reformule d'abord ce que le client a dit
+3. PAS de mention de lieu géographique, ville, pays, quartier ou devise spécifique
+4. Génère des exemples UNIVERSELS applicables partout dans le monde
+5. Une question à la fois
+6. Reformule d'abord ce que le client a dit
 
-FORMAT DE RÉPONSE :
+FORMAT DE RÉPONSE (si projet détecté) :
 
 **Je reformule** : [reformulation courte]
 
@@ -119,10 +192,10 @@ FORMAT DE RÉPONSE :
 
 [Question adaptée au projet]
 
-A) [Option spécifique au projet]
-B) [Option spécifique au projet]
-C) [Option spécifique au projet]
-D) [Option spécifique au projet]
+A) [Option spécifique au projet mais GÉNÉRIQUE]
+B) [Option spécifique au projet mais GÉNÉRIQUE]
+C) [Option spécifique au projet mais GÉNÉRIQUE]
+D) [Option spécifique au projet mais GÉNÉRIQUE]
 E) Autre (précisez)
 
 ---
@@ -143,35 +216,47 @@ LES 12 QUESTIONS À POSER :
 
 ---
 
-PREMIER MESSAGE :
-"Bonjour ! Je suis Ark Intelligence, votre assistant de cadrage de projet."
-Puis reformule le projet et pose la Question 1 avec options adaptées.
-
 APRÈS LA QUESTION 12 :
 Réponds avec [GENERATE] suivi d'une synthèse des 12 réponses.
 
 ---
+
+⚠️ RAPPEL CRITIQUE : NE JAMAIS afficher de texte comme "Analyse de l'historique" ou "je dois poser la question X". Ces réflexions internes doivent rester invisibles.
 
 PROJET DU CLIENT : "${projectDescription}"`;
 }
 
 // ==================== HANDLE CHAT ====================
 async function handleChat(res, message, history) {
+    
+    // ========== PRÉ-FILTRE SALUTATIONS (pas d'appel API) ==========
+    const salutations = ['bonjour', 'salut', 'hello', 'coucou', 'hey', 'bonsoir', 'hi', 'yo', 'bjr', 'slt'];
+    const messageClean = message.toLowerCase().trim();
+    
+    // Si c'est le PREMIER message ET c'est une salutation simple
+    if ((!history || history.length === 0) && salutations.includes(messageClean)) {
+        return res.status(200).json({ 
+            action: 'continue',
+            response: "Bonjour ! Je suis **Ark Intelligence**, votre assistant de cadrage de projet. 🎯\n\nDécrivez-moi votre idée de projet et je vous guiderai à travers 12 questions pour le structurer.\n\n**Exemple** : *\"Je veux ouvrir une boulangerie\"* ou *\"Je développe une application mobile\"*"
+        });
+    }
+    // ========== FIN PRÉ-FILTRE ==========
+
     const historyText = history && history.length > 0 
         ? history.map(h => `${h.type === 'user' ? 'CLIENT' : 'ARK INTELLIGENCE'}: ${h.content}`).join('\n\n')
         : 'Premier message du client';
 
-    // Extraire la description du projet (premier message utilisateur)
+    // Extraire la description du projet (premier message utilisateur substantiel)
     const firstUserMessage = history && history.length > 0 
         ? history.find(h => h.type === 'user')?.content 
         : message;
 
-    // RAG : Rechercher des exemples similaires
+    // RAG : Rechercher des exemples similaires (avec nettoyage automatique)
     let similarExamples = null;
     if (firstUserMessage) {
         similarExamples = await findSimilarExamples(firstUserMessage);
         if (similarExamples && similarExamples.length > 0) {
-            console.log(`RAG: ${similarExamples.length} exemples trouvés pour "${firstUserMessage.substring(0, 50)}..."`);
+            console.log(`✅ RAG: ${similarExamples.length} exemples trouvés et nettoyés pour "${firstUserMessage.substring(0, 50)}..."`);
         }
     }
 
@@ -190,12 +275,14 @@ NOUVEAU MESSAGE DU CLIENT :
 
 ---
 INSTRUCTION : 
-1. Analyse l'historique pour identifier quelle question tu as déjà posée
-2. Pose la question SUIVANTE avec des options A) B) C) D) E) adaptées au projet
-3. Ne répète JAMAIS une question déjà posée
-4. Les options doivent être SPÉCIFIQUES au projet du client (pas génériques)
+1. Si c'est le premier message, applique l'ÉTAPE 0 (classification)
+2. Si un projet a été identifié, analyse l'historique pour identifier quelle question tu as déjà posée
+3. Pose la question SUIVANTE avec des options A) B) C) D) E) adaptées au projet
+4. Ne répète JAMAIS une question déjà posée
+5. Les options doivent être SPÉCIFIQUES au projet du client (pas génériques)
+6. AUCUNE mention de lieu géographique, ville, pays ou devise
 
-Progression : Q1 → Q2 → Q3 → Q4 → Q5 → Q6 → Q7 → Q8 → Q9 → Q10 → Q11 → Q12 → [GENERATE]`;
+Progression : Classification → Q1 → Q2 → Q3 → Q4 → Q5 → Q6 → Q7 → Q8 → Q9 → Q10 → Q11 → Q12 → [GENERATE]`;
 
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
@@ -517,7 +604,6 @@ RÈGLES :
 - Base-toi UNIQUEMENT sur la conversation
 - Si info manquante → "À définir"
 - Style professionnel et clair
-- Adapté au contexte Congo-Brazzaville (Mobile Money, FCFA)
 - Pas de blabla, que du concret
 - PAS d'émojis
 - N'utilise JAMAIS de majuscules inappropriées`;
