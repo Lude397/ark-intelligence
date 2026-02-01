@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription | Ark Intelligence</title>
+    <link rel="icon" id="favicon" type="image/webp">
+    <link rel="apple-touch-icon" id="appleTouchIcon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
@@ -15,20 +17,19 @@
         }
 
         :root {
-            --bg-primary: #0a0b0f;
-            --bg-secondary: #12141a;
-            --bg-card: #1a1c24;
-            --bg-input: #0d0e12;
-            --border-color: #2a2d38;
-            --border-focus: #d4a853;
-            --text-primary: #ffffff;
-            --text-secondary: #8a8f9c;
-            --text-muted: #5a5f6d;
-            --accent: #d4a853;
-            --accent-hover: #e5b964;
-            --accent-glow: rgba(212, 168, 83, 0.15);
-            --error: #e74c3c;
-            --success: #2ecc71;
+            --bg-primary: #f0f9f4;
+            --bg-secondary: #e8f5e9;
+            --bg-card: #ffffff;
+            --bg-input: #f8fafc;
+            --border-color: #c8e6c9;
+            --border-focus: #66bb6a;
+            --text-primary: #1b5e20;
+            --text-secondary: #2e7d32;
+            --text-muted: #66bb6a;
+            --accent: #66bb6a;
+            --accent-hover: #4caf50;
+            --error: #d93025;
+            --success: #1e8e3e;
         }
 
         body {
@@ -44,7 +45,6 @@
             overflow-x: hidden;
         }
 
-        /* Fond subtil avec gradient */
         body::before {
             content: '';
             position: fixed;
@@ -53,8 +53,8 @@
             right: 0;
             bottom: 0;
             background: 
-                radial-gradient(ellipse at 20% 20%, rgba(212, 168, 83, 0.03) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(212, 168, 83, 0.02) 0%, transparent 50%);
+                radial-gradient(ellipse at 20% 20%, rgba(102, 187, 106, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(102, 187, 106, 0.03) 0%, transparent 50%);
             pointer-events: none;
             z-index: 0;
         }
@@ -66,146 +66,151 @@
             z-index: 1;
         }
 
-        /* Header avec logo */
-        .header {
+        .logo-container {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 32px;
         }
 
-        .logo {
-            display: inline-flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 12px;
-        }
-
-        .logo-icon {
-            width: 48px;
+        .logo-container img {
             height: 48px;
-            background: linear-gradient(135deg, var(--accent) 0%, #b8943f 100%);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Sora', sans-serif;
-            font-weight: 700;
-            font-size: 22px;
-            color: var(--bg-primary);
-            box-shadow: 0 4px 20px rgba(212, 168, 83, 0.25);
+            width: auto;
+            margin-bottom: 8px;
         }
 
-        .logo-text {
-            font-family: 'Sora', sans-serif;
-            font-size: 26px;
-            font-weight: 700;
-            color: var(--text-primary);
-            letter-spacing: -0.5px;
-        }
-
-        .header-subtitle {
+        .logo-subtitle {
             color: var(--text-secondary);
-            font-size: 15px;
-            font-weight: 400;
+            font-size: 14px;
         }
 
-        /* Card principale */
         .card {
             background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 40px;
-            box-shadow: 
-                0 4px 6px rgba(0, 0, 0, 0.1),
-                0 20px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 24px rgba(46, 125, 50, 0.08);
+            border: 1px solid var(--border-color);
         }
 
-        .card-title {
+        .card-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .card-header h1 {
             font-family: 'Sora', sans-serif;
             font-size: 24px;
             font-weight: 600;
-            margin-bottom: 8px;
             color: var(--text-primary);
+            margin-bottom: 8px;
         }
 
-        .card-description {
+        .card-header p {
             color: var(--text-secondary);
             font-size: 14px;
-            margin-bottom: 32px;
-            line-height: 1.5;
         }
 
-        /* Formulaire */
         .form-group {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
-        .form-label {
+        .form-group label {
             display: block;
             font-size: 13px;
             font-weight: 500;
             color: var(--text-secondary);
             margin-bottom: 8px;
-            letter-spacing: 0.3px;
         }
 
-        .form-input {
+        .name-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .name-field {
+            flex: 1;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input {
             width: 100%;
             padding: 14px 16px;
+            font-size: 15px;
+            font-family: inherit;
             background: var(--bg-input);
             border: 1px solid var(--border-color);
             border-radius: 10px;
             color: var(--text-primary);
-            font-family: inherit;
-            font-size: 15px;
             transition: all 0.2s ease;
-            outline: none;
         }
 
-        .form-input::placeholder {
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            background: var(--bg-card);
+            box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.1);
+        }
+
+        .input-wrapper input::placeholder {
             color: var(--text-muted);
         }
 
-        .form-input:hover {
-            border-color: #3a3d48;
-        }
-
-        .form-input:focus {
-            border-color: var(--border-focus);
-            box-shadow: 0 0 0 3px var(--accent-glow);
-        }
-
-        /* Input téléphone avec préfixe */
-        .phone-input-wrapper {
+        .phone-input {
             display: flex;
             gap: 10px;
         }
 
         .phone-prefix {
-            width: 90px;
+            flex-shrink: 0;
+            width: 80px;
             padding: 14px 12px;
-            background: var(--bg-input);
+            font-size: 15px;
+            font-family: inherit;
+            background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 10px;
             color: var(--text-primary);
-            font-family: inherit;
-            font-size: 15px;
             text-align: center;
-            outline: none;
-            transition: all 0.2s ease;
+            font-weight: 500;
         }
 
-        .phone-prefix:focus {
-            border-color: var(--border-focus);
-            box-shadow: 0 0 0 3px var(--accent-glow);
-        }
-
-        .phone-number {
+        .phone-input input {
             flex: 1;
         }
 
-        /* Sélection du profil */
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 48px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+            font-size: 18px;
+        }
+
+        .toggle-password:hover {
+            color: var(--text-secondary);
+        }
+
         .profile-section {
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
 
         .profile-label {
@@ -214,7 +219,6 @@
             font-weight: 500;
             color: var(--text-secondary);
             margin-bottom: 12px;
-            letter-spacing: 0.3px;
         }
 
         .profile-options {
@@ -236,23 +240,23 @@
         .profile-card {
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: 16px 20px;
+            gap: 14px;
+            padding: 14px 16px;
             background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
         .profile-card:hover {
-            border-color: #3a3d48;
-            background: var(--bg-secondary);
+            border-color: var(--text-secondary);
+            background: var(--bg-card);
         }
 
         .profile-option input:checked + .profile-card {
             border-color: var(--accent);
-            background: var(--accent-glow);
+            background: var(--bg-card);
         }
 
         .profile-radio {
@@ -301,57 +305,24 @@
             color: var(--text-secondary);
         }
 
-        .profile-badge {
-            padding: 4px 10px;
-            background: var(--bg-secondary);
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .profile-option input:checked + .profile-card .profile-badge {
-            background: var(--accent);
-            color: var(--bg-primary);
-        }
-
-        /* Bouton submit */
         .submit-btn {
             width: 100%;
-            padding: 16px 24px;
-            background: linear-gradient(135deg, var(--accent) 0%, #c49b4a 100%);
-            border: none;
-            border-radius: 12px;
-            color: var(--bg-primary);
-            font-family: inherit;
+            padding: 14px;
             font-size: 15px;
             font-weight: 600;
+            font-family: inherit;
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .submit-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s ease;
+            transition: all 0.2s ease;
+            margin-top: 8px;
         }
 
         .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(212, 168, 83, 0.35);
-        }
-
-        .submit-btn:hover::before {
-            left: 100%;
+            background: var(--accent-hover);
+            transform: translateY(-1px);
         }
 
         .submit-btn:active {
@@ -359,37 +330,11 @@
         }
 
         .submit-btn:disabled {
-            opacity: 0.6;
+            opacity: 0.7;
             cursor: not-allowed;
             transform: none;
         }
 
-        /* Footer */
-        .footer {
-            text-align: center;
-            margin-top: 28px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .footer-text {
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        .footer-link {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        .footer-link:hover {
-            color: var(--accent-hover);
-            text-decoration: underline;
-        }
-
-        /* Message d'erreur */
         .error-message {
             display: none;
             color: var(--error);
@@ -397,15 +342,39 @@
             margin-top: 6px;
         }
 
-        .form-group.error .form-input {
+        .form-group.error input,
+        .name-field.error input {
             border-color: var(--error);
         }
 
-        .form-group.error .error-message {
+        .form-group.error .error-message,
+        .name-field.error .error-message {
             display: block;
         }
 
-        /* Animation de chargement */
+        .card-footer {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .card-footer p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .card-footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .card-footer a:hover {
+            opacity: 0.8;
+        }
+
         .loading {
             display: inline-flex;
             align-items: center;
@@ -413,9 +382,9 @@
         }
 
         .spinner {
-            width: 18px;
-            height: 18px;
-            border: 2px solid var(--bg-primary);
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
             border-top-color: transparent;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
@@ -425,93 +394,74 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Animations d'entrée */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .header {
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        .card {
-            animation: fadeInUp 0.6s ease 0.1s forwards;
-            opacity: 0;
-        }
-
-        /* Responsive */
         @media (max-width: 480px) {
             .card {
-                padding: 28px 24px;
-                border-radius: 16px;
+                padding: 28px 20px;
             }
 
-            .card-title {
-                font-size: 20px;
-            }
-
-            .logo-icon {
-                width: 42px;
-                height: 42px;
-                font-size: 18px;
-            }
-
-            .logo-text {
+            .card-header h1 {
                 font-size: 22px;
             }
 
-            .profile-card {
-                padding: 14px 16px;
+            .name-row {
+                flex-direction: column;
+                gap: 0;
             }
 
-            .profile-badge {
-                display: none;
+            .name-field {
+                margin-bottom: 20px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <div class="logo">
-                <div class="logo-icon">A</div>
-                <span class="logo-text">Ark Intelligence</span>
-            </div>
-            <p class="header-subtitle">Assistant de cadrage projet</p>
-        </header>
+        <div class="logo-container">
+            <img class="app-logo" alt="Ark Intelligence">
+            <p class="logo-subtitle">Assistant de cadrage projet</p>
+        </div>
 
         <div class="card">
-            <h1 class="card-title">Créer votre compte</h1>
-            <p class="card-description">Accédez à vos outils de cadrage et structurez vos projets efficacement.</p>
+            <div class="card-header">
+                <h1>Créer votre compte</h1>
+                <p>Accédez à vos outils de cadrage et structurez vos projets efficacement</p>
+            </div>
 
             <form id="registerForm" autocomplete="off">
-                <div class="form-group">
-                    <label class="form-label">Nom complet</label>
-                    <input type="text" class="form-input" id="nom" placeholder="Entrez votre nom" required>
-                    <span class="error-message">Veuillez entrer votre nom</span>
+                <div class="name-row">
+                    <div class="name-field">
+                        <label>Prénom</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="prenom" placeholder="Votre prénom" required>
+                        </div>
+                        <span class="error-message">Requis</span>
+                    </div>
+
+                    <div class="name-field">
+                        <label>Nom</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="nom" placeholder="Votre nom" required>
+                        </div>
+                        <span class="error-message">Requis</span>
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Numéro de téléphone</label>
-                    <div class="phone-input-wrapper">
-                        <input type="text" class="phone-prefix" value="+242" id="prefix" maxlength="5">
-                        <input type="tel" class="form-input phone-number" id="telephone" placeholder="01 234 56 78" required>
+                    <label>Numéro de téléphone</label>
+                    <div class="phone-input">
+                        <div class="phone-prefix">+242</div>
+                        <div class="input-wrapper">
+                            <input type="tel" id="telephone" placeholder="06 XXX XXXX" required>
+                        </div>
                     </div>
                     <span class="error-message">Veuillez entrer un numéro valide</span>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Mot de passe</label>
-                    <div style="position: relative;">
-                        <input type="password" class="form-input" id="password" placeholder="Minimum 6 caractères" required style="padding-right: 50px;">
-                        <button type="button" id="togglePassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 18px;">👁</button>
+                    <label>Mot de passe</label>
+                    <div class="input-wrapper password-wrapper">
+                        <input type="password" id="password" placeholder="Minimum 6 caractères" required>
+                        <button type="button" class="toggle-password" id="togglePassword">👁</button>
                     </div>
                     <span class="error-message">Minimum 6 caractères requis</span>
                 </div>
@@ -530,11 +480,11 @@
                             </div>
                         </label>
                         <label class="profile-option">
-                            <input type="radio" name="profil" value="entrepreneur">
+                            <input type="radio" name="profil" value="Ark Operational Specialist">
                             <div class="profile-card">
                                 <div class="profile-radio"></div>
                                 <div class="profile-info">
-                                    <div class="profile-name">Entrepreneur</div>
+                                    <div class="profile-name">Ark Operational Specialist</div>
                                     <div class="profile-desc">Accès complet à tous les outils</div>
                                 </div>
                             </div>
@@ -542,9 +492,11 @@
                     </div>
                 </div>
 
-                <div class="form-group" id="codeEntrepreneurGroup" style="display: none;">
-                    <label class="form-label">Code d'accès entrepreneur</label>
-                    <input type="text" class="form-input" id="codeEntrepreneur" placeholder="Entrez votre code">
+                <div class="form-group" id="codeArk Operational SpecialistGroup" style="display: none;">
+                    <label>Code d'accès Ark Operational Specialist</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="codeArk Operational Specialist" placeholder="Entrez votre code">
+                    </div>
                     <span class="error-message">Code invalide</span>
                 </div>
                 
@@ -553,45 +505,79 @@
                 </button>
             </form>
 
-            <footer class="footer">
-                <p class="footer-text">
-                    Déjà inscrit ? <a href="connexion.html" class="footer-link">Se connecter</a>
-                </p>
-            </footer>
+            <div class="card-footer">
+                <p>Déjà inscrit ? <a href="connexion.html">Se connecter</a></p>
+            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
     <script>
-        // Configuration Supabase
-        const SUPABASE_URL = 'https://kolwacpvfxdrptldipzj.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvbHdhY3B2ZnhkcnB0bGRpcHpqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE4MjYzOTMsImV4cCI6MjA3NzQwMjM5M30.cXXOxBkX9KaddhfY5JoAvMGz-ohxdCoh5iQlHMUGHqE';
-        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // ========================================
+        // CENTRALISATION LOGO
+        // ========================================
+        const LOGO_BASE64 = "data:image/webp;base64,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";
 
+        function applyLogo() {
+            const favicon = document.getElementById('favicon');
+            const appleTouchIcon = document.getElementById('appleTouchIcon');
+            
+            if (favicon) favicon.href = LOGO_BASE64;
+            if (appleTouchIcon) appleTouchIcon.href = LOGO_BASE64;
+            document.querySelectorAll('.app-logo').forEach(img => img.src = LOGO_BASE64);
+        }
+
+        // ========================================
+        // CONFIGURATION SUPABASE
+        // ========================================
+        const SUPABASE_URL = 'https://ehaxnltgapcfxhwpqhyb.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVoYXhubHRnYXBjZnhod3BxaHliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjczNDg1NjksImV4cCI6MjA4MjkyNDU2OX0.-XLe5c2sgzGxv9Olc13Lu3S0hTHjSbs2brbvVC556Ec';
+        
+        const arkSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ========================================
+        // INITIALISATION
+        // ========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            applyLogo();
+        });
+
+        // ========================================
+        // ÉLÉMENTS DOM
+        // ========================================
         const form = document.getElementById('registerForm');
         const submitBtn = document.getElementById('submitBtn');
 
+        // ========================================
+        // GESTION FORMULAIRE
+        // ========================================
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             // Reset errors
-            document.querySelectorAll('.form-group').forEach(g => g.classList.remove('error'));
+            document.querySelectorAll('.form-group, .name-field').forEach(g => g.classList.remove('error'));
             
+            const prenom = document.getElementById('prenom').value.trim();
             const nom = document.getElementById('nom').value.trim();
-            const prefix = document.getElementById('prefix').value.trim();
-            const telephone = document.getElementById('telephone').value.trim();
+            const telephone = '+242' + document.getElementById('telephone').value.replace(/\s/g, '');
             const password = document.getElementById('password').value;
             const profil = document.querySelector('input[name="profil"]:checked').value;
 
             // Validation
             let hasError = false;
 
-            if (!nom) {
-                document.getElementById('nom').closest('.form-group').classList.add('error');
+            if (!prenom) {
+                document.getElementById('prenom').closest('.name-field').classList.add('error');
                 hasError = true;
             }
 
-            if (!telephone || telephone.length < 6) {
+            if (!nom) {
+                document.getElementById('nom').closest('.name-field').classList.add('error');
+                hasError = true;
+            }
+
+            if (!telephone || telephone.replace('+242', '').length !== 9) {
                 document.getElementById('telephone').closest('.form-group').classList.add('error');
                 hasError = true;
             }
@@ -607,109 +593,125 @@
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="loading"><span class="spinner"></span> Création en cours...</span>';
 
-            const fullPhone = prefix + telephone.replace(/\s/g, '');
+            try {
+                // Si Ark Operational Specialist, vérifier le code
+                if (profil === 'Ark Operational Specialist') {
+                    const codeValue = document.getElementById('codeArk Operational Specialist').value.trim();
+                    
+                    if (!codeValue) {
+                        document.getElementById('codeArk Operational SpecialistGroup').classList.add('error');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = 'Créer mon compte';
+                        return;
+                    }
 
-           try {
-    // Si entrepreneur, vérifier le code
-    if (profil === 'entrepreneur') {
-        const codeValue = document.getElementById('codeEntrepreneur').value.trim();
-        
-        if (!codeValue) {
-            document.getElementById('codeEntrepreneurGroup').classList.add('error');
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'Créer mon compte';
-            return;
-        }
+                    // Vérifier le code dans Supabase
+                    const { data: codeData, error: codeError } = await arkSupabase
+                        .from('ark_codes')
+                        .select('*')
+                        .eq('code', codeValue)
+                        .eq('active', true)
+                        .eq('utilise', false)
+                        .single();
 
-        // Vérifier le code dans Supabase
-        const { data: codeData, error: codeError } = await sb
-            .from('ark_codes')
-            .select('*')
-            .eq('code', codeValue)
-            .eq('active', true)
-            .eq('utilise', false)
-            .single();
+                    if (codeError || !codeData) {
+                        document.getElementById('codeArk Operational SpecialistGroup').classList.add('error');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = 'Créer mon compte';
+                        return;
+                    }
+                }
 
-        if (codeError || !codeData) {
-            document.getElementById('codeEntrepreneurGroup').classList.add('error');
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'Créer mon compte';
-            return;
-        }
-    }
+                // Hasher le mot de passe
+                const salt = await dcodeIO.bcrypt.genSalt(10);
+                const hash = await dcodeIO.bcrypt.hash(password, salt);
 
-    // Appel fonction Supabase
-    const { data, error } = await sb.rpc('ark_create_user', {
-        p_nom: nom,
-        p_telephone: fullPhone,
-        p_password: password,
-        p_type_user: profil
-    });
+                // Créer l'utilisateur avec prénom ET nom
+                const { data, error } = await arkSupabase
+                    .from('ark_users')
+                    .insert([{
+                        prenom: prenom,
+                        nom: nom,
+                        telephone: telephone,
+                        password_hash: hash,
+                        type_user: profil
+                    }])
+                    .select()
+                    .single();
 
-    if (error) throw error;
+                if (error) throw error;
 
-    if (data.success) {
-        // Si entrepreneur, marquer le code comme utilisé
-        if (profil === 'entrepreneur') {
-            const codeValue = document.getElementById('codeEntrepreneur').value.trim();
-            await sb
-                .from('ark_codes')
-                .update({ utilise: true, utilise_par: data.user.id })
-                .eq('code', codeValue);
-        }
+                // Si Ark Operational Specialist, marquer le code comme utilisé
+                if (profil === 'Ark Operational Specialist') {
+                    const codeValue = document.getElementById('codeArk Operational Specialist').value.trim();
+                    await arkSupabase
+                        .from('ark_codes')
+                        .update({ utilise: true, utilise_par: data.id })
+                        .eq('code', codeValue);
+                }
 
-        // Stocker l'utilisateur
-        localStorage.setItem('ark_user', JSON.stringify(data.user));
-        // Redirection
-        window.location.href = 'index.html';
-    } else {
-        alert(data.error || 'Erreur lors de l\'inscription');
-    }
+                // Stocker l'utilisateur
+                localStorage.setItem('ark_user', JSON.stringify({
+                    id: data.id,
+                    prenom: data.prenom,
+                    nom: data.nom,
+                    telephone: data.telephone,
+                    type_user: data.type_user
+                }));
 
-} catch (error) {
+                // Redirection
+                window.location.href = 'index.html';
+
+            } catch (error) {
                 console.error('Erreur:', error);
-                alert('Une erreur est survenue. Veuillez réessayer.');
+                alert('Une erreur est survenue. Ce numéro existe peut-être déjà.');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = 'Créer mon compte';
             }
         });
 
-        // Format numéro de téléphone (01 234 5678)
-document.getElementById('telephone').addEventListener('input', (e) => {
-    let value = e.target.value.replace(/\D/g, '');
-    if (value.length > 9) value = value.slice(0, 9);
-    
-    if (value.length > 2) {
-        value = value.slice(0, 2) + ' ' + value.slice(2);
-    }
-    if (value.length > 5) {
-        value = value.slice(0, 6) + ' ' + value.slice(6);
-    }
-    
-    e.target.value = value;
-});
+        // ========================================
+        // FORMATAGE TÉLÉPHONE
+        // ========================================
+        document.getElementById('telephone').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 9) value = value.slice(0, 9);
+            
+            if (value.length > 2) {
+                value = value.slice(0, 2) + ' ' + value.slice(2);
+            }
+            if (value.length > 6) {
+                value = value.slice(0, 6) + ' ' + value.slice(6);
+            }
+            
+            e.target.value = value;
+        });
 
-// Voir/cacher mot de passe
-document.getElementById('togglePassword').addEventListener('click', () => {
-    const pwd = document.getElementById('password');
-    const btn = document.getElementById('togglePassword');
-    if (pwd.type === 'password') {
-        pwd.type = 'text';
-        btn.textContent = '🙈';
-    } else {
-        pwd.type = 'password';
-        btn.textContent = '👁';
-    }
-});
+        // ========================================
+        // TOGGLE PASSWORD
+        // ========================================
+        document.getElementById('togglePassword').addEventListener('click', () => {
+            const pwd = document.getElementById('password');
+            const btn = document.getElementById('togglePassword');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                btn.textContent = '🙈';
+            } else {
+                pwd.type = 'password';
+                btn.textContent = '👁';
+            }
+        });
 
-// Afficher champ code si Entrepreneur
-document.querySelectorAll('input[name="profil"]').forEach(radio => {
-    radio.addEventListener('change', (e) => {
-        const codeGroup = document.getElementById('codeEntrepreneurGroup');
-        codeGroup.style.display = e.target.value === 'entrepreneur' ? 'block' : 'none';
-    });
-});
+        // ========================================
+        // AFFICHER CHAMP CODE Ark Operational Specialist
+        // ========================================
+        document.querySelectorAll('input[name="profil"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const codeGroup = document.getElementById('codeArk Operational SpecialistGroup');
+                codeGroup.style.display = e.target.value === 'Ark Operational Specialist' ? 'block' : 'none';
+            });
+        });
     </script>
 </body>
 </html>
