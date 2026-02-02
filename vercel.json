@@ -16,6 +16,10 @@
       "dest": "/api/chat.js"
     },
     {
+      "src": "/share/([a-zA-Z0-9]+)",
+      "dest": "/share.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }
