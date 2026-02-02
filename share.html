@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document partagé - Ark Intelligence</title>
+    <link rel="icon" type="image/png" id="favicon" href="">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f9f4;
+            color: #2e7d32;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: #ffffff;
+            border-bottom: 2px solid #e8f5e9;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.1);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2e7d32;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #c8e6c9;
+            color: #1b5e20;
+        }
+
+        .btn-primary:hover {
+            background: #a5d6a7;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #2e7d32;
+            border: 1px solid #e8f5e9;
+        }
+
+        .btn-secondary:hover {
+            background: #e8f5e9;
+        }
+
+        .banner {
+            background: linear-gradient(135deg, #66bb6a 0%, #2e7d32 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+        }
+
+        .banner.visible {
+            display: flex;
+        }
+
+        .banner-content {
+            flex: 1;
+        }
+
+        .banner-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .banner-text {
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        .banner-btn {
+            background: white;
+            color: #2e7d32;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .banner-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .doc-info {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid #e8f5e9;
+            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.05);
+        }
+
+        .doc-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 14px;
+            color: #66bb6a;
+        }
+
+        .doc-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .doc-meta-separator {
+            width: 4px;
+            height: 4px;
+            background: #e8f5e9;
+            border-radius: 50%;
+        }
+
+        .document {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 1px solid #e8f5e9;
+            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.05);
+            min-height: 400px;
+        }
+
+        .document h1 {
+            font-size: 28px;
+            margin-bottom: 16px;
+            color: #2e7d32;
+            border-bottom: 2px solid #e8f5e9;
+            padding-bottom: 12px;
+        }
+
+        .document h2 {
+            font-size: 22px;
+            margin-top: 32px;
+            margin-bottom: 16px;
+            color: #2e7d32;
+        }
+
+        .document h3 {
+            font-size: 18px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: #66bb6a;
+        }
+
+        .document p {
+            margin-bottom: 16px;
+            color: #2e7d32;
+        }
+
+        .document ul, .document ol {
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        .document li {
+            margin-bottom: 8px;
+        }
+
+        .document table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .document th, .document td {
+            padding: 12px;
+            border: 1px solid #e8f5e9;
+            text-align: left;
+        }
+
+        .document th {
+            background: #e8f5e9;
+            font-weight: 600;
+            color: #2e7d32;
+        }
+
+        .document strong {
+            font-weight: 600;
+            color: #1b5e20;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid #e8f5e9;
+            border-top-color: #66bb6a;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            text-align: center;
+            padding: 60px 20px;
+            color: #d32f2f;
+        }
+
+        .error-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: #66bb6a;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: #2e7d32;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .header-actions .btn {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .banner {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .banner-btn {
+                width: 100%;
+            }
+
+            .document {
+                padding: 20px;
+            }
+
+            .document h1 {
+                font-size: 22px;
+            }
+
+            .doc-meta {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-logo">
+                <div class="logo-icon">
+                    <img class="app-logo" alt="Ark Intelligence">
+                </div>
+                <div class="logo-text">Ark Intelligence</div>
+            </div>
+            <div class="header-actions">
+                <a href="/" class="btn btn-primary">Créer mon document</a>
+            </div>
+        </div>
+
+        <div class="banner" id="banner">
+            <div class="banner-content">
+                <div class="banner-title">Créez vos propres documents professionnels</div>
+                <div class="banner-text">Rejoignez Ark Intelligence pour cadrer vos projets et générer vos documents automatiquement</div>
+            </div>
+            <button class="banner-btn" onclick="window.location.href='/connexion.html'">
+                S'inscrire gratuitement
+            </button>
+        </div>
+
+        <div class="doc-info" id="docInfo" style="display:none;">
+            <div class="doc-meta">
+                <div class="doc-meta-item">
+                    <span>Document de</span>
+                    <span id="ownerName">Chargement...</span>
+                </div>
+                <span class="doc-meta-separator"></span>
+                <div class="doc-meta-item">
+                    <span id="docType">Document</span>
+                </div>
+                <span class="doc-meta-separator"></span>
+                <div class="doc-meta-item">
+                    <span id="docDate">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="document" id="documentContent">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Chargement du document...</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            Généré avec <a href="/">Ark Intelligence</a> - Cadrez et structurez vos projets professionnels
+        </div>
+    </div>
+
+    <script>
+        const LOGO_BASE64 = "COLLER_VOTRE_BASE64_ICI";
+        const API_URL = '/api/chat';
+
+        function applyLogo() {
+            document.getElementById('favicon').href = LOGO_BASE64;
+            document.querySelectorAll('.app-logo').forEach(img => img.src = LOGO_BASE64);
+        }
+        applyLogo();
+
+        function getTokenFromURL() {
+            const path = window.location.pathname;
+            const match = path.match(/\/share\/([a-zA-Z0-9]+)/);
+            return match ? match[1] : null;
+        }
+
+        function markdownToHtml(md) {
+            let html = md;
+            html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+            html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+            html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/^\|(.+)\|$/gm, (match, content) => {
+                const cells = content.split('|').map(c => c.trim());
+                if (cells.every(c => /^[-:]+$/.test(c))) return '<!--separator-->';
+                return '<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>';
+            });
+            html = html.replace(/<!--separator-->/g, '');
+            html = html.replace(/(<tr>.*<\/tr>\n?)+/g, '<table>$&</table>');
+            html = html.replace(/^- (.*$)/gm, '<li>$1</li>');
+            html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
+            html = html.replace(/^(?!<[hultro])(.*$)/gm, (match) => match.trim() ? `<p>${match}</p>` : '');
+            html = html.replace(/<p><\/p>/g, '');
+            return html;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+        }
+
+        async function trackView(sharedLinkId) {
+            const userData = localStorage.getItem('ark_user');
+            let viewerUserId = null;
+            
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    viewerUserId = user.id;
+                } catch (e) {}
+            }
+
+            let viewerIp = 'unknown';
+            try {
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                viewerIp = ipData.ip;
+            } catch (e) {
+                viewerIp = `browser_${Date.now()}`;
+            }
+
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        mode: 'trackView',
+                        sharedLinkId,
+                        viewerUserId,
+                        viewerIp
+                    })
+                });
+            } catch (error) {
+                console.error('Erreur tracking:', error);
+            }
+        }
+
+        async function loadDocument() {
+            const token = getTokenFromURL();
+            
+            if (!token) {
+                document.getElementById('documentContent').innerHTML = `
+                    <div class="error">
+                        <div class="error-icon">⚠️</div>
+                        <h2>Lien invalide</h2>
+                        <p>Ce lien de partage n'est pas valide.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}?token=${encodeURIComponent(token)}`);
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Document introuvable');
+                }
+
+                const doc = data.document;
+
+                document.getElementById('ownerName').textContent = doc.owner_name;
+                document.getElementById('docType').textContent = doc.projet_nom || 'Document';
+                document.getElementById('docDate').textContent = formatDate(doc.created_at);
+                document.getElementById('docInfo').style.display = 'block';
+
+                document.getElementById('documentContent').innerHTML = markdownToHtml(doc.contenu);
+
+                if (data.sharedLinkId) {
+                    trackView(data.sharedLinkId);
+                }
+
+                const userData = localStorage.getItem('ark_user');
+                if (!userData) {
+                    document.getElementById('banner').classList.add('visible');
+                }
+
+            } catch (error) {
+                console.error('Erreur chargement:', error);
+                document.getElementById('documentContent').innerHTML = `
+                    <div class="error">
+                        <div class="error-icon">❌</div>
+                        <h2>Erreur</h2>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        loadDocument();
+    </script>
+</body>
+</html>
