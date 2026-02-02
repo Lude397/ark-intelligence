@@ -388,7 +388,6 @@ function renderMyDocuments(docs) {
     if (docs.length === 0) {
         elements.mydocsList.innerHTML = `
             <div class="mydocs-empty">
-                <div class="mydocs-empty-icon">📄</div>
                 <div>Vous n'avez pas encore de documents générés</div>
             </div>
         `;
