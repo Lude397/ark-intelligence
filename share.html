@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document partagé - Ark Intelligence</title>
-    <link rel="icon" type="image/png" id="favicon" href="">
+    <link rel="icon" type="image/png" href="/assets/logo.png">
     <style>
         * {
             margin: 0;
@@ -395,14 +395,11 @@
     </div>
 
     <script>
-        const LOGO_BASE64 = "COLLER_VOTRE_BASE64_ICI";
-        const API_URL = '/api/chat';
-
-        function applyLogo() {
-            document.getElementById('favicon').href = LOGO_BASE64;
-            document.querySelectorAll('.app-logo').forEach(img => img.src = LOGO_BASE64);
-        }
-        applyLogo();
+        const LOGO_URL = "/assets/logo.png";
+function applyLogo() {
+    document.querySelectorAll('.app-logo').forEach(img => img.src = LOGO_URL);
+}
+applyLogo();
 
         function getTokenFromURL() {
             const path = window.location.pathname;
