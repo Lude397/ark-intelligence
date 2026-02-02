@@ -1,12 +1,9 @@
 // ===== CENTRALISATION DU LOGO =====
-const LOGO_BASE64 = "COLLER_VOTRE_BASE64_ICI";
+const LOGO_URL = "/assets/logo.png";
 
 function applyLogo() {
-    document.getElementById('favicon').href = LOGO_BASE64;
-    document.getElementById('appleTouchIcon').href = LOGO_BASE64;
-    document.querySelectorAll('.app-logo').forEach(img => img.src = LOGO_BASE64);
+    document.querySelectorAll('.app-logo').forEach(img => img.src = LOGO_URL);
 }
-
 applyLogo();
 
 // ===== VÉRIFICATION CONNEXION =====
