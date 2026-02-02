@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 // ==================== CONFIGURATION ====================
 const supabase = createClient(
     'https://ehaxnltgapcfxhwpqhyb.supabase.co',
-    'COLLER_VOTRE_BASE64_ICI'
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVoYXhubHRnYXBjZnhod3BxaHliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjczNDg1NjksImV4cCI6MjA4MjkyNDU2OX0.-XLe5c2sgzGxv9Olc13Lu3S0hTHjSbs2brbvVC556Ec'
 );
 
 const MISTRAL_API_KEY = 'pnpx3zcKxb9xR2RK4kxyyOXNLDQ1paE4';
@@ -11,13 +11,23 @@ const MISTRAL_API_KEY = 'pnpx3zcKxb9xR2RK4kxyyOXNLDQ1paE4';
 // ==================== HANDLER ====================
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     if (req.method === 'OPTIONS') return res.status(200).end();
+    
+    // GET pour récupérer un document partagé
+    if (req.method === 'GET') {
+        const { token } = req.query;
+        if (token) {
+            return await getSharedDocument(res, token);
+        }
+        return res.status(400).json({ error: 'Token manquant' });
+    }
+    
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
     try {
-        const { mode, message, history, docType, userId, projetNom } = req.body;
+        const { mode, message, history, docType, userId, projetNom, documentId, sharedLinkId, viewerUserId, viewerIp } = req.body;
 
         if (mode === 'chat') {
             return await handleChat(res, message, history);
@@ -25,6 +35,18 @@ export default async function handler(req, res) {
         
         if (mode === 'generate') {
             return await handleGenerate(res, history, docType, userId, projetNom);
+        }
+
+        if (mode === 'createShareLink') {
+            return await createShareLink(res, documentId, userId);
+        }
+
+        if (mode === 'trackView') {
+            return await trackView(res, sharedLinkId, viewerUserId, viewerIp);
+        }
+
+        if (mode === 'getStats') {
+            return await getDocumentStats(res, documentId, userId);
         }
 
         return res.status(400).json({ error: 'Mode invalide' });
@@ -645,8 +667,9 @@ RÈGLES :
         success: true,
         document: document
     });
+}
 
-    // ==================== PARTAGE DE DOCUMENTS ====================
+// ==================== PARTAGE DE DOCUMENTS ====================
 
 // ENDPOINT 1 : CRÉER UN LIEN DE PARTAGE
 async function createShareLink(res, documentId, userId) {
@@ -873,5 +896,4 @@ async function getDocumentStats(res, documentId, userId) {
         console.error('Erreur getDocumentStats:', error);
         return res.status(500).json({ error: 'Erreur serveur' });
     }
-}
 }
