@@ -645,4 +645,233 @@ RÈGLES :
         success: true,
         document: document
     });
+
+    // ==================== PARTAGE DE DOCUMENTS ====================
+
+// ENDPOINT 1 : CRÉER UN LIEN DE PARTAGE
+async function createShareLink(res, documentId, userId) {
+    try {
+        // Vérifier que le document appartient à l'utilisateur
+        const { data: doc, error: docError } = await supabase
+            .from('ark_documents')
+            .select('id, user_id, projet_nom')
+            .eq('id', documentId)
+            .eq('user_id', userId)
+            .single();
+
+        if (docError || !doc) {
+            return res.status(404).json({ error: 'Document non trouvé ou accès refusé' });
+        }
+
+        // Vérifier si un lien existe déjà
+        const { data: existingLink, error: linkCheckError } = await supabase
+            .from('ark_shared_links')
+            .select('share_token')
+            .eq('document_id', documentId)
+            .eq('is_active', true)
+            .single();
+
+        if (existingLink) {
+            // Retourner le lien existant
+            return res.status(200).json({
+                success: true,
+                shareUrl: `https://arkintelligence.vercel.app/share/${existingLink.share_token}`,
+                token: existingLink.share_token
+            });
+        }
+
+        // Générer un token unique
+        const { data: tokenData, error: tokenError } = await supabase
+            .rpc('generate_share_token');
+
+        if (tokenError) {
+            console.error('Erreur génération token:', tokenError);
+            return res.status(500).json({ error: 'Erreur génération token' });
+        }
+
+        const token = tokenData;
+
+        // Créer le lien de partage
+        const { data: newLink, error: insertError } = await supabase
+            .from('ark_shared_links')
+            .insert({
+                document_id: documentId,
+                share_token: token,
+                is_active: true
+            })
+            .select()
+            .single();
+
+        if (insertError) {
+            console.error('Erreur création lien:', insertError);
+            return res.status(500).json({ error: 'Erreur création lien' });
+        }
+
+        return res.status(200).json({
+            success: true,
+            shareUrl: `https://arkintelligence.vercel.app/share/${token}`,
+            token: token
+        });
+
+    } catch (error) {
+        console.error('Erreur createShareLink:', error);
+        return res.status(500).json({ error: 'Erreur serveur' });
+    }
+}
+
+// ENDPOINT 2 : RÉCUPÉRER UN DOCUMENT PARTAGÉ
+async function getSharedDocument(res, token) {
+    try {
+        // Récupérer le lien de partage
+        const { data: link, error: linkError } = await supabase
+            .from('ark_shared_links')
+            .select(`
+                id,
+                document_id,
+                is_active,
+                ark_documents (
+                    id,
+                    projet_nom,
+                    doc_type,
+                    contenu,
+                    created_at,
+                    user_id,
+                    ark_users (
+                        nom,
+                        prenom
+                    )
+                )
+            `)
+            .eq('share_token', token)
+            .eq('is_active', true)
+            .single();
+
+        if (linkError || !link) {
+            return res.status(404).json({ error: 'Lien invalide ou expiré' });
+        }
+
+        const document = link.ark_documents;
+        const owner = document.ark_users;
+
+        return res.status(200).json({
+            success: true,
+            sharedLinkId: link.id,
+            document: {
+                id: document.id,
+                projet_nom: document.projet_nom,
+                doc_type: document.doc_type,
+                contenu: document.contenu,
+                created_at: document.created_at,
+                owner_name: owner ? `${owner.prenom} ${owner.nom}` : 'Utilisateur Ark'
+            }
+        });
+
+    } catch (error) {
+        console.error('Erreur getSharedDocument:', error);
+        return res.status(500).json({ error: 'Erreur serveur' });
+    }
+}
+
+// ENDPOINT 3 : TRACKER UNE VUE
+async function trackView(res, sharedLinkId, viewerUserId, viewerIp) {
+    try {
+        // Vérifier si cette IP a déjà vu ce document dans les 24h
+        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+        
+        const { data: recentView, error: checkError } = await supabase
+            .from('ark_document_views')
+            .select('id')
+            .eq('shared_link_id', sharedLinkId)
+            .eq('viewer_ip', viewerIp)
+            .gte('viewed_at', oneDayAgo)
+            .limit(1);
+
+        if (recentView && recentView.length > 0) {
+            // Cette IP a déjà vu le document récemment, on ne compte pas
+            return res.status(200).json({ success: true, counted: false });
+        }
+
+        let viewerName = 'Inconnu';
+
+        // Si l'utilisateur est connecté, récupérer son nom
+        if (viewerUserId) {
+            const { data: user, error: userError } = await supabase
+                .from('ark_users')
+                .select('nom, prenom')
+                .eq('id', viewerUserId)
+                .single();
+
+            if (user && !userError) {
+                viewerName = `${user.prenom} ${user.nom}`;
+            }
+        }
+
+        // Enregistrer la vue
+        const { error: insertError } = await supabase
+            .from('ark_document_views')
+            .insert({
+                shared_link_id: sharedLinkId,
+                viewer_user_id: viewerUserId,
+                viewer_name: viewerName,
+                viewer_ip: viewerIp
+            });
+
+        if (insertError) {
+            console.error('Erreur enregistrement vue:', insertError);
+            return res.status(500).json({ error: 'Erreur enregistrement' });
+        }
+
+        return res.status(200).json({ success: true, counted: true });
+
+    } catch (error) {
+        console.error('Erreur trackView:', error);
+        return res.status(500).json({ error: 'Erreur serveur' });
+    }
+}
+
+// ENDPOINT 4 : RÉCUPÉRER LES STATS D'UN DOCUMENT
+async function getDocumentStats(res, documentId, userId) {
+    try {
+        // Vérifier que le document appartient à l'utilisateur
+        const { data: doc, error: docError } = await supabase
+            .from('ark_documents')
+            .select('id')
+            .eq('id', documentId)
+            .eq('user_id', userId)
+            .single();
+
+        if (docError || !doc) {
+            return res.status(404).json({ error: 'Document non trouvé' });
+        }
+
+        // Récupérer les vues
+        const { data: views, error: viewsError } = await supabase
+            .from('ark_document_views')
+            .select(`
+                id,
+                viewer_name,
+                viewed_at,
+                ark_shared_links!inner (
+                    document_id
+                )
+            `)
+            .eq('ark_shared_links.document_id', documentId)
+            .order('viewed_at', { ascending: false });
+
+        if (viewsError) {
+            console.error('Erreur récupération vues:', viewsError);
+            return res.status(500).json({ error: 'Erreur récupération stats' });
+        }
+
+        return res.status(200).json({
+            success: true,
+            totalViews: views ? views.length : 0,
+            views: views || []
+        });
+
+    } catch (error) {
+        console.error('Erreur getDocumentStats:', error);
+        return res.status(500).json({ error: 'Erreur serveur' });
+    }
+}
 }
