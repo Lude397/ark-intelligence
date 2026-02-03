@@ -127,31 +127,45 @@ if (elements.newProjectBtnWelcome) {
 function updatePageTitle(docType) {
     if (docType === null) {
         elements.welcomePageTitle.textContent = 'Accueil';
-        elements.welcomeInputContainer.classList.remove('visible');
-        elements.welcomeMessage.textContent = 'Bienvenue sur Ark Intelligence';
+        if (elements.welcomeInputContainer) {
+            elements.welcomeInputContainer.classList.remove('visible');
+        }
+        if (elements.welcomeMessage) {
+            elements.welcomeMessage.textContent = 'Bienvenue sur Ark Intelligence';
+        }
     } else {
         elements.welcomePageTitle.textContent = DOC_NAMES[docType];
         elements.chatTitle.textContent = DOC_NAMES[docType];
         elements.chatSubtitle.textContent = DOC_FOLDERS[docType];
-        elements.welcomeInputContainer.classList.add('visible');
-        elements.welcomeMessage.textContent = '';
+        if (elements.welcomeInputContainer) {
+            elements.welcomeInputContainer.classList.add('visible');
+        }
+        if (elements.welcomeMessage) {
+            elements.welcomeMessage.textContent = '';
+        }
     }
 }
 
 function init() {
     applyTheme(state.currentTheme);
 
-    elements.welcomeSend.addEventListener('click', handleWelcomeSend);
-    elements.welcomeInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleWelcomeSend(); }
-    });
+    // ===== MODIFICATION : Vérifier l'existence des éléments avant d'ajouter les listeners =====
+    if (elements.welcomeSend) {
+        elements.welcomeSend.addEventListener('click', handleWelcomeSend);
+    }
+    
+    if (elements.welcomeInput) {
+        elements.welcomeInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleWelcomeSend(); }
+        });
+        elements.welcomeInput.addEventListener('input', () => autoResize(elements.welcomeInput, 200));
+    }
 
     elements.chatSend.addEventListener('click', handleChatSend);
     elements.chatInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleChatSend(); }
     });
 
-    elements.welcomeInput.addEventListener('input', () => autoResize(elements.welcomeInput, 200));
     elements.chatInput.addEventListener('input', () => autoResize(elements.chatInput, 150));
 
     elements.newChatBtnMobile.addEventListener('click', goToHome);
@@ -329,7 +343,12 @@ function goToHome() {
     state.projetNom = null;
     state.currentDocumentId = null;
     elements.chatMessages.innerHTML = '';
-    elements.welcomeInput.value = '';
+    
+    // ===== MODIFICATION : Vérifier l'existence avant d'accéder =====
+    if (elements.welcomeInput) {
+        elements.welcomeInput.value = '';
+    }
+    
     elements.chatInput.disabled = false;
     elements.chatSend.disabled = false;
     elements.chatInput.placeholder = 'Écrivez votre réponse...';
@@ -361,9 +380,14 @@ function selectDocument(docType) {
         return;
     }
     
+    // ===== MODIFICATION : Démarrer directement le chat au lieu de la page d'accueil =====
     if (state.history.length === 0) {
-        switchScreen('welcome');
-        elements.welcomeInput.focus();
+        switchScreen('chat');
+        
+        // Envoyer un message automatique pour démarrer le cadrage
+        const welcomeMessage = "Bonjour, je souhaite créer un document " + DOC_NAMES[docType];
+        addMessage(welcomeMessage, 'user');
+        sendToAPI(welcomeMessage);
         return;
     }
     
@@ -518,8 +542,11 @@ function switchScreen(screen) {
 }
 
 async function handleWelcomeSend() {
+    // ===== MODIFICATION : Vérifier l'existence des éléments =====
+    if (!elements.welcomeInput || !state.currentDocType) return;
+    
     const message = elements.welcomeInput.value.trim();
-    if (!message || !state.currentDocType) return;
+    if (!message) return;
     
     state.projetNom = message.substring(0, 100);
     switchScreen('chat');
