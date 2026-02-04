@@ -134,7 +134,7 @@ function updatePageTitle(docType) {
             elements.welcomeInputContainer.classList.remove('visible');
         }
         if (welcomeStaticContent) {
-            welcomeStaticContent.style.display = 'flex';
+            welcomeStaticContent.style.display = '';
         }
         if (elements.welcomeMessage) {
             elements.welcomeMessage.textContent = 'En 5 minutes, obtenez un document professionnel prêt à être partagé';
