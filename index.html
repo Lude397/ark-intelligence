@@ -132,7 +132,7 @@
                         <img class="app-logo" alt="Ark Intelligence">
                     </div>
                     <h1 class="welcome-title">Transformez votre idée en projet structuré</h1>
-                    <p class="welcome-subtitle">En 10 minutes, obtenez un document professionnel prêt à être partagé</p>
+                    <p class="welcome-subtitle" id="welcomeMessage">En 10 minutes, obtenez un document professionnel prêt à être partagé</p>
                     
                     <div class="welcome-steps">
                         <div class="step-card">
@@ -152,6 +152,15 @@
                             </div>
                             <div class="step-arrow">→</div>
                         </div>
+                    </div>
+
+                    <!-- ZONE DE TEXTE REMISE -->
+                    <div class="welcome-input-container" id="welcomeInputContainer">
+                        <textarea class="welcome-textarea" id="welcomeInput" placeholder="Décrivez votre projet en quelques mots..." rows="3"></textarea>
+                        <button class="welcome-send" id="welcomeSend">
+                            C'est parti
+                            <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </button>
                     </div>
                 </div>
             </div>
