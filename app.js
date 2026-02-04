@@ -620,7 +620,7 @@ async function sendToAPI(message) {
             addMessage(cleanResponse, 'ai', true);
             disableChatInput();
             await delay(500);
-            addMessage('Je vais générer vos documents...', 'ai', false);
+            addMessage('Je vais générer votre document...', 'ai', false);
             showTypingIndicator();
             await generateDocumentsInBackground();
             hideTypingIndicator();
