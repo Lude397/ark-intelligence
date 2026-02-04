@@ -131,7 +131,7 @@ function updatePageTitle(docType) {
             elements.welcomeInputContainer.classList.remove('visible');
         }
         if (elements.welcomeMessage) {
-            elements.welcomeMessage.textContent = 'En 10 minutes, obtenez un document professionnel prêt à être partagé';
+            elements.welcomeMessage.textContent = 'En 5 minutes, obtenez un document professionnel prêt à être partagé';
         }
     } else {
         elements.welcomePageTitle.textContent = DOC_NAMES[docType];
