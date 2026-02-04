@@ -125,20 +125,30 @@ if (elements.newProjectBtnWelcome) {
 
 // ===== FONCTION POUR METTRE À JOUR LE TITRE =====
 function updatePageTitle(docType) {
+    const welcomeStaticContent = document.querySelector('.welcome-static-content');
+    
     if (docType === null) {
+        // ACCUEIL : Tout afficher sauf la zone de texte
         elements.welcomePageTitle.textContent = 'Accueil';
         if (elements.welcomeInputContainer) {
             elements.welcomeInputContainer.classList.remove('visible');
+        }
+        if (welcomeStaticContent) {
+            welcomeStaticContent.style.display = 'flex';
         }
         if (elements.welcomeMessage) {
             elements.welcomeMessage.textContent = 'En 5 minutes, obtenez un document professionnel prêt à être partagé';
         }
     } else {
+        // DOCUMENT SÉLECTIONNÉ : Cacher le contenu statique, afficher zone de texte
         elements.welcomePageTitle.textContent = DOC_NAMES[docType];
         elements.chatTitle.textContent = DOC_NAMES[docType];
         elements.chatSubtitle.textContent = DOC_FOLDERS[docType];
         if (elements.welcomeInputContainer) {
             elements.welcomeInputContainer.classList.add('visible');
+        }
+        if (welcomeStaticContent) {
+            welcomeStaticContent.style.display = 'none';
         }
         if (elements.welcomeMessage) {
             elements.welcomeMessage.textContent = '';
