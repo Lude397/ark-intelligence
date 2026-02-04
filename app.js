@@ -128,7 +128,6 @@ function updatePageTitle(docType) {
     const welcomeStaticContent = document.querySelector('.welcome-static-content');
     
     if (docType === null) {
-        // ACCUEIL : Tout afficher sauf la zone de texte
         elements.welcomePageTitle.textContent = 'Accueil';
         if (elements.welcomeInputContainer) {
             elements.welcomeInputContainer.classList.remove('visible');
@@ -140,7 +139,6 @@ function updatePageTitle(docType) {
             elements.welcomeMessage.textContent = 'En 5 minutes, obtenez un document professionnel prêt à être partagé';
         }
     } else {
-        // DOCUMENT SÉLECTIONNÉ : Cacher le contenu statique, afficher zone de texte
         elements.welcomePageTitle.textContent = DOC_NAMES[docType];
         elements.chatTitle.textContent = DOC_NAMES[docType];
         elements.chatSubtitle.textContent = DOC_FOLDERS[docType];
@@ -228,7 +226,7 @@ function init() {
     updatePageTitle(null);
 }
 
-// ===== PARTAGE DE DOCUMENTS =====
+// ===== PARTAGE DE DOCUMENTS (avec URL automatique) =====
 async function handleShareDocument() {
     if (!state.currentDoc) return;
     
@@ -247,14 +245,18 @@ async function handleShareDocument() {
             body: JSON.stringify({
                 mode: 'createShareLink',
                 documentId: fakeDocumentId,
-                userId: userData.id
+                userId: userData.id,
+                projetNom: state.projetNom
             })
         });
 
         const data = await response.json();
         
         if (data.success) {
-            showShareModal(data.shareUrl);
+            // URL automatique avec window.location.origin
+            const baseUrl = window.location.origin;
+            const fullShareUrl = `${baseUrl}${data.shareUrl}`;
+            showShareModal(fullShareUrl);
         } else {
             alert('Erreur lors de la création du lien de partage');
         }
@@ -388,7 +390,6 @@ function selectDocument(docType) {
         return;
     }
     
-    // ===== CORRECTION : Afficher la zone de texte, pas de message automatique =====
     if (state.history.length === 0) {
         switchScreen('welcome');
         if (elements.welcomeInput) {
@@ -674,7 +675,11 @@ async function generateDocumentsInBackground() {
                 })
             });
             const data = await response.json();
-            if (data.success) state.documentCache[docType] = data.document;
+            if (data.success) {
+                // Remplacer PLACEHOLDER_BASE_URL par l'URL réelle
+                const baseUrl = window.location.origin;
+                state.documentCache[docType] = data.document.replace(/PLACEHOLDER_BASE_URL/g, baseUrl);
+            }
         } catch (error) {
             console.error(`Erreur génération ${docType}:`, error);
         }
@@ -716,8 +721,10 @@ async function generateDocument(docType) {
         });
         const data = await response.json();
         if (data.success) {
-            state.documentCache[docType] = data.document;
-            showDocument(docType, data.document);
+            // Remplacer PLACEHOLDER_BASE_URL par l'URL réelle
+            const baseUrl = window.location.origin;
+            state.documentCache[docType] = data.document.replace(/PLACEHOLDER_BASE_URL/g, baseUrl);
+            showDocument(docType, state.documentCache[docType]);
         } else {
             alert('Erreur lors de la génération');
             switchScreen(state.currentScreen);
