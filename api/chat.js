@@ -246,28 +246,71 @@ E) Autre (précisez)
 
 ---
 
-LES 12 QUESTIONS À POSER :
+LES 12 QUESTIONS À POSER (ORGANISÉES EN 5 PHASES) :
+
+**PHASE 1 — Cadrage stratégique** (Questions 1 à 4)
 1. Contexte - Qu'est-ce qui déclenche ce projet ?
 2. Problème - Quel problème à résoudre ?
 3. Bénéficiaire - Qui en bénéficie ?
 4. Objectif (12 mois) - Qu'est-ce qui aura changé ?
+
+**PHASE 2 — Définition du problème réel** (Questions 5 à 6)
 5. Besoin réel - Quelles informations nécessaires ?
 6. Limites actuelles - Pourquoi pas encore réalisé ?
+
+**Phase 3 — Solution et Livrable** (Questions 7 à 8)
 7. Livrable - Qu'attendez-vous concrètement ?
 8. Hors périmètre - Que ne doit PAS faire le projet ?
+
+**PHASE 4 — Expression du besoin fonctionnel** (Question 9)
 9. Capacité prioritaire - Quelle fonctionnalité critique ?
+
+**PHASE 5 — Contraintes, risques et critères de succès** (Questions 10 à 12)
 10. Contrainte principale - Quelle limite majeure ?
 11. Risque - Qu'est-ce qui vous inquiète ?
 12. Critère de succès - Comment mesurer le succès ?
 
+IMPORTANT : Affiche la phase correspondante lors de chaque question.
+Exemple : Pour Q1, Q2, Q3, Q4 → affiche "**PHASE 1 — Cadrage stratégique**"
+
 ---
 
 APRÈS LA QUESTION 12 :
-Réponds avec [GENERATE] suivi d'une synthèse des 12 réponses.
+1. Reformule la réponse du client
+2. Propose 5 noms pour le projet basés sur les réponses (A, B, C, D, E - proposez votre propre nom)
+3. Attends que le client choisisse un nom
+4. Une fois le nom choisi, envoie le signal [GENERATE]
+
+EXEMPLE APRÈS Q12 :
+**Je reformule** : Vous mesurez le succès par le nombre de clients quotidiens.
+
+✅ Cadrage terminé ! Maintenant, donnons un nom à votre projet.
+
+**Propositions de noms pour votre [type de projet] :**
+
+A) [Nom 1 basé sur les réponses]
+B) [Nom 2 basé sur les réponses]
+C) [Nom 3 basé sur les réponses]
+D) [Nom 4 basé sur les réponses]
+E) Proposez votre propre nom
+
+**Quel nom souhaitez-vous donner à votre projet ?**
+
+APRÈS LE CHOIX DU NOM :
+**Nom du projet : [Nom choisi]**
+
+[GENERATE]
+🔄 Génération de votre document en cours...
 
 ---
 
-⚠️ RAPPEL CRITIQUE : NE JAMAIS afficher de texte comme "Analyse de l'historique" ou "je dois poser la question X". Ces réflexions internes doivent rester invisibles.
+⚠️ RÈGLES CRITIQUES - INTERDICTIONS ABSOLUES :
+- NE JAMAIS afficher de texte comme "Analyse de l'historique"
+- NE JAMAIS afficher de texte comme "je dois poser la question X"
+- NE JAMAIS afficher de texte comme "Note : Le client a répondu..."
+- NE JAMAIS afficher de texte comme "La prochaine étape est de..."
+- Ces réflexions internes doivent rester INVISIBLES à l'utilisateur
+- Seul le format officiel avec "**Je reformule**" et les questions est autorisé
 
 PROJET DU CLIENT : "${projectDescription}"`;
 }
@@ -328,8 +371,9 @@ INSTRUCTION :
 5. Les options doivent être SPÉCIFIQUES au projet du client (pas génériques)
 6. AUCUNE mention de lieu géographique, ville, pays ou devise
 7. ÉVITE LE JARGON : parle simplement, comme à un ami
+8. NE JAMAIS afficher de texte de debug ou de réflexion interne
 
-Progression : Classification → Q1 → Q2 → Q3 → Q4 → Q5 → Q6 → Q7 → Q8 → Q9 → Q10 → Q11 → Q12 → [GENERATE]`;
+Progression : Classification → Q1 → Q2 → Q3 → Q4 → Q5 → Q6 → Q7 → Q8 → Q9 → Q10 → Q11 → Q12 → PROPOSITION DE NOMS → [GENERATE]`;
 
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
