@@ -423,14 +423,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 24px;
+    margin: 0 auto 24px;  /* Centré horizontalement + marge en bas */
     overflow: hidden;
-}
-
-.welcome-logo {
-    display: flex;
-    justify-content: center;  /* ← Centre horizontalement */
-    margin-bottom: 2rem;
 }
 
 .welcome-logo img {
