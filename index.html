@@ -128,33 +128,36 @@
                 </div>
                 
                 <div class="welcome-content">
-                    <div class="welcome-logo">
-                        <img class="app-logo" alt="Ark Intelligence">
-                    </div>
-                    <h1 class="welcome-title">Transformez votre idée en projet structuré</h1>
-                    <p class="welcome-subtitle" id="welcomeMessage">En 10 minutes, obtenez un document professionnel prêt à être partagé</p>
-                    
-                    <div class="welcome-steps">
-                        <div class="step-card">
-                            <div class="step-number">1</div>
-                            <div class="step-content">
-                                <div class="step-title">Répondez aux</div>
-                                <div class="step-desc">questions</div>
-                            </div>
-                            <div class="step-arrow">→</div>
+                    <!-- Contenu TOUJOURS visible (logo + titre + étapes) -->
+                    <div class="welcome-static-content">
+                        <div class="welcome-logo">
+                            <img class="app-logo" alt="Ark Intelligence">
                         </div>
+                        <h1 class="welcome-title">Transformez votre idée en projet structuré</h1>
+                        <p class="welcome-subtitle" id="welcomeMessage">En 5 minutes, obtenez un document professionnel prêt à être partagé</p>
                         
-                        <div class="step-card">
-                            <div class="step-number">2</div>
-                            <div class="step-content">
-                                <div class="step-title">Obtenez</div>
-                                <div class="step-desc">votre document</div>
+                        <div class="welcome-steps">
+                            <div class="step-card">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <div class="step-title">Répondez aux</div>
+                                    <div class="step-desc">questions</div>
+                                </div>
+                                <div class="step-arrow">→</div>
                             </div>
-                            <div class="step-arrow">→</div>
+                            
+                            <div class="step-card">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <div class="step-title">Obtenez</div>
+                                    <div class="step-desc">votre document</div>
+                                </div>
+                                <div class="step-arrow">→</div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- ZONE DE TEXTE REMISE -->
+                    <!-- Zone de texte (visible UNIQUEMENT quand document sélectionné) -->
                     <div class="welcome-input-container" id="welcomeInputContainer">
                         <textarea class="welcome-textarea" id="welcomeInput" placeholder="Décrivez votre projet en quelques mots..." rows="3"></textarea>
                         <button class="welcome-send" id="welcomeSend">
