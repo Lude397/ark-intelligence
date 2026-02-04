@@ -417,65 +417,131 @@ function getFormattedDate() {
 // ==================== PROMPTS DOCUMENTS ====================
 const DOCUMENT_PROMPTS = {
 
-// 1. DÉFINITION DE PROJET (12 sections)
-definition_projet: `Génère une DÉFINITION DE PROJET basée UNIQUEMENT sur les 12 questions du cadrage.
+// 1. DÉFINITION DE PROJET (Format Tableau HTML)
+definition_projet: `Génère une DÉFINITION DE PROJET sous forme de tableau HTML professionnel.
 
 RÈGLES STRICTES :
 - Utilise UNIQUEMENT les réponses des 12 questions collectées
-- NE PAS inventer d'informations supplémentaires
-- Développe chaque réponse en un paragraphe fluide et professionnel
-- Pas de mention de source (Q1, Q2...) dans le document final
+- Format: Tableau HTML avec bordures noires
+- Texte en paragraphe SANS puces (•) ni numéros à l'intérieur
+- Pas de mention de source (Q1, Q2...)
 - Style professionnel, phrases complètes
-- N'utilise JAMAIS de majuscules inappropriées au milieu des phrases
+- Police NOIRE uniquement
 
 ---
 
-# DÉFINITION DE PROJET
-## [Nom du projet]
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { font-family: Arial, sans-serif; color: #000; }
+table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+th, td { border: 1px solid #000; padding: 12px; text-align: left; vertical-align: top; }
+th { background-color: #f0f0f0; font-weight: bold; }
+.header { text-align: center; font-size: 18px; font-weight: bold; text-transform: uppercase; }
+.project-name { text-align: center; font-size: 16px; font-weight: bold; }
+.info-row td { font-size: 14px; }
+.section-title { font-weight: bold; font-size: 14px; }
+.footer { text-align: center; padding: 20px; font-size: 12px; }
+.footer a { color: #4a7c59; text-decoration: none; font-weight: bold; }
+.footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
 
-Date : {{DATE}}
+<table>
+<tr>
+<th colspan="2" class="header">Définition de Projet</th>
+</tr>
+<tr>
+<td colspan="2" class="project-name">[Nom du projet]</td>
+</tr>
+<tr class="info-row">
+<td><strong>Date :</strong> {{DATE}}</td>
+<td><strong>Préparé par :</strong> {{OWNER_NAME}}</td>
+</tr>
+<tr>
+<td colspan="2">
+<span class="section-title">1. Contexte</span><br><br>
+[Développe la réponse Q1 en un paragraphe fluide et professionnel, sans puces ni numéros]
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<span class="section-title">2. Problème à résoudre</span><br><br>
+[Développe la réponse Q2 en un paragraphe fluide et professionnel]
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<span class="section-title">3. Bénéficiaire principal</span><br><br>
+[Développe la réponse Q3 en un paragraphe fluide et professionnel]
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<span class="section-title">4. Objectif stratégique (12 mois)</span><br><br>
+[Développe la réponse Q4 en un paragraphe fluide et professionnel]
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<span class="section-title">5. Besoin réel</span><br><br>
+[Développe la réponse Q5 en un paragraphe fluide et professionnel]
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<span class="section-title">6. Limites actuelles</span><br><br>
+[Développe la réponse Q6 en un paragraphe fluide et professionnel]
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<span class="section-title">7. Livrable attendu</span><br><br>
+[Développe la réponse Q7 en un paragraphe fluide et professionnel]
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<span class="section-title">8. Hors périmètre</span><br><br>
+[Développe la réponse Q8 en un paragraphe fluide et professionnel]
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<span class="section-title">9. Exigences fonctionnelles</span><br><br>
+[Développe la réponse Q9 en un paragraphe fluide et professionnel]
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<span class="section-title">10. Contraintes</span><br><br>
+[Développe la réponse Q10 en un paragraphe fluide et professionnel]
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<span class="section-title">11. Risques</span><br><br>
+[Développe la réponse Q11 en un paragraphe fluide et professionnel]
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<span class="section-title">12. Critères de succès</span><br><br>
+[Développe la réponse Q12 en un paragraphe fluide et professionnel]
+</td>
+</tr>
+</table>
 
----
+<div class="footer">
+<a href="{{BASE_URL}}" target="_blank">Document généré par Ark Intelligence</a>
+</div>
 
-### 1. Contexte
-[Développe la réponse Q1 en un paragraphe]
-
-### 2. Problème à résoudre
-[Développe la réponse Q2 en un paragraphe]
-
-### 3. Bénéficiaire principal
-[Développe la réponse Q3 en un paragraphe]
-
-### 4. Objectif stratégique
-[Développe la réponse Q4 en un paragraphe]
-
-### 5. Besoin réel
-[Développe la réponse Q5 en un paragraphe]
-
-### 6. Limites actuelles
-[Développe la réponse Q6 en un paragraphe]
-
-### 7. Livrable attendu
-[Développe la réponse Q7 en un paragraphe]
-
-### 8. Hors périmètre
-[Développe la réponse Q8 en un paragraphe]
-
-### 9. Exigences fonctionnelles
-[Développe la réponse Q9 en un paragraphe]
-
-### 10. Contraintes
-[Développe la réponse Q10 en un paragraphe]
-
-### 11. Risques
-[Développe la réponse Q11 en un paragraphe]
-
-### 12. Critères de succès
-[Développe la réponse Q12 en un paragraphe]
-
----
-
-Document généré par Ark Intelligence`,
+</body>
+</html>`,
 
 // 2. ORIENTATION DE SOLUTION
 orientation_solution: `Génère un document ORIENTATION DE SOLUTION.
@@ -680,6 +746,30 @@ async function handleGenerate(res, history, docType = 'definition_projet', userI
     // Remplacer {{DATE}} par la date actuelle
     const currentDate = getFormattedDate();
     docPrompt = docPrompt.replace(/\{\{DATE\}\}/g, currentDate);
+    
+    // Récupérer le nom du propriétaire
+    let ownerName = 'Utilisateur Ark';
+    if (userId) {
+        try {
+            const { data: user, error } = await supabase
+                .from('ark_users')
+                .select('nom, prenom')
+                .eq('id', userId)
+                .single();
+            
+            if (user && !error) {
+                ownerName = `${user.prenom} ${user.nom}`;
+            }
+        } catch (error) {
+            console.error('Erreur récupération propriétaire:', error);
+        }
+    }
+    
+    // Remplacer {{OWNER_NAME}}
+    docPrompt = docPrompt.replace(/\{\{OWNER_NAME\}\}/g, ownerName);
+    
+    // Remplacer {{BASE_URL}} par une instruction pour l'IA
+    docPrompt = docPrompt.replace(/\{\{BASE_URL\}\}/g, 'https://arkintelligence.vercel.app');
 
     const generatePrompt = `Tu es un expert en gestion de projet PMI.
 
@@ -697,7 +787,9 @@ RÈGLES :
 - Style professionnel et clair
 - Pas de blabla, que du concret
 - PAS d'émojis
-- N'utilise JAMAIS de majuscules inappropriées`;
+- N'utilise JAMAIS de majuscules inappropriées
+- Pour le HTML: garde EXACTEMENT la structure fournie
+- Texte en paragraphe SANS puces ni numéros`;
 
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
