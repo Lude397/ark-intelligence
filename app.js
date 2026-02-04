@@ -131,7 +131,7 @@ function updatePageTitle(docType) {
             elements.welcomeInputContainer.classList.remove('visible');
         }
         if (elements.welcomeMessage) {
-            elements.welcomeMessage.textContent = 'Bienvenue sur Ark Intelligence';
+            elements.welcomeMessage.textContent = 'En 10 minutes, obtenez un document professionnel prêt à être partagé';
         }
     } else {
         elements.welcomePageTitle.textContent = DOC_NAMES[docType];
@@ -149,7 +149,6 @@ function updatePageTitle(docType) {
 function init() {
     applyTheme(state.currentTheme);
 
-    // ===== MODIFICATION : Vérifier l'existence des éléments avant d'ajouter les listeners =====
     if (elements.welcomeSend) {
         elements.welcomeSend.addEventListener('click', handleWelcomeSend);
     }
@@ -344,7 +343,6 @@ function goToHome() {
     state.currentDocumentId = null;
     elements.chatMessages.innerHTML = '';
     
-    // ===== MODIFICATION : Vérifier l'existence avant d'accéder =====
     if (elements.welcomeInput) {
         elements.welcomeInput.value = '';
     }
@@ -380,14 +378,12 @@ function selectDocument(docType) {
         return;
     }
     
-    // ===== MODIFICATION : Démarrer directement le chat au lieu de la page d'accueil =====
+    // ===== CORRECTION : Afficher la zone de texte, pas de message automatique =====
     if (state.history.length === 0) {
-        switchScreen('chat');
-        
-        // Envoyer un message automatique pour démarrer le cadrage
-        const welcomeMessage = "Bonjour, je souhaite créer un document " + DOC_NAMES[docType];
-        addMessage(welcomeMessage, 'user');
-        sendToAPI(welcomeMessage);
+        switchScreen('welcome');
+        if (elements.welcomeInput) {
+            elements.welcomeInput.focus();
+        }
         return;
     }
     
@@ -542,7 +538,6 @@ function switchScreen(screen) {
 }
 
 async function handleWelcomeSend() {
-    // ===== MODIFICATION : Vérifier l'existence des éléments =====
     if (!elements.welcomeInput || !state.currentDocType) return;
     
     const message = elements.welcomeInput.value.trim();
