@@ -427,6 +427,12 @@ body {
     overflow: hidden;
 }
 
+.welcome-logo {
+    display: flex;
+    justify-content: center;  /* ← Centre horizontalement */
+    margin-bottom: 2rem;
+}
+
 .welcome-logo img {
     width: 100%;
     height: 100%;
