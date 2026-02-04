@@ -270,7 +270,10 @@ LES 12 QUESTIONS À POSER (ORGANISÉES EN 5 PHASES) :
 11. Risque - Qu'est-ce qui vous inquiète ?
 12. Critère de succès - Comment mesurer le succès ?
 
-IMPORTANT : Affiche la phase correspondante lors de chaque question.
+⚠️ IMPORTANT : La Question 12 doit UNIQUEMENT porter sur le critère de succès.
+⚠️ NE JAMAIS proposer les noms A) B) C) D) E) dans la Question 12.
+⚠️ Les noms sont proposés APRÈS avoir reçu la réponse à Q12.
+⚠️IMPORTANT : Affiche la phase correspondante lors de chaque question.
 Exemple : Pour Q1, Q2, Q3, Q4 → affiche "**PHASE 1 — Cadrage stratégique**"
 
 ---
