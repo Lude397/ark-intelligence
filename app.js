@@ -51,6 +51,7 @@ const elements = {
     copyDoc: document.getElementById('copyDoc'),
     shareDoc: document.getElementById('shareDoc'),
     shareWhatsApp: document.getElementById('shareWhatsApp'),
+    shareEmail: document.getElementById('shareEmail'),
     mydocsList: document.getElementById('mydocsList'),
     settingsBtn: document.getElementById('settingsBtn'),
     settingsModal: document.getElementById('settingsModal'),
@@ -180,6 +181,11 @@ function init() {
     elements.copyDoc.addEventListener('click', copyDocument);
     elements.shareDoc.addEventListener('click', handleShareDocument);
     elements.shareWhatsApp.addEventListener('click', shareWhatsApp);
+    
+    // MODIFICATION 4 : Connecter le bouton Email
+    if (elements.shareEmail) {
+        elements.shareEmail.addEventListener('click', shareEmail);
+    }
 
     elements.settingsBtn.addEventListener('click', openSettingsModal);
     elements.settingsModalClose.addEventListener('click', closeSettingsModal);
@@ -626,7 +632,7 @@ async function sendToAPI(message) {
             await generateDocumentsInBackground();
             hideTypingIndicator();
             enableDocuments();
-            addMessage('✓ Les documents sont prêts ! Vous pouvez les consulter depuis le menu.', 'ai', false);
+            addMessage('✓ Le document est prêt ! Vous pouvez le consulter depuis le menu.', 'ai', false);
             showCadrageComplete();
         } else {
             addMessage(data.response, 'ai', true);
@@ -651,13 +657,14 @@ function showCadrageComplete() {
     state.cadrageComplete = true;
     elements.chatInput.disabled = true;
     elements.chatSend.disabled = true;
-    elements.chatInput.placeholder = 'Cadrage terminé — Consultez vos documents';
+    elements.chatInput.placeholder = 'Cadrage terminé — Consultez votre document';
     elements.chatInput.style.opacity = '0.6';
     elements.chatSend.style.opacity = '0.6';
 }
 
+// MODIFICATION 1 : Générer 1 seul document au lieu de 3
 async function generateDocumentsInBackground() {
-    const mainDocs = ['definition_projet', 'orientation_solution', 'formulation_solution'];
+    const mainDocs = ['definition_projet']; // Un seul document généré
     const userData = JSON.parse(localStorage.getItem('ark_user'));
     const userId = userData ? userData.id : null;
     
@@ -690,7 +697,7 @@ function enableDocuments() {
     state.documentsReady = true;
     document.querySelectorAll('.doc-item').forEach(item => {
         const docType = item.dataset.doc;
-        if (['definition_projet', 'orientation_solution', 'formulation_solution'].includes(docType)) {
+        if (['definition_projet'].includes(docType)) { // Un seul document activé
             item.classList.remove('disabled');
         }
     });
@@ -784,11 +791,23 @@ function cleanMarkdownForWhatsApp(text) {
     return clean.trim();
 }
 
+// MODIFICATION 2 : WhatsApp partage le LIEN au lieu du contenu
 function shareWhatsApp() {
-    if (state.currentDoc) {
-        const cleanContent = cleanMarkdownForWhatsApp(state.currentDoc.content);
-        const text = encodeURIComponent(`*${DOC_NAMES[state.currentDoc.type]}*\n\n${cleanContent}\n\n---\nGénéré par Ark Intelligence`);
+    const shareUrl = elements.shareLinkInput.value;
+    if (shareUrl && state.currentDoc) {
+        const message = `Découvrez mon projet : ${DOC_NAMES[state.currentDoc.type]}\n\n${shareUrl}\n\nGénéré par Ark Intelligence`;
+        const text = encodeURIComponent(message);
         window.open(`https://wa.me/?text=${text}`, '_blank');
+    }
+}
+
+// MODIFICATION 3 : Fonction Email pour partager le lien
+function shareEmail() {
+    const shareUrl = elements.shareLinkInput.value;
+    if (shareUrl && state.currentDoc) {
+        const subject = encodeURIComponent(`Projet : ${DOC_NAMES[state.currentDoc.type]}`);
+        const body = encodeURIComponent(`Bonjour,\n\nDécouvrez mon projet "${state.projetNom || 'Mon projet'}" :\n\n${shareUrl}\n\nDocument généré par Ark Intelligence`);
+        window.location.href = `mailto:?subject=${subject}&body=${body}`;
     }
 }
 
