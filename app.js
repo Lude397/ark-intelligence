@@ -486,14 +486,22 @@ function openDocFromCache(docType) {
     if (state.allDocuments && state.allDocuments.length > 0) {
         const doc = state.allDocuments.find(d => d.doc_type === docType);
         if (doc) {
-            showDocument(docType, doc.contenu);
+            // ✅ NOUVEAU : Passer les métadonnées à showDocument
+            showDocument(docType, doc.contenu, {
+                projetNom: doc.projet_nom,
+                createdAt: doc.created_at
+            });
             return;
         }
     }
     
     // Fallback : chercher dans le cache local
     if (state.documentCache[docType]) {
-        showDocument(docType, state.documentCache[docType]);
+        // Pour les documents du cache, utiliser la date actuelle et le nom du state
+        showDocument(docType, state.documentCache[docType], {
+            projetNom: state.projetNom,
+            createdAt: new Date().toISOString()
+        });
     }
 }
 
@@ -739,7 +747,11 @@ function enableDocuments() {
 
 async function generateDocument(docType) {
     if (state.documentCache[docType]) {
-        showDocument(docType, state.documentCache[docType]);
+        // ✅ NOUVEAU : Passer les métadonnées pour les documents en cache
+        showDocument(docType, state.documentCache[docType], {
+            projetNom: state.projetNom,
+            createdAt: new Date().toISOString()
+        });
         return;
     }
     
@@ -764,7 +776,11 @@ async function generateDocument(docType) {
         if (data.success) {
             const baseUrl = window.location.origin;
             state.documentCache[docType] = data.document.replace(/PLACEHOLDER_BASE_URL/g, baseUrl);
-            showDocument(docType, state.documentCache[docType]);
+            // ✅ NOUVEAU : Passer les métadonnées
+            showDocument(docType, state.documentCache[docType], {
+                projetNom: state.projetNom,
+                createdAt: new Date().toISOString()
+            });
         } else {
             alert('Erreur lors de la génération');
             switchScreen(state.currentScreen);
@@ -775,10 +791,40 @@ async function generateDocument(docType) {
     }
 }
 
-function showDocument(docType, content) {
-    state.currentDoc = { type: docType, content };
+function showDocument(docType, content, metadata = {}) {
+    // ✅ Récupérer le nom actuel depuis le profil
+    const userData = JSON.parse(localStorage.getItem('ark_user'));
+    let ownerName = 'Utilisateur Ark';
+    
+    if (userData) {
+        const prenom = userData.prenom || '';
+        const nom = userData.nom || '';
+        ownerName = `${prenom} ${nom}`.trim() || 'Utilisateur Ark';
+    }
+    
+    // ✅ Récupérer le nom du projet
+    const projectName = metadata.projetNom || state.projetNom || 'Projet sans nom';
+    
+    // ✅ Formater la date de création
+    let formattedDate = 'À définir';
+    if (metadata.createdAt) {
+        const date = new Date(metadata.createdAt);
+        formattedDate = date.toLocaleDateString('fr-FR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+    }
+    
+    // ✅ Remplacer les 3 placeholders
+    let updatedContent = content
+        .replace(/\{\{OWNER_NAME\}\}/g, ownerName)
+        .replace(/\{\{PROJECT_NAME\}\}/g, projectName)
+        .replace(/\{\{DATE\}\}/g, formattedDate);
+    
+    state.currentDoc = { type: docType, content: updatedContent };
     elements.documentTitle.textContent = DOC_NAMES[docType] || docType;
-    elements.documentBody.innerHTML = markdownToHtml(content);
+    elements.documentBody.innerHTML = markdownToHtml(updatedContent);
     switchScreen('document');
 }
 
