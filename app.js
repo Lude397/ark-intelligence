@@ -25,7 +25,8 @@ const state = {
     cadrageComplete: false,
     projetNom: null,
     currentScreen: 'welcome',
-    currentDocumentId: null
+    currentDocumentId: null,
+    allDocuments: [] // CORRECTION : Ajout pour stocker les documents Supabase
 };
 
 const elements = {
@@ -241,7 +242,6 @@ async function handleShareDocument() {
         return;
     }
 
-    // CORRECTION : Valeur par défaut si projetNom est vide
     const projetNom = state.projetNom || 'mon-projet';
     const fakeDocumentId = `${state.currentDoc.type}_${Date.now()}`;
     
@@ -407,6 +407,7 @@ function selectDocument(docType) {
     generateDocument(docType);
 }
 
+// CORRECTION : Stocker les documents récupérés depuis Supabase
 async function showMyDocuments() {
     closeSettingsModal();
     
@@ -430,12 +431,15 @@ async function showMyDocuments() {
         const data = await response.json();
         
         if (data.success && data.documents) {
+            state.allDocuments = data.documents; // CORRECTION : Stocker dans state
             renderMyDocuments(data.documents);
         } else {
+            state.allDocuments = []; // CORRECTION : Vider si pas de documents
             renderMyDocuments([]);
         }
     } catch (error) {
         console.error('Erreur récupération documents:', error);
+        state.allDocuments = []; // CORRECTION : Vider en cas d'erreur
         renderMyDocuments([]);
     }
     
@@ -476,7 +480,18 @@ function renderMyDocuments(docs) {
     elements.mydocsList.innerHTML = html;
 }
 
+// CORRECTION : Chercher dans les documents Supabase ET le cache local
 function openDocFromCache(docType) {
+    // Chercher d'abord dans les documents Supabase
+    if (state.allDocuments && state.allDocuments.length > 0) {
+        const doc = state.allDocuments.find(d => d.doc_type === docType);
+        if (doc) {
+            showDocument(docType, doc.contenu);
+            return;
+        }
+    }
+    
+    // Fallback : chercher dans le cache local
     if (state.documentCache[docType]) {
         showDocument(docType, state.documentCache[docType]);
     }
