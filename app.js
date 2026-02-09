@@ -182,7 +182,6 @@ function init() {
     elements.shareDoc.addEventListener('click', handleShareDocument);
     elements.shareWhatsApp.addEventListener('click', shareWhatsApp);
     
-    // MODIFICATION 4 : Connecter le bouton Email
     if (elements.shareEmail) {
         elements.shareEmail.addEventListener('click', shareEmail);
     }
@@ -232,7 +231,7 @@ function init() {
     updatePageTitle(null);
 }
 
-// ===== PARTAGE DE DOCUMENTS (avec URL automatique) =====
+// ===== PARTAGE DE DOCUMENTS (avec URL automatique + valeur par défaut) =====
 async function handleShareDocument() {
     if (!state.currentDoc) return;
     
@@ -242,6 +241,8 @@ async function handleShareDocument() {
         return;
     }
 
+    // CORRECTION : Valeur par défaut si projetNom est vide
+    const projetNom = state.projetNom || 'mon-projet';
     const fakeDocumentId = `${state.currentDoc.type}_${Date.now()}`;
     
     try {
@@ -252,14 +253,13 @@ async function handleShareDocument() {
                 mode: 'createShareLink',
                 documentId: fakeDocumentId,
                 userId: userData.id,
-                projetNom: state.projetNom
+                projetNom: projetNom
             })
         });
 
         const data = await response.json();
         
         if (data.success) {
-            // URL automatique avec window.location.origin
             const baseUrl = window.location.origin;
             const fullShareUrl = `${baseUrl}${data.shareUrl}`;
             showShareModal(fullShareUrl);
@@ -662,9 +662,8 @@ function showCadrageComplete() {
     elements.chatSend.style.opacity = '0.6';
 }
 
-// MODIFICATION 1 : Générer 1 seul document au lieu de 3
 async function generateDocumentsInBackground() {
-    const mainDocs = ['definition_projet']; // Un seul document généré
+    const mainDocs = ['definition_projet'];
     const userData = JSON.parse(localStorage.getItem('ark_user'));
     const userId = userData ? userData.id : null;
     
@@ -683,7 +682,6 @@ async function generateDocumentsInBackground() {
             });
             const data = await response.json();
             if (data.success) {
-                // Remplacer PLACEHOLDER_BASE_URL par l'URL réelle
                 const baseUrl = window.location.origin;
                 state.documentCache[docType] = data.document.replace(/PLACEHOLDER_BASE_URL/g, baseUrl);
             }
@@ -697,7 +695,7 @@ function enableDocuments() {
     state.documentsReady = true;
     document.querySelectorAll('.doc-item').forEach(item => {
         const docType = item.dataset.doc;
-        if (['definition_projet'].includes(docType)) { // Un seul document activé
+        if (['definition_projet'].includes(docType)) {
             item.classList.remove('disabled');
         }
     });
@@ -728,7 +726,6 @@ async function generateDocument(docType) {
         });
         const data = await response.json();
         if (data.success) {
-            // Remplacer PLACEHOLDER_BASE_URL par l'URL réelle
             const baseUrl = window.location.origin;
             state.documentCache[docType] = data.document.replace(/PLACEHOLDER_BASE_URL/g, baseUrl);
             showDocument(docType, state.documentCache[docType]);
@@ -791,7 +788,6 @@ function cleanMarkdownForWhatsApp(text) {
     return clean.trim();
 }
 
-// MODIFICATION 2 : WhatsApp partage le LIEN au lieu du contenu
 function shareWhatsApp() {
     const shareUrl = elements.shareLinkInput.value;
     if (shareUrl && state.currentDoc) {
@@ -801,7 +797,6 @@ function shareWhatsApp() {
     }
 }
 
-// MODIFICATION 3 : Fonction Email pour partager le lien
 function shareEmail() {
     const shareUrl = elements.shareLinkInput.value;
     if (shareUrl && state.currentDoc) {
