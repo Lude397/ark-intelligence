@@ -49,7 +49,6 @@ export default async function handler(req, res) {
             return await getDocumentStats(res, documentId, userId);
         }
 
-        // CORRECTION 1 : Ajout de l'endpoint getUserDocuments
         if (mode === 'getUserDocuments') {
             return await getUserDocuments(res, userId);
         }
@@ -475,8 +474,13 @@ th { background-color: #f0f0f0; font-weight: bold; }
 <td colspan="2" class="project-name">[Nom du projet]</td>
 </tr>
 <tr class="info-row">
-<td><strong>Date :</strong> {{DATE}}</td>
-<td><strong>Préparé par :</strong> {{OWNER_NAME}}</td>
+<td colspan="2" style="padding: 16px; background-color: #f9f9f9;">
+  <div style="line-height: 1.8;">
+    <strong>Projet :</strong> {{PROJECT_NAME}}<br>
+    <strong>Préparé par :</strong> {{OWNER_NAME}}<br>
+    <strong>Date de création :</strong> {{DATE}}
+  </div>
+</td>
 </tr>
 <tr>
 <td colspan="2">
@@ -759,32 +763,10 @@ async function handleGenerate(res, history, docType = 'definition_projet', userI
 
     let docPrompt = DOCUMENT_PROMPTS[docType] || DOCUMENT_PROMPTS.definition_projet;
     
-    // Remplacer {{DATE}} par la date actuelle
-    const currentDate = getFormattedDate();
-    docPrompt = docPrompt.replace(/\{\{DATE\}\}/g, currentDate);
+    // ✅ MODIFICATION : On garde les placeholders {{DATE}}, {{OWNER_NAME}}, {{PROJECT_NAME}}
+    // Ils seront remplacés dynamiquement à l'affichage
     
-    // Récupérer le nom du propriétaire
-    let ownerName = 'Utilisateur Ark';
-    if (userId) {
-        try {
-            const { data: user, error } = await supabase
-                .from('ark_users')
-                .select('nom, prenom')
-                .eq('id', userId)
-                .single();
-            
-            if (user && !error) {
-                ownerName = `${user.prenom} ${user.nom}`;
-            }
-        } catch (error) {
-            console.error('Erreur récupération propriétaire:', error);
-        }
-    }
-    
-    // Remplacer {{OWNER_NAME}}
-    docPrompt = docPrompt.replace(/\{\{OWNER_NAME\}\}/g, ownerName);
-    
-    // Remplacer {{BASE_URL}} par une instruction pour l'IA
+    // Remplacer {{BASE_URL}}
     docPrompt = docPrompt.replace(/\{\{BASE_URL\}\}/g, 'https://arkintelligence.vercel.app');
 
     const generatePrompt = `Tu es un expert en gestion de projet PMI.
@@ -826,7 +808,7 @@ RÈGLES :
     const data = await response.json();
     const document = data.choices[0].message.content.trim();
     
-    // CORRECTION 2 : Sauvegarder TOUJOURS avec valeur par défaut
+    // Sauvegarder dans Supabase
     if (userId) {
         try {
             const finalProjetNom = projetNom || 'Projet sans nom';
@@ -862,7 +844,7 @@ function createSlug(text) {
         .replace(/^-+|-+$/g, '');
 }
 
-// ENDPOINT 1 : CRÉER UN LIEN DE PARTAGE (CORRECTION 3)
+// ENDPOINT 1 : CRÉER UN LIEN DE PARTAGE
 async function createShareLink(res, documentId, userId, projetNom) {
     try {
         const { data: user, error: userError } = await supabase
@@ -875,7 +857,6 @@ async function createShareLink(res, documentId, userId, projetNom) {
             return res.status(404).json({ error: 'Utilisateur non trouvé' });
         }
 
-        // CORRECTION : Valeurs par défaut
         const prenom = user.prenom || 'utilisateur';
         const nom = user.nom || 'ark';
         const projet = projetNom || 'mon-projet';
@@ -1052,7 +1033,7 @@ async function getDocumentStats(res, documentId, userId) {
     }
 }
 
-// CORRECTION 1 : ENDPOINT 5 : RÉCUPÉRER TOUS LES DOCUMENTS D'UN UTILISATEUR
+// ENDPOINT 5 : RÉCUPÉRER TOUS LES DOCUMENTS D'UN UTILISATEUR
 async function getUserDocuments(res, userId) {
     try {
         const { data: documents, error } = await supabase
