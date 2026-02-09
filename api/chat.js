@@ -470,13 +470,10 @@ th { background-color: #f0f0f0; font-weight: bold; }
 <tr>
 <th colspan="2" class="header">Définition de Projet</th>
 </tr>
-<tr>
-<td colspan="2" class="project-name">[Nom du projet]</td>
-</tr>
 <tr class="info-row">
 <td colspan="2" style="padding: 16px; background-color: #f9f9f9;">
   <div style="line-height: 1.8;">
-    <strong>Projet :</strong> {{PROJECT_NAME}}<br>
+    <strong>Nom du projet :</strong> {{PROJECT_NAME}}<br>
     <strong>Préparé par :</strong> {{OWNER_NAME}}<br>
     <strong>Date de création :</strong> {{DATE}}
   </div>
