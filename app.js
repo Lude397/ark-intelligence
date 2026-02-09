@@ -407,17 +407,38 @@ function selectDocument(docType) {
     generateDocument(docType);
 }
 
-function showMyDocuments() {
+async function showMyDocuments() {
     closeSettingsModal();
     
-    const docs = Object.keys(state.documentCache).map(docType => ({
-        doc_type: docType,
-        projet_nom: state.projetNom || 'Projet en cours',
-        contenu: state.documentCache[docType],
-        created_at: new Date().toISOString()
-    }));
+    const userData = JSON.parse(localStorage.getItem('ark_user'));
+    if (!userData || !userData.id) {
+        switchScreen('mydocs');
+        renderMyDocuments([]);
+        return;
+    }
     
-    renderMyDocuments(docs);
+    try {
+        const response = await fetch(CONFIG.apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                mode: 'getUserDocuments',
+                userId: userData.id
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success && data.documents) {
+            renderMyDocuments(data.documents);
+        } else {
+            renderMyDocuments([]);
+        }
+    } catch (error) {
+        console.error('Erreur récupération documents:', error);
+        renderMyDocuments([]);
+    }
+    
     switchScreen('mydocs');
 }
 
