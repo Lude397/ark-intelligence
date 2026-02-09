@@ -38,7 +38,7 @@ export default async function handler(req, res) {
         }
 
         if (mode === 'createShareLink') {
-            return await createShareLink(res, documentId, userId);
+            return await createShareLink(res, documentId, userId, projetNom);
         }
 
         if (mode === 'trackView') {
@@ -47,6 +47,11 @@ export default async function handler(req, res) {
 
         if (mode === 'getStats') {
             return await getDocumentStats(res, documentId, userId);
+        }
+
+        // CORRECTION 1 : Ajout de l'endpoint getUserDocuments
+        if (mode === 'getUserDocuments') {
+            return await getUserDocuments(res, userId);
         }
 
         return res.status(400).json({ error: 'Mode invalide' });
@@ -219,20 +224,9 @@ MISSION : Poser 12 questions de cadrage sous forme de QCM ADAPTÉ au projet du c
 
 ${examplesSection}
 
-RÈGLES IMPORTANTES :
-1. Chaque question doit avoir 5 options (A, B, C, D, E)
-2. Les options doivent être SPÉCIFIQUES au type de projet du client
-3. PAS de mention de lieu géographique, ville, pays, quartier ou devise spécifique
-4. Génère des exemples UNIVERSELS applicables partout dans le monde
-5. Une question à la fois
-6. Reformule d'abord ce que le client a dit
-7. LANGAGE SIMPLE : évite le jargon, parle comme à un ami
+RÈGLES IMPORTANTES - FORMAT OBLIGATOIRE POUR CHAQUE QUESTION :
 
 ⚠️ FORMAT STRICT (valable pour Q1, Q2, Q3... jusqu'à Q12) :
-⚠️ AUCUNE EXCEPTION : Toutes les 12 questions doivent avoir ce format avec 5 options.
-⚠️ Si tu ne proposes pas A) B) C) D) E) → C'EST UNE ERREUR GRAVE.
-
-FORMAT DE RÉPONSE (si projet détecté) :
 
 **Je reformule** : [reformulation courte]
 
@@ -247,6 +241,16 @@ B) [Option spécifique au projet mais GÉNÉRIQUE]
 C) [Option spécifique au projet mais GÉNÉRIQUE]
 D) [Option spécifique au projet mais GÉNÉRIQUE]
 E) Autre (précisez)
+
+⚠️ AUCUNE EXCEPTION : Toutes les 12 questions doivent avoir ce format avec 5 options.
+⚠️ Si tu ne proposes pas A) B) C) D) E) → C'EST UNE ERREUR GRAVE.
+
+AUTRES RÈGLES :
+1. Les options doivent être SPÉCIFIQUES au type de projet du client
+2. PAS de mention de lieu géographique, ville, pays, quartier ou devise
+3. Génère des exemples UNIVERSELS applicables partout dans le monde
+4. Une question à la fois
+5. LANGAGE SIMPLE : évite le jargon, parle comme à un ami
 
 ---
 
@@ -274,19 +278,24 @@ LES 12 QUESTIONS À POSER (ORGANISÉES EN 5 PHASES) :
 11. Risque - Qu'est-ce qui vous inquiète ?
 12. Critère de succès - Comment mesurer le succès ?
 
-⚠️ IMPORTANT : La Question 12 doit UNIQUEMENT porter sur le critère de succès.
-⚠️ NE JAMAIS proposer les noms A) B) C) D) E) dans la Question 12.
-⚠️ Les noms sont proposés APRÈS avoir reçu la réponse à Q12.
 ⚠️IMPORTANT : Affiche la phase correspondante lors de chaque question.
 Exemple : Pour Q1, Q2, Q3, Q4 → affiche "**PHASE 1 — Cadrage stratégique**"
 
 ---
 
-APRÈS LA QUESTION 12 :
-1. Reformule la réponse du client
-2. Propose 5 noms pour le projet basés sur les réponses (A, B, C, D, E - proposez votre propre nom)
-3. Attends que le client choisisse un nom
-4. Une fois le nom choisi, envoie le signal [GENERATE]
+APRÈS LA QUESTION 12 (une fois que le client a choisi A/B/C/D ou E) :
+
+ÉTAPE 1 - REFORMULER + PROPOSER NOMS :
+1. Reformule la réponse Q12
+2. Annonce "✅ Cadrage terminé !"
+3. Propose 5 noms (A, B, C, D, E)
+4. Demande "Quel nom souhaitez-vous donner à votre projet ?"
+
+ÉTAPE 2 - APRÈS CHOIX DU NOM (client répond "C" ou "Mon Nom") :
+⚠️ NE REPOSE JAMAIS LA QUESTION DES NOMS !
+1. Confirme : "**Nom du projet : [Nom choisi]**"
+2. Envoie immédiatement : [GENERATE]
+3. FIN
 
 EXEMPLE APRÈS Q12 :
 **Je reformule** : Vous mesurez le succès par le nombre de clients quotidiens.
@@ -295,10 +304,10 @@ EXEMPLE APRÈS Q12 :
 
 **Propositions de noms pour votre [type de projet] :**
 
-A) [Nom 1 basé sur les réponses]
-B) [Nom 2 basé sur les réponses]
-C) [Nom 3 basé sur les réponses]
-D) [Nom 4 basé sur les réponses]
+A) [Nom 1]
+B) [Nom 2]
+C) [Nom 3]
+D) [Nom 4]
 E) Proposez votre propre nom
 
 **Quel nom souhaitez-vous donner à votre projet ?**
@@ -817,15 +826,19 @@ RÈGLES :
     const data = await response.json();
     const document = data.choices[0].message.content.trim();
     
-    // Sauvegarder dans Supabase si userId est fourni
-    if (userId && projetNom) {
+    // CORRECTION 2 : Sauvegarder TOUJOURS avec valeur par défaut
+    if (userId) {
         try {
+            const finalProjetNom = projetNom || 'Projet sans nom';
+            
             await supabase.from('ark_documents').insert({
                 user_id: userId,
-                projet_nom: projetNom,
+                projet_nom: finalProjetNom,
                 doc_type: docType,
                 contenu: document
             });
+            
+            console.log(`✅ Document sauvegardé: ${finalProjetNom} (${docType})`);
         } catch (error) {
             console.error('Erreur sauvegarde document:', error);
         }
@@ -839,69 +852,42 @@ RÈGLES :
 
 // ==================== PARTAGE DE DOCUMENTS ====================
 
-// ENDPOINT 1 : CRÉER UN LIEN DE PARTAGE
-async function createShareLink(res, documentId, userId) {
+// Fonction utilitaire pour créer un slug
+function createSlug(text) {
+    return text
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+// ENDPOINT 1 : CRÉER UN LIEN DE PARTAGE (CORRECTION 3)
+async function createShareLink(res, documentId, userId, projetNom) {
     try {
-        // Vérifier que le document appartient à l'utilisateur
-        const { data: doc, error: docError } = await supabase
-            .from('ark_documents')
-            .select('id, user_id, projet_nom')
-            .eq('id', documentId)
-            .eq('user_id', userId)
+        const { data: user, error: userError } = await supabase
+            .from('ark_users')
+            .select('nom, prenom')
+            .eq('id', userId)
             .single();
 
-        if (docError || !doc) {
-            return res.status(404).json({ error: 'Document non trouvé ou accès refusé' });
+        if (userError || !user) {
+            return res.status(404).json({ error: 'Utilisateur non trouvé' });
         }
 
-        // Vérifier si un lien existe déjà
-        const { data: existingLink, error: linkCheckError } = await supabase
-            .from('ark_shared_links')
-            .select('share_token')
-            .eq('document_id', documentId)
-            .eq('is_active', true)
-            .single();
+        // CORRECTION : Valeurs par défaut
+        const prenom = user.prenom || 'utilisateur';
+        const nom = user.nom || 'ark';
+        const projet = projetNom || 'mon-projet';
 
-        if (existingLink) {
-            // Retourner le lien existant
-            return res.status(200).json({
-                success: true,
-                shareUrl: `https://arkintelligence.vercel.app/share/${existingLink.share_token}`,
-                token: existingLink.share_token
-            });
-        }
-
-        // Générer un token unique
-        const { data: tokenData, error: tokenError } = await supabase
-            .rpc('generate_share_token');
-
-        if (tokenError) {
-            console.error('Erreur génération token:', tokenError);
-            return res.status(500).json({ error: 'Erreur génération token' });
-        }
-
-        const token = tokenData;
-
-        // Créer le lien de partage
-        const { data: newLink, error: insertError } = await supabase
-            .from('ark_shared_links')
-            .insert({
-                document_id: documentId,
-                share_token: token,
-                is_active: true
-            })
-            .select()
-            .single();
-
-        if (insertError) {
-            console.error('Erreur création lien:', insertError);
-            return res.status(500).json({ error: 'Erreur création lien' });
-        }
-
+        const ownerName = createSlug(`${prenom}-${nom}`);
+        const projectSlug = createSlug(projet);
+        
         return res.status(200).json({
             success: true,
-            shareUrl: `https://arkintelligence.vercel.app/share/${token}`,
-            token: token
+            shareUrl: `/ark/${ownerName}/${projectSlug}`,
+            ownerName: ownerName,
+            projectSlug: projectSlug
         });
 
     } catch (error) {
@@ -1062,6 +1048,31 @@ async function getDocumentStats(res, documentId, userId) {
 
     } catch (error) {
         console.error('Erreur getDocumentStats:', error);
+        return res.status(500).json({ error: 'Erreur serveur' });
+    }
+}
+
+// CORRECTION 1 : ENDPOINT 5 : RÉCUPÉRER TOUS LES DOCUMENTS D'UN UTILISATEUR
+async function getUserDocuments(res, userId) {
+    try {
+        const { data: documents, error } = await supabase
+            .from('ark_documents')
+            .select('*')
+            .eq('user_id', userId)
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('Erreur récupération documents:', error);
+            return res.status(500).json({ error: 'Erreur récupération' });
+        }
+
+        return res.status(200).json({
+            success: true,
+            documents: documents || []
+        });
+
+    } catch (error) {
+        console.error('Erreur getUserDocuments:', error);
         return res.status(500).json({ error: 'Erreur serveur' });
     }
 }
