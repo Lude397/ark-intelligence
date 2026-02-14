@@ -26,7 +26,7 @@ const state = {
     projetNom: null,
     currentScreen: 'welcome',
     currentDocumentId: null,
-    allDocuments: [] // CORRECTION : Ajout pour stocker les documents Supabase
+    allDocuments: []
 };
 
 const elements = {
@@ -407,7 +407,6 @@ function selectDocument(docType) {
     generateDocument(docType);
 }
 
-// CORRECTION : Stocker les documents récupérés depuis Supabase
 async function showMyDocuments() {
     closeSettingsModal();
     
@@ -431,15 +430,15 @@ async function showMyDocuments() {
         const data = await response.json();
         
         if (data.success && data.documents) {
-            state.allDocuments = data.documents; // CORRECTION : Stocker dans state
+            state.allDocuments = data.documents;
             renderMyDocuments(data.documents);
         } else {
-            state.allDocuments = []; // CORRECTION : Vider si pas de documents
+            state.allDocuments = [];
             renderMyDocuments([]);
         }
     } catch (error) {
         console.error('Erreur récupération documents:', error);
-        state.allDocuments = []; // CORRECTION : Vider en cas d'erreur
+        state.allDocuments = [];
         renderMyDocuments([]);
     }
     
@@ -480,13 +479,10 @@ function renderMyDocuments(docs) {
     elements.mydocsList.innerHTML = html;
 }
 
-// CORRECTION : Chercher dans les documents Supabase ET le cache local
 function openDocFromCache(docType) {
-    // Chercher d'abord dans les documents Supabase
     if (state.allDocuments && state.allDocuments.length > 0) {
         const doc = state.allDocuments.find(d => d.doc_type === docType);
         if (doc) {
-            // ✅ NOUVEAU : Passer les métadonnées à showDocument
             showDocument(docType, doc.contenu, {
                 projetNom: doc.projet_nom,
                 createdAt: doc.created_at
@@ -495,9 +491,7 @@ function openDocFromCache(docType) {
         }
     }
     
-    // Fallback : chercher dans le cache local
     if (state.documentCache[docType]) {
-        // Pour les documents du cache, utiliser la date actuelle et le nom du state
         showDocument(docType, state.documentCache[docType], {
             projetNom: state.projetNom,
             createdAt: new Date().toISOString()
@@ -747,7 +741,6 @@ function enableDocuments() {
 
 async function generateDocument(docType) {
     if (state.documentCache[docType]) {
-        // ✅ NOUVEAU : Passer les métadonnées pour les documents en cache
         showDocument(docType, state.documentCache[docType], {
             projetNom: state.projetNom,
             createdAt: new Date().toISOString()
@@ -776,7 +769,6 @@ async function generateDocument(docType) {
         if (data.success) {
             const baseUrl = window.location.origin;
             state.documentCache[docType] = data.document.replace(/PLACEHOLDER_BASE_URL/g, baseUrl);
-            // ✅ NOUVEAU : Passer les métadonnées
             showDocument(docType, state.documentCache[docType], {
                 projetNom: state.projetNom,
                 createdAt: new Date().toISOString()
@@ -792,7 +784,6 @@ async function generateDocument(docType) {
 }
 
 function showDocument(docType, content, metadata = {}) {
-    // ✅ Récupérer le nom actuel depuis le profil
     const userData = JSON.parse(localStorage.getItem('ark_user'));
     let ownerName = 'Utilisateur Ark';
     
@@ -802,10 +793,8 @@ function showDocument(docType, content, metadata = {}) {
         ownerName = `${prenom} ${nom}`.trim() || 'Utilisateur Ark';
     }
     
-    // ✅ Récupérer le nom du projet
     const projectName = metadata.projetNom || state.projetNom || 'Projet sans nom';
     
-    // ✅ Formater la date de création
     let formattedDate = 'À définir';
     if (metadata.createdAt) {
         const date = new Date(metadata.createdAt);
@@ -816,7 +805,6 @@ function showDocument(docType, content, metadata = {}) {
         });
     }
     
-    // ✅ Remplacer les 3 placeholders
     let updatedContent = content
         .replace(/\{\{OWNER_NAME\}\}/g, ownerName)
         .replace(/\{\{PROJECT_NAME\}\}/g, projectName)
@@ -825,15 +813,12 @@ function showDocument(docType, content, metadata = {}) {
     state.currentDoc = { type: docType, content: updatedContent };
     elements.documentTitle.textContent = DOC_NAMES[docType] || docType;
     
-    // ✅ CORRECTION : Détecter si c'est du HTML complet ou du Markdown
     const trimmedContent = updatedContent.trim();
     if (trimmedContent.startsWith('<!DOCTYPE html>') || 
         trimmedContent.startsWith('<html') ||
         trimmedContent.includes('<table>')) {
-        // C'est du HTML complet → afficher directement
         elements.documentBody.innerHTML = updatedContent;
     } else {
-        // C'est du Markdown → convertir
         elements.documentBody.innerHTML = markdownToHtml(updatedContent);
     }
     
