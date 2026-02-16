@@ -118,7 +118,6 @@ async function loadUserProfile() {
             userData.telephone = data.user.telephone;
             userData.email = data.user.email;
             userData.type_user = data.user.type_user;
-            localStorage.setItem('ark_user', JSON.stringify(userData));
             console.log('✅ Profil chargé depuis Supabase');
         }
     } catch (error) {
@@ -731,7 +730,6 @@ async function sendToAPI(message) {
             // Extraire le nom du projet depuis la réponse
             const nomMatch = cleanResponse.match(/\*\*Nom du projet\s*:\s*(.+?)\*\*/);
             if (nomMatch && nomMatch[1]) {
-                state.projetNom = nomMatch[1].trim();
                 console.log('✅ Nom du projet extrait:', state.projetNom);
             }
             
