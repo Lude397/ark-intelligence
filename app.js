@@ -119,7 +119,6 @@ async function loadUserProfile() {
             userData.email = data.user.email;
             userData.type_user = data.user.type_user;
             localStorage.setItem('ark_user', JSON.stringify(userData));
-            console.log('✅ Profil chargé depuis Supabase');
         }
     } catch (error) {
         console.error('Erreur chargement profil:', error);
@@ -503,13 +502,13 @@ function renderMyDocuments(docs) {
     docs.forEach(doc => {
         const date = new Date(doc.created_at).toLocaleDateString('fr-FR');
         html += `
-            <div class="doc-card" onclick="openDocFromCache(${doc.id})">
+            <div class="doc-card" onclick="openDocFromCache('${doc.id}')">
                 <div class="doc-card-header">
                     <div>
                         <div class="doc-card-title">${doc.projet_nom || 'Sans titre'}</div>
                         <div class="doc-card-type">${DOC_NAMES[doc.doc_type] || doc.doc_type}</div>
                     </div>
-                    <button class="doc-card-btn" onclick="event.stopPropagation(); openDocFromCache(${doc.id})">Voir</button>
+                    <button class="doc-card-btn" onclick="event.stopPropagation(); openDocFromCache('${doc.id}')">Voir</button>
                 </div>
                 <div class="doc-card-meta">
                     <div class="doc-card-meta-item">
@@ -748,7 +747,6 @@ async function sendToAPI(message) {
             const nomMatch = cleanResponse.match(/\*\*Nom du projet\s*:\s*(.+?)\*\*/);
             if (nomMatch && nomMatch[1]) {
                 state.projetNom = nomMatch[1].trim();
-                console.log('✅ Nom du projet extrait:', state.projetNom);
             }
             
             addMessage(cleanResponse, 'ai', true);
