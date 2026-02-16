@@ -118,6 +118,8 @@ async function loadUserProfile() {
             userData.telephone = data.user.telephone;
             userData.email = data.user.email;
             userData.type_user = data.user.type_user;
+            localStorage.setItem('ark_user', JSON.stringify(userData));
+            console.log('✅ Profil chargé depuis Supabase');
         }
     } catch (error) {
         console.error('Erreur chargement profil:', error);
@@ -422,7 +424,18 @@ function selectDocument(docType) {
     
     updatePageTitle(docType);
     
-    if (state.documentCache[docType]) {
+    // Si on a un document en cache ET qu'on n'est PAS en train de cadrer
+    // → On va à l'accueil pour commencer un nouveau projet
+    if (state.documentCache[docType] && !state.cadrageComplete) {
+        switchScreen('welcome');
+        if (elements.welcomeInput) {
+            elements.welcomeInput.focus();
+        }
+        return;
+    }
+    
+    // Si on a terminé le cadrage, on peut afficher le document
+    if (state.documentCache[docType] && state.cadrageComplete) {
         showDocument(docType, state.documentCache[docType]);
         return;
     }
@@ -490,13 +503,13 @@ function renderMyDocuments(docs) {
     docs.forEach(doc => {
         const date = new Date(doc.created_at).toLocaleDateString('fr-FR');
         html += `
-            <div class="doc-card" onclick="openDocFromCache('${doc.doc_type}')">
+            <div class="doc-card" onclick="openDocFromCache(${doc.id})">
                 <div class="doc-card-header">
                     <div>
                         <div class="doc-card-title">${doc.projet_nom || 'Sans titre'}</div>
                         <div class="doc-card-type">${DOC_NAMES[doc.doc_type] || doc.doc_type}</div>
                     </div>
-                    <button class="doc-card-btn" onclick="event.stopPropagation(); openDocFromCache('${doc.doc_type}')">Voir</button>
+                    <button class="doc-card-btn" onclick="event.stopPropagation(); openDocFromCache(${doc.id})">Voir</button>
                 </div>
                 <div class="doc-card-meta">
                     <div class="doc-card-meta-item">
@@ -510,18 +523,23 @@ function renderMyDocuments(docs) {
     elements.mydocsList.innerHTML = html;
 }
 
-function openDocFromCache(docType) {
-    if (state.allDocuments && state.allDocuments.length > 0) {
-        const doc = state.allDocuments.find(d => d.doc_type === docType);
-        if (doc) {
-            showDocument(docType, doc.contenu, {
-                projetNom: doc.projet_nom,
-                createdAt: doc.created_at
-            });
-            return;
+function openDocFromCache(documentId) {
+    // Si c'est un ID numérique (document depuis Supabase)
+    if (typeof documentId === 'number' || !isNaN(parseInt(documentId))) {
+        if (state.allDocuments && state.allDocuments.length > 0) {
+            const doc = state.allDocuments.find(d => d.id == documentId);
+            if (doc) {
+                showDocument(doc.doc_type, doc.contenu, {
+                    projetNom: doc.projet_nom,
+                    createdAt: doc.created_at
+                });
+                return;
+            }
         }
     }
     
+    // Sinon c'est un docType (document en cache de la session actuelle)
+    const docType = documentId;
     if (state.documentCache[docType]) {
         showDocument(docType, state.documentCache[docType], {
             projetNom: state.projetNom,
@@ -727,11 +745,11 @@ async function sendToAPI(message) {
             const cleanResponse = data.response.replace('[GENERATE]', '').trim();
             
             // Extraire le nom du projet depuis la réponse
-         const nomMatch = cleanResponse.match(/\*\*Nom du projet\s*:\s*(.+?)\*\*/);
-if (nomMatch && nomMatch[1]) {
-    state.projetNom = nomMatch[1].trim();
-}
-
+            const nomMatch = cleanResponse.match(/\*\*Nom du projet\s*:\s*(.+?)\*\*/);
+            if (nomMatch && nomMatch[1]) {
+                state.projetNom = nomMatch[1].trim();
+                console.log('✅ Nom du projet extrait:', state.projetNom);
+            }
             
             addMessage(cleanResponse, 'ai', true);
             disableChatInput();
