@@ -503,21 +503,23 @@ function openSettingsModal() {
     elements.settingsModal.classList.add('visible');
     const userData = JSON.parse(localStorage.getItem('ark_user'));
     if (userData) {
-        const nameInput = document.getElementById('profileNameInput');
+        const prenomInput = document.getElementById('profilePrenomInput');
+        const nomInput = document.getElementById('profileNomInput');
         const phoneInput = document.getElementById('profilePhoneInput');
         const emailInput = document.getElementById('profileEmailInput');
         const typeEl = document.getElementById('profileType');
         const avatarEl = document.getElementById('profileAvatar');
         
-        if (userData.nom) {
-            nameInput.value = userData.nom;
-            avatarEl.textContent = userData.nom.charAt(0).toUpperCase();
-        }
+        if (userData.prenom) prenomInput.value = userData.prenom;
+        if (userData.nom) nomInput.value = userData.nom;
         if (userData.telephone) phoneInput.value = userData.telephone;
         if (userData.email) emailInput.value = userData.email;
         if (userData.type_user) {
             typeEl.textContent = userData.type_user === 'Ark Operational Specialist' ? 'Ark Operational Specialist' : 'Porteur de projet';
         }
+        
+        const initial = (userData.prenom || userData.nom || 'U').charAt(0).toUpperCase();
+        avatarEl.textContent = initial;
     }
 }
 
@@ -526,21 +528,22 @@ function closeSettingsModal() {
 }
 
 function saveProfile() {
-    const nameInput = document.getElementById('profileNameInput');
+    const prenomInput = document.getElementById('profilePrenomInput');
+    const nomInput = document.getElementById('profileNomInput');
     const phoneInput = document.getElementById('profilePhoneInput');
     const emailInput = document.getElementById('profileEmailInput');
     const avatarEl = document.getElementById('profileAvatar');
     
     const userData = JSON.parse(localStorage.getItem('ark_user')) || {};
-    userData.nom = nameInput.value.trim();
+    userData.prenom = prenomInput.value.trim();
+    userData.nom = nomInput.value.trim();
     userData.telephone = phoneInput.value.trim();
     userData.email = emailInput.value.trim();
     
     localStorage.setItem('ark_user', JSON.stringify(userData));
     
-    if (userData.nom) {
-        avatarEl.textContent = userData.nom.charAt(0).toUpperCase();
-    }
+    const initial = (userData.prenom || userData.nom || 'U').charAt(0).toUpperCase();
+    avatarEl.textContent = initial;
     
     const btn = document.getElementById('saveProfileBtn');
     btn.textContent = 'Enregistré ✓';
@@ -662,12 +665,14 @@ async function sendToAPI(message) {
 
         if (data.action === 'generate') {
             const cleanResponse = data.response.replace('[GENERATE]', '').trim();
+            
             // Extraire le nom du projet depuis la réponse
             const nomMatch = cleanResponse.match(/\*\*Nom du projet\s*:\s*(.+?)\*\*/);
             if (nomMatch && nomMatch[1]) {
-            state.projetNom = nomMatch[1].trim();
-            console.log('✅ Nom du projet extrait:', state.projetNom);
+                state.projetNom = nomMatch[1].trim();
+                console.log('✅ Nom du projet extrait:', state.projetNom);
             }
+            
             addMessage(cleanResponse, 'ai', true);
             disableChatInput();
             await delay(500);
