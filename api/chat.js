@@ -786,6 +786,7 @@ RÈGLES :
 - Pour le HTML: garde EXACTEMENT la structure fournie
 - ⚠️ IMPORTANT : GARDE EXACTEMENT les placeholders {{OWNER_NAME}}, {{PROJECT_NAME}}, {{DATE}} tels quels
 - NE REMPLACE PAS {{OWNER_NAME}}, {{PROJECT_NAME}}, {{DATE}} par d'autres valeurs
+- Renvoie le HTML directement, sans balises markdown
 - Texte en paragraphe SANS puces ni numéros`;
 
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
