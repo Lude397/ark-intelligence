@@ -1,6 +1,6 @@
 // ===== CENTRALISATION DU LOGO =====
 const LOGO_URL = "/assets/logo.png";
-
+ 
 function applyLogo() {
     document.querySelectorAll('.app-logo').forEach(img => img.src = LOGO_URL);
 }
