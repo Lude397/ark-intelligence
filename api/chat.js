@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-
+ 
 // ==================== CONFIGURATION ====================
 const supabase = createClient(
     'https://ehaxnltgapcfxhwpqhyb.supabase.co',
