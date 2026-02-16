@@ -662,6 +662,12 @@ async function sendToAPI(message) {
 
         if (data.action === 'generate') {
             const cleanResponse = data.response.replace('[GENERATE]', '').trim();
+            // Extraire le nom du projet depuis la réponse
+            const nomMatch = cleanResponse.match(/\*\*Nom du projet\s*:\s*(.+?)\*\*/);
+            if (nomMatch && nomMatch[1]) {
+            state.projetNom = nomMatch[1].trim();
+            console.log('✅ Nom du projet extrait:', state.projetNom);
+            }
             addMessage(cleanResponse, 'ai', true);
             disableChatInput();
             await delay(500);
