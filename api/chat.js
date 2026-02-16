@@ -3,10 +3,10 @@ import { createClient } from '@supabase/supabase-js';
 // ==================== CONFIGURATION ====================
 const supabase = createClient(
     'https://ehaxnltgapcfxhwpqhyb.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVoYXhubHRnYXBjZnhod3BxaHliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjczNDg1NjksImV4cCI6MjA4MjkyNDU2OX0.-XLe5c2sgzGxv9Olc13Lu3S0hTHjSbs2brbvVC556Ec'
+    'COLLER_VOTRE_SUPABASE_ANON_KEY_ICI'
 );
 
-const MISTRAL_API_KEY = 'pnpx3zcKxb9xR2RK4kxyyOXNLDQ1paE4';
+const MISTRAL_API_KEY = 'COLLER_VOTRE_MISTRAL_API_KEY_ICI';
 
 // ==================== HANDLER ====================
 export default async function handler(req, res) {
@@ -51,6 +51,14 @@ export default async function handler(req, res) {
 
         if (mode === 'getUserDocuments') {
             return await getUserDocuments(res, userId);
+        }
+
+        if (mode === 'updateUserProfile') {
+            return await updateUserProfile(res, userId, req.body);
+        }
+
+        if (mode === 'getUserProfile') {
+            return await getUserProfile(res, userId);
         }
 
         return res.status(400).json({ error: 'Mode invalide' });
@@ -1040,7 +1048,7 @@ async function getUserDocuments(res, userId) {
             .from('ark_documents')
             .select('*')
             .eq('user_id', userId)
-            .order('created_at', { ascending: false });
+            .order('created_at', { ascending: false});
 
         if (error) {
             console.error('Erreur récupération documents:', error);
@@ -1054,6 +1062,60 @@ async function getUserDocuments(res, userId) {
 
     } catch (error) {
         console.error('Erreur getUserDocuments:', error);
+        return res.status(500).json({ error: 'Erreur serveur' });
+    }
+}
+
+// ENDPOINT 6 : METTRE À JOUR LE PROFIL UTILISATEUR
+async function updateUserProfile(res, userId, profileData) {
+    try {
+        const { prenom, nom, telephone, email } = profileData;
+        
+        const { error } = await supabase
+            .from('ark_users')
+            .update({
+                prenom: prenom,
+                nom: nom,
+                telephone: telephone,
+                email: email
+            })
+            .eq('id', userId);
+
+        if (error) {
+            console.error('Erreur mise à jour profil:', error);
+            return res.status(500).json({ error: 'Erreur mise à jour' });
+        }
+
+        console.log(`✅ Profil mis à jour pour user ${userId}`);
+        return res.status(200).json({ success: true });
+
+    } catch (error) {
+        console.error('Erreur updateUserProfile:', error);
+        return res.status(500).json({ error: 'Erreur serveur' });
+    }
+}
+
+// ENDPOINT 7 : RÉCUPÉRER LE PROFIL UTILISATEUR
+async function getUserProfile(res, userId) {
+    try {
+        const { data: user, error } = await supabase
+            .from('ark_users')
+            .select('id, nom, prenom, telephone, email, type_user')
+            .eq('id', userId)
+            .single();
+
+        if (error || !user) {
+            console.error('Erreur récupération profil:', error);
+            return res.status(404).json({ error: 'Utilisateur non trouvé' });
+        }
+
+        return res.status(200).json({
+            success: true,
+            user: user
+        });
+
+    } catch (error) {
+        console.error('Erreur getUserProfile:', error);
         return res.status(500).json({ error: 'Erreur serveur' });
     }
 }
