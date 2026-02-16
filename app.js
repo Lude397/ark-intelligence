@@ -118,7 +118,6 @@ async function loadUserProfile() {
             userData.telephone = data.user.telephone;
             userData.email = data.user.email;
             userData.type_user = data.user.type_user;
-            console.log('✅ Profil chargé depuis Supabase');
         }
     } catch (error) {
         console.error('Erreur chargement profil:', error);
