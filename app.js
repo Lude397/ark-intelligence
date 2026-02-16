@@ -814,6 +814,26 @@ async function generateDocumentsInBackground() {
             console.error(`Erreur génération ${docType}:`, error);
         }
     }
+    
+    // Recharger la liste des documents depuis Supabase pour inclure le nouveau document
+    if (userId) {
+        try {
+            const response = await fetch(CONFIG.apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    mode: 'getUserDocuments',
+                    userId: userId
+                })
+            });
+            const data = await response.json();
+            if (data.success && data.documents) {
+                state.allDocuments = data.documents;
+            }
+        } catch (error) {
+            console.error('Erreur rechargement documents:', error);
+        }
+    }
 }
 
 function enableDocuments() {
