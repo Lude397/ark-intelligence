@@ -357,7 +357,9 @@ Client répond : "MonNom Aérien"
 - Ces réflexions internes doivent rester INVISIBLES à l'utilisateur
 - Seul le format officiel avec "**Je reformule**" et les questions est autorisé
 
-PROJET DU CLIENT : "${projectDescription}"`;
+PROJET DU CLIENT : "${projectDescription}"
+ ⚠️ ATTENTION : Ceci est la DESCRIPTION du projet, PAS le nom.
+Le nom sera choisi après la question 12.`;
 }
 
 // ==================== HANDLE CHAT ====================
