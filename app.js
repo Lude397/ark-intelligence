@@ -94,6 +94,38 @@ const DOC_FOLDERS = {
     agile: 'Ark Business'
 };
 
+// ===== CHARGER LE PROFIL DEPUIS SUPABASE =====
+async function loadUserProfile() {
+    const userData = JSON.parse(localStorage.getItem('ark_user'));
+    if (!userData || !userData.id) return;
+    
+    try {
+        const response = await fetch(CONFIG.apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                mode: 'getUserProfile',
+                userId: userData.id
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success && data.user) {
+            // Mettre à jour localStorage avec les données fraîches
+            userData.prenom = data.user.prenom;
+            userData.nom = data.user.nom;
+            userData.telephone = data.user.telephone;
+            userData.email = data.user.email;
+            userData.type_user = data.user.type_user;
+            localStorage.setItem('ark_user', JSON.stringify(userData));
+            console.log('✅ Profil chargé depuis Supabase');
+        }
+    } catch (error) {
+        console.error('Erreur chargement profil:', error);
+    }
+}
+
 // ===== HAMBURGER MENU =====
 function toggleSidebar() {
     elements.sidebar.classList.toggle('active');
@@ -158,6 +190,7 @@ function updatePageTitle(docType) {
 
 function init() {
     applyTheme(state.currentTheme);
+    loadUserProfile(); // Charger le profil depuis Supabase au démarrage
 
     if (elements.welcomeSend) {
         elements.welcomeSend.addEventListener('click', handleWelcomeSend);
@@ -518,8 +551,8 @@ function openSettingsModal() {
             typeEl.textContent = userData.type_user === 'Ark Operational Specialist' ? 'Ark Operational Specialist' : 'Porteur de projet';
         }
         
-        const initial = (userData.prenom || userData.nom || 'U').charAt(0).toUpperCase();
-        avatarEl.textContent = initial;
+        // Avatar vide
+        avatarEl.textContent = '';
     }
 }
 
@@ -527,7 +560,7 @@ function closeSettingsModal() {
     elements.settingsModal.classList.remove('visible'); 
 }
 
-function saveProfile() {
+async function saveProfile() {
     const prenomInput = document.getElementById('profilePrenomInput');
     const nomInput = document.getElementById('profileNomInput');
     const phoneInput = document.getElementById('profilePhoneInput');
@@ -535,25 +568,54 @@ function saveProfile() {
     const avatarEl = document.getElementById('profileAvatar');
     
     const userData = JSON.parse(localStorage.getItem('ark_user')) || {};
-    userData.prenom = prenomInput.value.trim();
-    userData.nom = nomInput.value.trim();
-    userData.telephone = phoneInput.value.trim();
-    userData.email = emailInput.value.trim();
+    const profileData = {
+        prenom: prenomInput.value.trim(),
+        nom: nomInput.value.trim(),
+        telephone: phoneInput.value.trim(),
+        email: emailInput.value.trim()
+    };
     
-    localStorage.setItem('ark_user', JSON.stringify(userData));
-    
-    const initial = (userData.prenom || userData.nom || 'U').charAt(0).toUpperCase();
-    avatarEl.textContent = initial;
-    
-    const btn = document.getElementById('saveProfileBtn');
-    btn.textContent = 'Enregistré ✓';
-    btn.style.background = '#22c55e';
-    btn.style.color = '#fff';
-    setTimeout(() => {
-        btn.textContent = 'Enregistrer';
-        btn.style.background = '';
-        btn.style.color = '';
-    }, 2000);
+    // Envoyer à Supabase
+    try {
+        const response = await fetch(CONFIG.apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                mode: 'updateUserProfile',
+                userId: userData.id,
+                ...profileData
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            // Mettre à jour localStorage
+            userData.prenom = profileData.prenom;
+            userData.nom = profileData.nom;
+            userData.telephone = profileData.telephone;
+            userData.email = profileData.email;
+            localStorage.setItem('ark_user', JSON.stringify(userData));
+            
+            // Avatar vide
+            avatarEl.textContent = '';
+            
+            const btn = document.getElementById('saveProfileBtn');
+            btn.textContent = 'Enregistré ✓';
+            btn.style.background = '#22c55e';
+            btn.style.color = '#fff';
+            setTimeout(() => {
+                btn.textContent = 'Enregistrer';
+                btn.style.background = '';
+                btn.style.color = '';
+            }, 2000);
+        } else {
+            alert('Erreur lors de la sauvegarde');
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur de connexion');
+    }
 }
 
 function applyTheme(theme) {
