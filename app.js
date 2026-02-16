@@ -727,10 +727,27 @@ async function sendToAPI(message) {
             const cleanResponse = data.response.replace('[GENERATE]', '').trim();
             
             // Extraire le nom du projet depuis la réponse
-            const nomMatch = cleanResponse.match(/\*\*Nom du projet\s*:\s*(.+?)\*\*/);
-            if (nomMatch && nomMatch[1]) {
-                console.log('✅ Nom du projet extrait:', state.projetNom);
-            }
+           const nomMatch = cleanResponse.match(/\*\*Nom du projet\s*:\s*(.+?)\*\*/);
+if (nomMatch && nomMatch[1]) {
+    let extractedName = nomMatch[1].trim();
+    
+    // Nettoyer si DeepSeek écrit la phrase complète au lieu du nom
+    // Exemples à nettoyer : "mon projet est de lancer une compagnie aerienne"
+    extractedName = extractedName
+        .replace(/^mon projet est de /i, '')
+        .replace(/^je veux /i, '')
+        .replace(/^je souhaite /i, '')
+        .replace(/^l'objectif est de /i, '')
+        .replace(/^le projet consiste à /i, '');
+    
+    // Prendre seulement les 5 premiers mots maximum
+    const words = extractedName.split(' ');
+    if (words.length > 5) {
+        extractedName = words.slice(0, 5).join(' ');
+    }
+    
+    state.projetNom = extractedName.trim();
+}
             
             addMessage(cleanResponse, 'ai', true);
             disableChatInput();
