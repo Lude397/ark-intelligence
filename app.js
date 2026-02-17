@@ -523,24 +523,21 @@ function renderMyDocuments(docs) {
 }
 
 function openDocFromCache(documentId) {
-    // Si c'est un ID numérique (document depuis Supabase)
-    if (typeof documentId === 'number' || !isNaN(parseInt(documentId))) {
-        if (state.allDocuments && state.allDocuments.length > 0) {
-            const doc = state.allDocuments.find(d => d.id == documentId);
-            if (doc) {
-                showDocument(doc.doc_type, doc.contenu, {
-                    projetNom: doc.projet_nom,
-                    createdAt: doc.created_at
-                });
-                return;
-            }
+    // D'abord, chercher dans la liste de tous les documents (depuis Supabase)
+    if (state.allDocuments && state.allDocuments.length > 0) {
+        const doc = state.allDocuments.find(d => d.id === documentId);
+        if (doc) {
+            showDocument(doc.doc_type, doc.contenu, {
+                projetNom: doc.projet_nom,
+                createdAt: doc.created_at
+            });
+            return;
         }
     }
     
-    // Sinon c'est un docType (document en cache de la session actuelle)
-    const docType = documentId;
-    if (state.documentCache[docType]) {
-        showDocument(docType, state.documentCache[docType], {
+    // Sinon, chercher dans le cache de la session actuelle (par type de document)
+    if (state.documentCache[documentId]) {
+        showDocument(documentId, state.documentCache[documentId], {
             projetNom: state.projetNom,
             createdAt: new Date().toISOString()
         });
