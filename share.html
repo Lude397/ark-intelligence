@@ -351,7 +351,7 @@
                 <div class="logo-text">Ark Intelligence</div>
             </div>
             <div class="header-actions">
-                <a href="/" class="btn btn-primary">Créer mon document</a>
+                <a href="https://www.arkintelligence.africa/" class="btn btn-primary">Créer mon document</a>
             </div>
         </div>
 
@@ -360,7 +360,7 @@
                 <div class="banner-title">Créez vos propres documents professionnels</div>
                 <div class="banner-text">Rejoignez Ark Intelligence pour cadrer vos projets et générer vos documents automatiquement</div>
             </div>
-            <button class="banner-btn" onclick="window.location.href='/connexion.html'">
+            <button class="banner-btn" onclick="window.location.href='https://www.arkintelligence.africa/connexion.html'">
                 S'inscrire gratuitement
             </button>
         </div>
@@ -375,10 +375,6 @@
                 <div class="doc-meta-item">
                     <span id="docType">Document</span>
                 </div>
-                <span class="doc-meta-separator"></span>
-                <div class="doc-meta-item">
-                    <span id="docDate">-</span>
-                </div>
             </div>
         </div>
 
@@ -390,140 +386,94 @@
         </div>
 
         <div class="footer">
-            Généré avec <a href="/">Ark Intelligence</a> - Cadrez et structurez vos projets professionnels
+            Généré avec <a href="https://www.arkintelligence.africa/">Ark Intelligence</a> - Cadrez et structurez vos projets professionnels
         </div>
     </div>
 
     <script>
         const LOGO_URL = "/assets/logo.png";
-function applyLogo() {
-    document.querySelectorAll('.app-logo').forEach(img => img.src = LOGO_URL);
-}
-applyLogo();
-
-        function getTokenFromURL() {
-            const path = window.location.pathname;
-            const match = path.match(/\/share\/([a-zA-Z0-9]+)/);
-            return match ? match[1] : null;
+        const API_URL = '/api/chat';
+        
+        function applyLogo() {
+            document.querySelectorAll('.app-logo').forEach(img => img.src = LOGO_URL);
         }
+        applyLogo();
 
-        function markdownToHtml(md) {
-            let html = md;
-            html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
-            html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
-            html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
-            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            html = html.replace(/^\|(.+)\|$/gm, (match, content) => {
-                const cells = content.split('|').map(c => c.trim());
-                if (cells.every(c => /^[-:]+$/.test(c))) return '<!--separator-->';
-                return '<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>';
-            });
-            html = html.replace(/<!--separator-->/g, '');
-            html = html.replace(/(<tr>.*<\/tr>\n?)+/g, '<table>$&</table>');
-            html = html.replace(/^- (.*$)/gm, '<li>$1</li>');
-            html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
-            html = html.replace(/^(?!<[hultro])(.*$)/gm, (match) => match.trim() ? `<p>${match}</p>` : '');
-            html = html.replace(/<p><\/p>/g, '');
-            return html;
-        }
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('fr-FR', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            });
-        }
-
-        async function trackView(sharedLinkId) {
-            const userData = localStorage.getItem('ark_user');
-            let viewerUserId = null;
-            
-            if (userData) {
-                try {
-                    const user = JSON.parse(userData);
-                    viewerUserId = user.id;
-                } catch (e) {}
-            }
-
-            let viewerIp = 'unknown';
+        async function loadDocument() {
             try {
-                const ipResponse = await fetch('https://api.ipify.org?format=json');
-                const ipData = await ipResponse.json();
-                viewerIp = ipData.ip;
-            } catch (e) {
-                viewerIp = `browser_${Date.now()}`;
-            }
-
-            try {
-                await fetch(API_URL, {
+                // Extraire owner et project depuis l'URL
+                // Format: /ark/luderic-samba/fiablebat
+                const pathParts = window.location.pathname.split('/').filter(p => p);
+                
+                if (pathParts.length < 3 || pathParts[0] !== 'ark') {
+                    showError('URL invalide', 'Le lien de partage est mal formé.');
+                    return;
+                }
+                
+                const owner = pathParts[1];
+                const project = pathParts[2];
+                
+                // Appeler l'API pour récupérer le document
+                const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        mode: 'trackView',
-                        sharedLinkId,
-                        viewerUserId,
-                        viewerIp
+                        mode: 'getSharedDocument',
+                        owner: owner,
+                        project: project
                     })
                 });
-            } catch (error) {
-                console.error('Erreur tracking:', error);
-            }
-        }
-
-        async function loadDocument() {
-            const token = getTokenFromURL();
-            
-            if (!token) {
-                document.getElementById('documentContent').innerHTML = `
-                    <div class="error">
-                        <div class="error-icon">⚠️</div>
-                        <h2>Lien invalide</h2>
-                        <p>Ce lien de partage n'est pas valide.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_URL}?token=${encodeURIComponent(token)}`);
+                
                 const data = await response.json();
-
-                if (!data.success) {
-                    throw new Error(data.error || 'Document introuvable');
+                
+                if (data.success && data.document) {
+                    showDocument(data.document, owner, project);
+                } else {
+                    showError('Document introuvable', 'Ce document n\'existe pas ou n\'est plus disponible.');
                 }
-
-                const doc = data.document;
-
-                document.getElementById('ownerName').textContent = doc.owner_name;
-                document.getElementById('docType').textContent = doc.projet_nom || 'Document';
-                document.getElementById('docDate').textContent = formatDate(doc.created_at);
-                document.getElementById('docInfo').style.display = 'block';
-
-                document.getElementById('documentContent').innerHTML = markdownToHtml(doc.contenu);
-
-                if (data.sharedLinkId) {
-                    trackView(data.sharedLinkId);
-                }
-
-                const userData = localStorage.getItem('ark_user');
-                if (!userData) {
-                    document.getElementById('banner').classList.add('visible');
-                }
-
+                
             } catch (error) {
-                console.error('Erreur chargement:', error);
-                document.getElementById('documentContent').innerHTML = `
-                    <div class="error">
-                        <div class="error-icon">❌</div>
-                        <h2>Erreur</h2>
-                        <p>${error.message}</p>
-                    </div>
-                `;
+                console.error('Erreur:', error);
+                showError('Erreur de chargement', 'Impossible de charger le document. Veuillez réessayer plus tard.');
             }
         }
-
+        
+        function showDocument(htmlContent, owner, project) {
+            // Afficher le nom du propriétaire
+            const ownerName = owner.split('-').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+            document.getElementById('ownerName').textContent = ownerName;
+            
+            // Afficher le nom du projet
+            const projectName = project.split('-').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+            document.getElementById('docType').textContent = projectName;
+            
+            document.getElementById('docInfo').style.display = 'block';
+            
+            // Afficher le document
+            document.getElementById('documentContent').innerHTML = htmlContent;
+            
+            // Afficher la bannière si l'utilisateur n'est pas connecté
+            const userData = localStorage.getItem('ark_user');
+            if (!userData) {
+                document.getElementById('banner').classList.add('visible');
+            }
+        }
+        
+        function showError(title, message) {
+            document.getElementById('documentContent').innerHTML = `
+                <div class="error">
+                    <div class="error-icon">⚠️</div>
+                    <h2>${title}</h2>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+        
+        // Charger le document au démarrage
         loadDocument();
     </script>
 </body>
