@@ -1578,3 +1578,67 @@ body {
         font-size: 13px;
     }
 }
+
+/* ===== MENU DROPDOWN DOCUMENT ===== */
+.doc-menu-btn {
+    font-size: 24px;
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text);
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.doc-menu-btn:hover {
+    background: var(--hover);
+}
+
+.doc-dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 20px;
+    top: 60px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    min-width: 180px;
+}
+
+.doc-dropdown-menu.visible {
+    display: block;
+}
+
+.doc-dropdown-menu button {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    text-align: left;
+    border: none;
+    background: none;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.doc-dropdown-menu button:hover {
+    background: var(--hover);
+}
+
+.doc-dropdown-menu .delete-btn {
+    color: #dc2626;
+    border-top: 1px solid var(--border);
+}
+
+.doc-dropdown-menu .delete-btn:hover {
+    background: #fee;
+}
+
+/* ===== DOCUMENT ACTIONS POSITION ===== */
+.document-actions {
+    position: relative;
+}
