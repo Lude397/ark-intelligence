@@ -27,7 +27,7 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
     try {
-        const { mode, message, history, docType, userId, projetNom, documentId, sharedLinkId, viewerUserId, viewerIp } = req.body;
+        const { mode, message, history, docType, userId, projetNom, documentId, sharedLinkId, viewerUserId, viewerIp, owner, project } = req.body;
 
         if (mode === 'chat') {
             return await handleChat(res, message, history);
@@ -59,6 +59,14 @@ export default async function handler(req, res) {
 
         if (mode === 'getUserProfile') {
             return await getUserProfile(res, userId);
+        }
+
+        if (mode === 'deleteDocument') {
+            return await deleteDocument(res, documentId, userId);
+        }
+
+        if (mode === 'getSharedDocument') {
+            return await getSharedDocumentByOwnerProject(res, owner, project);
         }
 
         return res.status(400).json({ error: 'Mode invalide' });
@@ -294,59 +302,49 @@ Exemple : Pour Q1, Q2, Q3, Q4 → affiche "**PHASE 1 — Cadrage stratégique**"
 
 APRÈS LA QUESTION 12 (une fois que le client a choisi A/B/C/D ou E) :
 
-APRÈS LA QUESTION 12 :
-
-ÉTAPE 1 - PROPOSER LES NOMS :
+ÉTAPE 1 - REFORMULER + PROPOSER NOMS :
 1. Reformule la réponse Q12
 2. Annonce "✅ Cadrage terminé !"
-3. Propose 5 noms courts (1 à 3 mots maximum) :
-   - Mémorise : Nom_A = [premier nom]
-   - Mémorise : Nom_B = [deuxième nom]
-   - Mémorise : Nom_C = [troisième nom]
-   - Mémorise : Nom_D = [quatrième nom]
-   - Mémorise : Nom_E = "Proposez votre propre nom"
+3. Propose 5 noms (A, B, C, D, E)
+4. Demande "Quel nom souhaitez-vous donner à votre projet ?"
 
-4. Affiche :
-A) [Nom_A]
-B) [Nom_B]
-C) [Nom_C]
-D) [Nom_D]
+ÉTAPE 2 - APRÈS CHOIX DU NOM :
+
+Tu poses la question des noms UNE SEULE FOIS. Ne la redemande JAMAIS.
+
+Quand le client choisit :
+1. Identifie le nom exact :
+   - Si client répond "A", "B", "C" ou "D" → Prends le nom que tu as proposé pour cette lettre
+   - Si client répond "E" ou écrit un nom → Prends exactement ce qu'il a écrit
+2. Écris sur une ligne : **Nom du projet : [le nom exact]**
+3. Écris sur une nouvelle ligne : [GENERATE]
+4. ARRÊTE - Ne pose AUCUNE autre question
+
+Exemples :
+- Tu as proposé B) CyberHub, client dit "B" → **Nom du projet : CyberHub**
+- Client écrit "Pizza Royale" → **Nom du projet : Pizza Royale**
+
+EXEMPLE COMPLET APRÈS Q12 :
+**Je reformule** : Vous mesurez le succès par le nombre de clients quotidiens.
+
+✅ Cadrage terminé ! Maintenant, donnons un nom à votre projet.
+
+**Propositions de noms pour votre cybercafé :**
+
+A) CyberHub
+B) NetPoint
+C) ConnectZone
+D) Digital Access
 E) Proposez votre propre nom
 
 **Quel nom souhaitez-vous donner à votre projet ?**
 
-ÉTAPE 2 - UTILISER LE NOM CHOISI :
+[CLIENT RÉPOND : "B"]
 
-Quand le client répond :
-1. Identifie la variable correspondante :
-   - Client dit "A" → Variable_Choisie = Nom_A
-   - Client dit "B" → Variable_Choisie = Nom_B
-   - Client dit "C" → Variable_Choisie = Nom_C
-   - Client dit "D" → Variable_Choisie = Nom_D
-   - Client écrit un nom → Variable_Choisie = [ce qu'il a écrit]
+**Nom du projet : NetPoint**
 
-2. Écris EXACTEMENT : **Nom du projet : [Variable_Choisie]**
+[GENERATE]
 
-3. Écris : [GENERATE]
-
-⚠️ RÈGLE ABSOLUE : Utilise UNIQUEMENT le contenu de Variable_Choisie.
-NE mets JAMAIS la description du projet ("mon projet est de...").
-
-EXEMPLE COMPLET :
-Tu as proposé :
-A) SkyConnect
-B) AeroLink
-C) CloudWings
-D) FlyExpress
-E) Proposez votre propre nom
-
-Client répond : "B"
-→ Variable_Choisie = AeroLink
-→ Tu écris : **Nom du projet : AeroLink**
-
-Client répond : "MonNom Aérien"
-→ Variable_Choisie = MonNom Aérien
-→ Tu écris : **Nom du projet : MonNom Aérien**
 ---
 
 ⚠️ RÈGLES CRITIQUES - INTERDICTIONS ABSOLUES :
@@ -357,9 +355,7 @@ Client répond : "MonNom Aérien"
 - Ces réflexions internes doivent rester INVISIBLES à l'utilisateur
 - Seul le format officiel avec "**Je reformule**" et les questions est autorisé
 
-PROJET DU CLIENT : "${projectDescription}"
- ⚠️ ATTENTION : Ceci est la DESCRIPTION du projet, PAS le nom.
-Le nom sera choisi après la question 12.`;
+PROJET DU CLIENT : "${projectDescription}"`;
 }
 
 // ==================== HANDLE CHAT ====================
@@ -796,7 +792,7 @@ async function handleGenerate(res, history, docType = 'definition_projet', userI
     // Ils seront remplacés dynamiquement à l'affichage
     
     // Remplacer {{BASE_URL}}
-    docPrompt = docPrompt.replace(/\{\{BASE_URL\}\}/g, 'https://arkintelligence.vercel.app');
+    docPrompt = docPrompt.replace(/\{\{BASE_URL\}\}/g, 'https://www.arkintelligence.africa/');
 
     const generatePrompt = `Tu es un expert en gestion de projet PMI.
 
@@ -1141,5 +1137,85 @@ async function getUserProfile(res, userId) {
     } catch (error) {
         console.error('Erreur getUserProfile:', error);
         return res.status(500).json({ error: 'Erreur serveur' });
+    }
+}
+
+async function deleteDocument(res, documentId, userId) {
+    try {
+        const { data, error } = await supabase
+            .from('ark_documents')
+            .delete()
+            .eq('id', documentId)
+            .eq('user_id', userId);
+
+        if (error) {
+            console.error('Erreur suppression document:', error);
+            return res.status(500).json({ error: 'Erreur lors de la suppression' });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: 'Document supprimé avec succès'
+        });
+
+    } catch (error) {
+        console.error('Erreur deleteDocument:', error);
+        return res.status(500).json({ error: 'Erreur serveur' });
+    }
+}
+
+async function getSharedDocumentByOwnerProject(res, owner, project) {
+    try {
+        // Rechercher l'utilisateur par son nom (owner = "prenom-nom")
+        const ownerParts = owner.split('-');
+        const prenom = ownerParts[0];
+        const nom = ownerParts.slice(1).join('-');
+        
+        // Trouver l'utilisateur
+        const { data: users, error: userError } = await supabase
+            .from('ark_users')
+            .select('id')
+            .ilike('prenom', prenom)
+            .ilike('nom', nom);
+
+        if (userError || !users || users.length === 0) {
+            return res.status(404).json({ 
+                success: false, 
+                error: 'Utilisateur introuvable' 
+            });
+        }
+
+        const userId = users[0].id;
+        
+        // Rechercher le document par projet_nom et user_id
+        const projectName = project.replace(/-/g, ' ');
+        
+        const { data: document, error: docError } = await supabase
+            .from('ark_documents')
+            .select('contenu')
+            .eq('user_id', userId)
+            .ilike('projet_nom', projectName)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+
+        if (docError || !document) {
+            return res.status(404).json({ 
+                success: false, 
+                error: 'Document introuvable' 
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            document: document.contenu
+        });
+
+    } catch (error) {
+        console.error('Erreur getSharedDocumentByOwnerProject:', error);
+        return res.status(500).json({ 
+            success: false, 
+            error: 'Erreur serveur' 
+        });
     }
 }
