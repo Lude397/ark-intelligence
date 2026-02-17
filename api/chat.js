@@ -1166,45 +1166,107 @@ async function deleteDocument(res, documentId, userId) {
 
 async function getSharedDocumentByOwnerProject(res, owner, project) {
     try {
+        console.log('🔍 Recherche document:', { owner, project });
+        
+        // Normaliser owner et project (supprimer accents, mettre en minuscules)
+        const normalizeString = (str) => {
+            return str
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, ''); // Supprimer les accents
+        };
+        
         // Rechercher l'utilisateur par son nom (owner = "prenom-nom")
         const ownerParts = owner.split('-');
         const prenom = ownerParts[0];
         const nom = ownerParts.slice(1).join('-');
         
-        // Trouver l'utilisateur
+        console.log('👤 Recherche utilisateur:', { prenom, nom });
+        
+        // Trouver l'utilisateur - chercher avec pattern flexible
         const { data: users, error: userError } = await supabase
             .from('ark_users')
-            .select('id')
-            .ilike('prenom', prenom)
-            .ilike('nom', nom);
+            .select('id, prenom, nom');
 
-        if (userError || !users || users.length === 0) {
+        if (userError) {
+            console.error('❌ Erreur recherche utilisateur:', userError);
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Erreur recherche utilisateur' 
+            });
+        }
+
+        if (!users || users.length === 0) {
+            console.error('❌ Aucun utilisateur trouvé');
             return res.status(404).json({ 
                 success: false, 
                 error: 'Utilisateur introuvable' 
             });
         }
 
-        const userId = users[0].id;
+        // Chercher l'utilisateur avec normalisation
+        const prenomNorm = normalizeString(prenom);
+        const nomNorm = normalizeString(nom);
+        
+        const user = users.find(u => 
+            normalizeString(u.prenom || '') === prenomNorm && 
+            normalizeString(u.nom || '') === nomNorm
+        );
+
+        if (!user) {
+            console.error('❌ Utilisateur non trouvé après normalisation');
+            return res.status(404).json({ 
+                success: false, 
+                error: 'Utilisateur introuvable' 
+            });
+        }
+
+        console.log('✅ Utilisateur trouvé:', user.id);
+
+        const userId = user.id;
         
         // Rechercher le document par projet_nom et user_id
-        const projectName = project.replace(/-/g, ' ');
+        const projectNorm = normalizeString(project.replace(/-/g, ' '));
         
-        const { data: document, error: docError } = await supabase
+        console.log('📄 Recherche document pour userId:', userId);
+        
+        const { data: documents, error: docError } = await supabase
             .from('ark_documents')
-            .select('contenu')
+            .select('contenu, projet_nom')
             .eq('user_id', userId)
-            .ilike('projet_nom', projectName)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .single();
+            .order('created_at', { ascending: false });
 
-        if (docError || !document) {
+        if (docError) {
+            console.error('❌ Erreur recherche document:', docError);
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Erreur recherche document' 
+            });
+        }
+
+        if (!documents || documents.length === 0) {
+            console.error('❌ Aucun document trouvé pour cet utilisateur');
+            return res.status(404).json({ 
+                success: false, 
+                error: 'Aucun document disponible' 
+            });
+        }
+
+        // Chercher le document avec normalisation
+        const document = documents.find(d => 
+            normalizeString(d.projet_nom || '') === projectNorm
+        );
+
+        if (!document) {
+            console.error('❌ Document non trouvé après normalisation. Projets disponibles:', 
+                documents.map(d => d.projet_nom));
             return res.status(404).json({ 
                 success: false, 
                 error: 'Document introuvable' 
             });
         }
+
+        console.log('✅ Document trouvé');
 
         return res.status(200).json({
             success: true,
@@ -1212,7 +1274,7 @@ async function getSharedDocumentByOwnerProject(res, owner, project) {
         });
 
     } catch (error) {
-        console.error('Erreur getSharedDocumentByOwnerProject:', error);
+        console.error('❌ Erreur getSharedDocumentByOwnerProject:', error);
         return res.status(500).json({ 
             success: false, 
             error: 'Erreur serveur' 
