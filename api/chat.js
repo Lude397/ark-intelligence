@@ -1168,12 +1168,17 @@ async function getSharedDocumentByOwnerProject(res, owner, project) {
     try {
         console.log('🔍 Recherche document:', { owner, project });
         
-        // Normaliser owner et project (supprimer accents, mettre en minuscules)
+        // Normaliser owner et project (supprimer accents, caractères spéciaux)
         const normalizeString = (str) => {
             return str
                 .toLowerCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, ''); // Supprimer les accents
+                .normalize('NFD')                      // Décompose les accents
+                .replace(/[\u0300-\u036f]/g, '')      // Supprime les accents
+                .replace(/['']/g, ' ')                // Apostrophes → espace
+                .replace(/[–—]/g, '-')                // Tirets longs → tiret court
+                .replace(/[^\w\s-]/g, '')             // Supprime tout sauf lettres, chiffres, espaces, tirets
+                .replace(/\s+/g, ' ')                 // Espaces multiples → 1 espace
+                .trim();                               // Supprime espaces début/fin
         };
         
         // Rechercher l'utilisateur par son nom (owner = "prenom-nom")
