@@ -277,13 +277,35 @@ async function handleShareDocument() {
         return;
     }
 
+    // Vérifier que le nom du projet existe
+    if (!state.projetNom || state.projetNom === 'mon-projet') {
+        alert('Nom du projet manquant. Veuillez générer un nouveau document.');
+        return;
+    }
+
+    // Fonction de normalisation (identique à l'API)
+    const normalizeString = (str) => {
+        return str
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/['']/g, ' ')
+            .replace(/[–—]/g, '-')
+            .replace(/[^\w\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .trim();
+    };
+
     // Générer l'URL au format /ark/prenom-nom/nom-du-projet
-    const prenom = (userData.prenom || '').toLowerCase().replace(/\s+/g, '-');
-    const nom = (userData.nom || '').toLowerCase().replace(/\s+/g, '-');
-    const projet = (state.projetNom || 'mon-projet').toLowerCase().replace(/\s+/g, '-');
+    const prenom = normalizeString(userData.prenom || '');
+    const nom = normalizeString(userData.nom || '');
+    const projet = normalizeString(state.projetNom);
     
     const baseUrl = window.location.origin;
     const shareUrl = `${baseUrl}/ark/${prenom}-${nom}/${projet}`;
+    
+    console.log('📤 Lien de partage généré:', shareUrl);
+    console.log('📊 Données:', { prenom, nom, projet, projetNomOriginal: state.projetNom });
     
     showShareModal(shareUrl);
 }
