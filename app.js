@@ -255,6 +255,9 @@ function init() {
 
     document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
 
+    document.getElementById('docMenuBtn').addEventListener('click', toggleDocMenu);
+    document.getElementById('deleteDoc').addEventListener('click', deleteCurrentDocument);
+
     document.getElementById('myDocsBtnSidebar').addEventListener('click', () => {
         showMyDocuments();
         closeSidebar();
@@ -274,34 +277,15 @@ async function handleShareDocument() {
         return;
     }
 
-    const projetNom = state.projetNom || 'mon-projet';
-    const fakeDocumentId = `${state.currentDoc.type}_${Date.now()}`;
+    // Générer l'URL au format /ark/prenom-nom/nom-du-projet
+    const prenom = (userData.prenom || '').toLowerCase().replace(/\s+/g, '-');
+    const nom = (userData.nom || '').toLowerCase().replace(/\s+/g, '-');
+    const projet = (state.projetNom || 'mon-projet').toLowerCase().replace(/\s+/g, '-');
     
-    try {
-        const response = await fetch(CONFIG.apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                mode: 'createShareLink',
-                documentId: fakeDocumentId,
-                userId: userData.id,
-                projetNom: projetNom
-            })
-        });
-
-        const data = await response.json();
-        
-        if (data.success) {
-            const baseUrl = window.location.origin;
-            const fullShareUrl = `${baseUrl}${data.shareUrl}`;
-            showShareModal(fullShareUrl);
-        } else {
-            alert('Erreur lors de la création du lien de partage');
-        }
-    } catch (error) {
-        console.error('Erreur création lien:', error);
-        alert('Erreur de connexion');
-    }
+    const baseUrl = window.location.origin;
+    const shareUrl = `${baseUrl}/ark/${prenom}-${nom}/${projet}`;
+    
+    showShareModal(shareUrl);
 }
 
 function showShareModal(shareUrl) {
@@ -508,7 +492,6 @@ function renderMyDocuments(docs) {
                         <div class="doc-card-title">${doc.projet_nom || 'Sans titre'}</div>
                         <div class="doc-card-type">${DOC_NAMES[doc.doc_type] || doc.doc_type}</div>
                     </div>
-                    <button class="doc-card-btn" onclick="event.stopPropagation(); openDocFromCache('${doc.id}')">Voir</button>
                 </div>
                 <div class="doc-card-meta">
                     <div class="doc-card-meta-item">
@@ -955,6 +938,70 @@ function copyDocument() {
         navigator.clipboard.writeText(state.currentDoc.content);
         elements.copyDoc.textContent = 'Copié !';
         setTimeout(() => elements.copyDoc.textContent = 'Copier', 2000);
+    }
+}
+
+function toggleDocMenu() {
+    const menu = document.getElementById('docDropdownMenu');
+    if (menu) {
+        menu.classList.toggle('visible');
+    }
+}
+
+async function deleteCurrentDocument() {
+    if (!state.currentDoc) return;
+    
+    const menu = document.getElementById('docDropdownMenu');
+    if (menu) menu.classList.remove('visible');
+    
+    if (!confirm('Voulez-vous vraiment supprimer ce document ?')) return;
+    
+    const userData = JSON.parse(localStorage.getItem('ark_user'));
+    if (!userData || !userData.id) {
+        alert('Vous devez être connecté pour supprimer un document');
+        return;
+    }
+    
+    // Trouver l'ID du document actuel
+    let documentId = null;
+    if (state.allDocuments && state.allDocuments.length > 0) {
+        const doc = state.allDocuments.find(d => 
+            d.doc_type === state.currentDoc.type && 
+            d.contenu === state.currentDoc.content
+        );
+        if (doc) documentId = doc.id;
+    }
+    
+    if (!documentId) {
+        alert('Impossible de supprimer ce document');
+        return;
+    }
+    
+    try {
+        const response = await fetch(CONFIG.apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                mode: 'deleteDocument',
+                documentId: documentId,
+                userId: userData.id
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Retirer le document de state.allDocuments
+            state.allDocuments = state.allDocuments.filter(d => d.id !== documentId);
+            
+            // Retourner à "Mes documents"
+            showMyDocuments();
+        } else {
+            alert('Erreur lors de la suppression');
+        }
+    } catch (error) {
+        console.error('Erreur suppression:', error);
+        alert('Erreur de connexion');
     }
 }
 
