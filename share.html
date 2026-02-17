@@ -439,6 +439,11 @@
         }
         
         function showDocument(htmlContent, owner, project) {
+            // Remplacer l'ancien lien Vercel par le lien de production
+            htmlContent = htmlContent
+                .replace(/arkintelligence\.vercel\.app/g, 'www.arkintelligence.africa')
+                .replace(/https:\/\/arkintelligence\.vercel\.app/g, 'https://www.arkintelligence.africa');
+            
             // Afficher le nom du propriétaire
             const ownerName = owner.split('-').map(word => 
                 word.charAt(0).toUpperCase() + word.slice(1)
