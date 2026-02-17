@@ -895,7 +895,9 @@ function showDocument(docType, content, metadata = {}) {
     let updatedContent = content
         .replace(/\{\{OWNER_NAME\}\}/g, ownerName)
         .replace(/\{\{PROJECT_NAME\}\}/g, projectName)
-        .replace(/\{\{DATE\}\}/g, formattedDate);
+        .replace(/\{\{DATE\}\}/g, formattedDate)
+        .replace(/arkintelligence\.vercel\.app/g, 'www.arkintelligence.africa')
+        .replace(/https:\/\/arkintelligence\.vercel\.app/g, 'https://www.arkintelligence.africa');
     
     state.currentDoc = { type: docType, content: updatedContent };
     elements.documentTitle.textContent = DOC_NAMES[docType] || docType;
