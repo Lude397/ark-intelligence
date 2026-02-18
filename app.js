@@ -256,6 +256,7 @@ function init() {
     document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
 
     document.getElementById('docMenuBtn').addEventListener('click', toggleDocMenu);
+    document.getElementById('printDoc').addEventListener('click', printDocument);
     document.getElementById('deleteDoc').addEventListener('click', deleteCurrentDocument);
 
     document.getElementById('myDocsBtnSidebar').addEventListener('click', () => {
@@ -1030,6 +1031,15 @@ async function deleteCurrentDocument() {
         console.error('Erreur suppression:', error);
         alert('Erreur de connexion');
     }
+}
+
+function printDocument() {
+    // Fermer le menu dropdown
+    const menu = document.getElementById('docDropdownMenu');
+    if (menu) menu.classList.remove('visible');
+    
+    // Lancer l'impression
+    window.print();
 }
 
 function cleanMarkdownForWhatsApp(text) {
