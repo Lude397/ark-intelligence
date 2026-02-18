@@ -169,7 +169,7 @@ body {
 }
 
 .sidebar-content {
-    flex: 1;
+    flex: 0.7;
     overflow-y: auto;
     padding: 10px;
 }
@@ -250,7 +250,7 @@ body {
 }
 
 .sidebar-content {
-    flex: 1;
+    flex: 0.7;
     overflow-y: auto;
     padding-bottom: 20px;
 }
