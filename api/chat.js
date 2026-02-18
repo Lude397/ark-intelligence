@@ -1237,7 +1237,7 @@ async function getSharedDocumentByOwnerProject(res, owner, project) {
         
         const { data: documents, error: docError } = await supabase
             .from('ark_documents')
-            .select('contenu, projet_nom')
+            .select('contenu, projet_nom, created_at')
             .eq('user_id', userId)
             .order('created_at', { ascending: false });
 
@@ -1275,7 +1275,8 @@ async function getSharedDocumentByOwnerProject(res, owner, project) {
 
         return res.status(200).json({
             success: true,
-            document: document.contenu
+            document: document.contenu,
+            createdAt: document.created_at
         });
 
     } catch (error) {
