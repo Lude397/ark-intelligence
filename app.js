@@ -969,10 +969,33 @@ function copyDocument() {
     }
 }
 
-function toggleDocMenu() {
+function toggleDocMenu(event) {
+    if (event) event.stopPropagation();
+    
     const menu = document.getElementById('docDropdownMenu');
     if (menu) {
+        const isVisible = menu.classList.contains('visible');
         menu.classList.toggle('visible');
+        
+        // Si le menu vient de s'ouvrir, ajouter un listener pour le fermer au clic ailleurs
+        if (!isVisible) {
+            setTimeout(() => {
+                document.addEventListener('click', closeDocMenuOnClickOutside);
+            }, 10);
+        } else {
+            document.removeEventListener('click', closeDocMenuOnClickOutside);
+        }
+    }
+}
+
+function closeDocMenuOnClickOutside(event) {
+    const menu = document.getElementById('docDropdownMenu');
+    const menuBtn = document.getElementById('docMenuBtn');
+    
+    // Si le clic n'est ni sur le menu ni sur le bouton
+    if (menu && !menu.contains(event.target) && event.target !== menuBtn) {
+        menu.classList.remove('visible');
+        document.removeEventListener('click', closeDocMenuOnClickOutside);
     }
 }
 
