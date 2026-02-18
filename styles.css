@@ -249,9 +249,16 @@ body {
     margin-top: 2px;
 }
 
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+
 .sidebar-footer {
     padding: 10px;
     border-top: 1px solid var(--border);
+    margin-top: auto;
 }
 
 .my-docs-btn-sidebar {
@@ -1625,12 +1632,16 @@ body {
     position: absolute;
     right: 20px;
     top: 60px;
-    background: var(--bg);
+    background: #ffffff;
     border: 1px solid var(--border);
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     z-index: 1000;
     min-width: 180px;
+}
+
+[data-theme="dark"] .doc-dropdown-menu {
+    background: #1a1a1a;
 }
 
 .doc-dropdown-menu.visible {
