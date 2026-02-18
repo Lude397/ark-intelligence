@@ -532,6 +532,9 @@ function openDocFromCache(documentId) {
     if (state.allDocuments && state.allDocuments.length > 0) {
         const doc = state.allDocuments.find(d => d.id === documentId);
         if (doc) {
+            // ✅ IMPORTANT : Mettre à jour state.projetNom pour le partage
+            state.projetNom = doc.projet_nom;
+            
             showDocument(doc.doc_type, doc.contenu, {
                 projetNom: doc.projet_nom,
                 createdAt: doc.created_at
