@@ -472,6 +472,14 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
+.step-card-centered {
+    justify-content: center;
+}
+
+.step-card-centered .step-content {
+    text-align: center;
+}
+
 .step-number {
     flex-shrink: 0;
     width: 40px;
@@ -1568,6 +1576,20 @@ body {
         width: 36px;
         height: 36px;
         font-size: 18px;
+    }
+    
+    /* Menu dropdown mobile - correction superposition */
+    .doc-dropdown-menu {
+        right: 10px;
+        top: 50px;
+        min-width: 160px;
+        max-width: 200px;
+    }
+    
+    .doc-dropdown-menu button {
+        padding: 14px 16px;
+        font-size: 15px;
+        white-space: nowrap;
     }
     
     .step-title {
