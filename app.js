@@ -219,8 +219,15 @@ function init() {
         elements.shareEmail.addEventListener('click', shareEmail);
     }
 
-    elements.settingsBtn.addEventListener('click', openSettingsModal);
+    elements.settingsBtn.addEventListener('click', () => {
+        openSettingsModal();
+        closeSidebar();
+    });
     elements.settingsModalClose.addEventListener('click', closeSettingsModal);
+    document.getElementById('settingsBack').addEventListener('click', () => {
+        closeSettingsModal();
+        switchScreen('welcome');
+    });
     elements.settingsModal.addEventListener('click', (e) => { if (e.target === elements.settingsModal) closeSettingsModal(); });
 
     elements.shareModalClose.addEventListener('click', closeShareModal);
