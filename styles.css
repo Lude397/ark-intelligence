@@ -13,7 +13,7 @@
     --text-secondary: #888888;
     --border: #333333;
     --success: #22c55e;
-    --sidebar-width: 280px;
+    --sidebar-width: 200px;
     --user-msg-bg: #252525;
     --btn-primary: #3a3a3a;
     --btn-primary-hover: #4a4a4a;
@@ -1572,7 +1572,7 @@ body {
         position: fixed;
         top: 0;
         left: -280px;
-        height: 100vh;
+        height: 93vh;
         z-index: 99;
         box-shadow: 2px 0 16px rgba(0, 0, 0, 0.15);
         transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s, border-color 0.3s;
