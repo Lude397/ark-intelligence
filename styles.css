@@ -1114,11 +1114,45 @@ body {
     border: 1px solid var(--border);
 }
 
+.settings-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.settings-back {
+    width: 36px;
+    height: 36px;
+    background: var(--bg-tertiary);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.settings-back:hover {
+    background: var(--border);
+}
+
+.settings-back svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+}
+
 .settings-modal-title {
     font-size: 16px;
     font-weight: 600;
-    margin-bottom: 16px;
     text-align: center;
+    flex: 1;
 }
 
 .settings-section {
@@ -1538,7 +1572,7 @@ body {
         position: fixed;
         top: 0;
         left: -280px;
-        height: 93vh;
+        height: 100vh;
         z-index: 99;
         box-shadow: 2px 0 16px rgba(0, 0, 0, 0.15);
         transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s, border-color 0.3s;
