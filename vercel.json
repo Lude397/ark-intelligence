@@ -1,23 +1,6 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "api/chat.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/chat",
-      "dest": "/api/chat.js"
-    },
-    {
-      "src": "/ark/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)",
-      "dest": "/share.html"
-    },
-    {
-      "src": "/share/([a-zA-Z0-9]+)",
-      "dest": "/share.html"
-    }
+  "rewrites": [
+    { "source": "/ark/:owner/:project", "destination": "/share.html" },
+    { "source": "/share/:id", "destination": "/share.html" }
   ]
 }
