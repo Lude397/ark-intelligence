@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+    <title>Mes documents | Ark Intelligence</title>
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+    <link rel="apple-touch-icon" href="/assets/logo.png">
+    <link rel="stylesheet" href="/shared/css/base.css">
+    <link rel="stylesheet" href="/shared/css/sidebar.css">
+    <link rel="stylesheet" href="/shared/css/responsive.css">
+    <link rel="stylesheet" href="/documents/documents.css">
+</head>
+<body data-theme="vert">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="logo-icon"><img class="app-logo" alt="Ark"></div>
+                    <div class="logo-text">Ark Intelligence</div>
+                </div>
+                <button class="home-btn" id="homeBtn" title="Accueil">
+                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                </button>
+            </div>
+            <div class="sidebar-content">
+                <div class="sidebar-section">
+                    <div class="folder-item">
+                        <div class="folder-header"><span>Ark Project</span></div>
+                        <div class="folder-content">
+                            <div class="doc-item" data-doc="definition_projet">
+                                <div class="doc-left"><span class="icon">&#8226;</span><span>Definition de projet</span></div>
+                            </div>
+                            <div class="doc-item disabled" data-doc="orientation_solution">
+                                <div class="doc-left"><span class="icon">&#8226;</span><span>Orientation de solution</span></div>
+                                <span class="badge-soon">Bientot</span>
+                            </div>
+                            <div class="doc-item disabled" data-doc="formulation_solution">
+                                <div class="doc-left"><span class="icon">&#8226;</span><span>Formulation de solution</span></div>
+                                <span class="badge-soon">Bientot</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <div class="folder-item">
+                        <div class="folder-header"><span>Ark Business</span></div>
+                        <div class="folder-content">
+                            <div class="doc-item disabled" data-doc="design_thinking">
+                                <div class="doc-left"><span class="icon">&#8226;</span><span>Design Thinking</span></div>
+                                <span class="badge-soon">Bientot</span>
+                            </div>
+                            <div class="doc-item disabled" data-doc="business_model">
+                                <div class="doc-left"><span class="icon">&#8226;</span><span>Business Model Canvas</span></div>
+                                <span class="badge-soon">Bientot</span>
+                            </div>
+                            <div class="doc-item disabled" data-doc="lean_startup">
+                                <div class="doc-left"><span class="icon">&#8226;</span><span>Lean Start Up</span></div>
+                                <span class="badge-soon">Bientot</span>
+                            </div>
+                            <div class="doc-item disabled" data-doc="agile">
+                                <div class="doc-left"><span class="icon">&#8226;</span><span>Agile</span></div>
+                                <span class="badge-soon">Bientot</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-footer">
+                <button class="my-docs-btn-sidebar" id="myDocsBtnSidebar"><span>Mes documents</span></button>
+                <button class="settings-btn" id="settingsBtn"><span>Parametres</span></button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Documents List -->
+            <div class="mydocs-screen visible" id="mydocsScreen">
+                <div class="mydocs-header">
+                    <button class="hamburger-btn" id="hamburgerBtnMyDocs">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div class="mydocs-header-logo"><img class="app-logo" alt="Ark"></div>
+                    <div class="mydocs-header-info">
+                        <div class="mydocs-header-title">Mes documents</div>
+                    </div>
+                </div>
+                <div class="mydocs-content">
+                    <div class="mydocs-list" id="mydocsList">
+                        <div class="mydocs-empty"><div>Chargement...</div></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Document Screen -->
+    <div class="document-screen" id="documentScreen">
+        <div class="document-header">
+            <button class="document-back" id="documentBack">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <div class="document-title" id="documentTitle">Document</div>
+            <div class="document-actions">
+                <button id="docMenuBtn" class="doc-menu-btn">&#8942;</button>
+                <div id="docDropdownMenu" class="doc-dropdown-menu">
+                    <button id="copyDoc">Copier</button>
+                    <button id="shareDoc">Partager</button>
+                    <button id="printDoc">Imprimer</button>
+                    <button id="deleteDoc" class="delete-btn">Supprimer</button>
+                </div>
+            </div>
+        </div>
+        <div class="document-content">
+            <div class="document-body" id="documentBody"></div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div class="share-modal" id="shareModal">
+        <div class="share-modal-content">
+            <div class="share-modal-title">Partager le document</div>
+            <div class="share-link-container">
+                <input type="text" class="share-link-input" id="shareLinkInput" readonly>
+                <button class="copy-link-btn" id="copyLinkBtn">Copier</button>
+            </div>
+            <div class="share-actions">
+                <button class="share-action-btn whatsapp" id="shareWhatsApp">WhatsApp</button>
+                <button class="share-action-btn email" id="shareEmail">Email</button>
+            </div>
+            <div class="share-modal-footer">
+                <button class="share-modal-close" id="shareModalClose">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Modal -->
+    <div class="stats-modal" id="statsModal">
+        <div class="stats-modal-content">
+            <div class="stats-modal-title">Statistiques du document</div>
+            <div class="stats-summary">
+                <div class="stats-count">
+                    <div class="stats-count-number" id="statsCount">0</div>
+                    <div class="stats-count-label">vues</div>
+                </div>
+            </div>
+            <div class="stats-list-title">Detail des consultations</div>
+            <div class="stats-list" id="statsList"></div>
+            <div class="stats-modal-footer">
+                <button class="stats-modal-close" id="statsModalClose">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/shared/js/config.js"></script>
+    <script src="/shared/js/auth.js"></script>
+    <script src="/shared/js/theme.js"></script>
+    <script src="/shared/js/sidebar.js"></script>
+    <script src="/documents/documents.js"></script>
+</body>
+</html>
