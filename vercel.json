@@ -1,4 +1,4 @@
-{
+{ 
   "rewrites": [
     { "source": "/ark/:owner/:project", "destination": "/share.html" },
     { "source": "/share/:id", "destination": "/share.html" }
