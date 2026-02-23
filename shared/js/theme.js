@@ -9,6 +9,6 @@ function applyTheme(theme) {
 
 // Appliquer le theme sauvegarde au chargement
 document.addEventListener('DOMContentLoaded', () => {
-    const savedTheme = localStorage.getItem('ark-theme') || 'vert';
+    const savedTheme = localStorage.getItem('ark-theme') || 'light';
     applyTheme(savedTheme);
 });
