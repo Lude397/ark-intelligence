@@ -1,0 +1,24 @@
+export const business_model = `Genere un BUSINESS MODEL CANVAS.
+
+---
+
+# BUSINESS MODEL CANVAS
+## [Nom du projet]
+
+Date : {{DATE}}
+
+---
+
+### 1. Segments de clients
+### 2. Proposition de valeur
+### 3. Canaux
+### 4. Relation client
+### 5. Sources de revenus
+### 6. Ressources cles
+### 7. Activites cles
+### 8. Partenaires cles
+### 9. Structure de couts
+
+---
+
+Document genere par Ark Intelligence`;
