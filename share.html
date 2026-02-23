@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document partagé - Ark Intelligence</title>
+    <title>Document partage - Ark Intelligence</title>
     <link rel="icon" type="image/png" href="/assets/logo.png">
     <style>
         * {
@@ -14,8 +14,8 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f0f9f4;
-            color: #2e7d32;
+            background: #f0f4f9;
+            color: #1f2937;
             min-height: 100vh;
             line-height: 1.6;
         }
@@ -28,14 +28,14 @@
 
         .header {
             background: #ffffff;
-            border-bottom: 2px solid #e8f5e9;
+            border-bottom: 2px solid #e8edf2;
             padding: 16px 20px;
             margin-bottom: 24px;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
         .header-logo {
@@ -60,7 +60,7 @@
         .logo-text {
             font-size: 18px;
             font-weight: 600;
-            color: #2e7d32;
+            color: #1f2937;
         }
 
         .header-actions {
@@ -83,26 +83,26 @@
         }
 
         .btn-primary {
-            background: #c8e6c9;
-            color: #1b5e20;
+            background: #e8edf2;
+            color: #1f2937;
         }
 
         .btn-primary:hover {
-            background: #a5d6a7;
+            background: #d1d5db;
         }
 
         .btn-secondary {
             background: transparent;
-            color: #2e7d32;
-            border: 1px solid #e8f5e9;
+            color: #4b5563;
+            border: 1px solid #e8edf2;
         }
 
         .btn-secondary:hover {
-            background: #e8f5e9;
+            background: #e8edf2;
         }
 
         .banner {
-            background: linear-gradient(135deg, #66bb6a 0%, #2e7d32 100%);
+            background: linear-gradient(135deg, #4b5563 0%, #1f2937 100%);
             color: white;
             padding: 20px;
             border-radius: 12px;
@@ -110,7 +110,7 @@
             display: none;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
         }
 
         .banner.visible {
@@ -134,7 +134,7 @@
 
         .banner-btn {
             background: white;
-            color: #2e7d32;
+            color: #1f2937;
             padding: 10px 20px;
             border: none;
             border-radius: 8px;
@@ -155,8 +155,8 @@
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 24px;
-            border: 1px solid #e8f5e9;
-            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.05);
+            border: 1px solid #e8edf2;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
 
         .doc-meta {
@@ -165,7 +165,7 @@
             gap: 16px;
             flex-wrap: wrap;
             font-size: 14px;
-            color: #66bb6a;
+            color: #6b7280;
         }
 
         .doc-meta-item {
@@ -177,7 +177,7 @@
         .doc-meta-separator {
             width: 4px;
             height: 4px;
-            background: #e8f5e9;
+            background: #d1d5db;
             border-radius: 50%;
         }
 
@@ -186,16 +186,16 @@
             border-radius: 12px;
             padding: 32px;
             margin-bottom: 24px;
-            border: 1px solid #e8f5e9;
-            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.05);
+            border: 1px solid #e8edf2;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
             min-height: 400px;
         }
 
         .document h1 {
             font-size: 28px;
             margin-bottom: 16px;
-            color: #2e7d32;
-            border-bottom: 2px solid #e8f5e9;
+            color: #1f2937;
+            border-bottom: 2px solid #e8edf2;
             padding-bottom: 12px;
         }
 
@@ -203,19 +203,19 @@
             font-size: 22px;
             margin-top: 32px;
             margin-bottom: 16px;
-            color: #2e7d32;
+            color: #1f2937;
         }
 
         .document h3 {
             font-size: 18px;
             margin-top: 24px;
             margin-bottom: 12px;
-            color: #66bb6a;
+            color: #4b5563;
         }
 
         .document p {
             margin-bottom: 16px;
-            color: #2e7d32;
+            color: #374151;
         }
 
         .document ul, .document ol {
@@ -225,6 +225,7 @@
 
         .document li {
             margin-bottom: 8px;
+            color: #374151;
         }
 
         .document table {
@@ -235,19 +236,19 @@
 
         .document th, .document td {
             padding: 12px;
-            border: 1px solid #e8f5e9;
+            border: 1px solid #e8edf2;
             text-align: left;
         }
 
         .document th {
-            background: #e8f5e9;
+            background: #f0f4f9;
             font-weight: 600;
-            color: #2e7d32;
+            color: #1f2937;
         }
 
         .document strong {
             font-weight: 600;
-            color: #1b5e20;
+            color: #1f2937;
         }
 
         .loading {
@@ -258,8 +259,8 @@
         .loading-spinner {
             width: 48px;
             height: 48px;
-            border: 3px solid #e8f5e9;
-            border-top-color: #66bb6a;
+            border: 3px solid #e8edf2;
+            border-top-color: #6b7280;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 16px;
@@ -283,12 +284,12 @@
         .footer {
             text-align: center;
             padding: 24px;
-            color: #66bb6a;
+            color: #9ca3af;
             font-size: 14px;
         }
 
         .footer a {
-            color: #2e7d32;
+            color: #4b5563;
             text-decoration: none;
             font-weight: 600;
         }
@@ -351,14 +352,14 @@
                 <div class="logo-text">Ark Intelligence</div>
             </div>
             <div class="header-actions">
-                <a href="https://www.arkintelligence.africa/" class="btn btn-primary">Créer mon document</a>
+                <a href="https://www.arkintelligence.africa/" class="btn btn-primary">Creer mon document</a>
             </div>
         </div>
 
         <div class="banner" id="banner">
             <div class="banner-content">
-                <div class="banner-title">Créez vos propres documents professionnels</div>
-                <div class="banner-text">Rejoignez Ark Intelligence pour cadrer vos projets et générer vos documents automatiquement</div>
+                <div class="banner-title">Creez vos propres documents professionnels</div>
+                <div class="banner-text">Rejoignez Ark Intelligence pour cadrer vos projets et generer vos documents automatiquement</div>
             </div>
             <button class="banner-btn" onclick="window.location.href='https://www.arkintelligence.africa/connexion.html'">
                 S'inscrire gratuitement
@@ -386,7 +387,7 @@
         </div>
 
         <div class="footer">
-            Généré avec <a href="https://www.arkintelligence.africa/">Ark Intelligence</a> - Cadrez et structurez vos projets professionnels
+            Genere avec <a href="https://www.arkintelligence.africa/">Ark Intelligence</a> - Cadrez et structurez vos projets professionnels
         </div>
     </div>
 
@@ -401,19 +402,16 @@
 
         async function loadDocument() {
             try {
-                // Extraire owner et project depuis l'URL
-                // Format: /ark/luderic-samba/fiablebat
                 const pathParts = window.location.pathname.split('/').filter(p => p);
                 
                 if (pathParts.length < 3 || pathParts[0] !== 'ark') {
-                    showError('URL invalide', 'Le lien de partage est mal formé.');
+                    showError('URL invalide', 'Le lien de partage est mal forme.');
                     return;
                 }
                 
                 const owner = pathParts[1];
                 const project = pathParts[2];
                 
-                // Appeler l'API pour récupérer le document
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -434,23 +432,20 @@
                 
             } catch (error) {
                 console.error('Erreur:', error);
-                showError('Erreur de chargement', 'Impossible de charger le document. Veuillez réessayer plus tard.');
+                showError('Erreur de chargement', 'Impossible de charger le document. Veuillez reessayer plus tard.');
             }
         }
         
         function showDocument(htmlContent, owner, project, createdAt) {
-            // Afficher le nom du propriétaire
             const ownerName = owner.split('-').map(word => 
                 word.charAt(0).toUpperCase() + word.slice(1)
             ).join(' ');
             
-            // Afficher le nom du projet
             const projectName = project.split('-').map(word => 
                 word.charAt(0).toUpperCase() + word.slice(1)
             ).join(' ');
             
-            // Formater la date
-            let formattedDate = 'Document partagé';
+            let formattedDate = 'Document partage';
             if (createdAt) {
                 const date = new Date(createdAt);
                 formattedDate = date.toLocaleDateString('fr-FR', {
@@ -460,7 +455,6 @@
                 });
             }
             
-            // Remplacer les placeholders dans le document
             htmlContent = htmlContent
                 .replace(/\{\{OWNER_NAME\}\}/g, ownerName)
                 .replace(/\{\{PROJECT_NAME\}\}/g, projectName)
@@ -468,15 +462,12 @@
                 .replace(/arkintelligence\.vercel\.app/g, 'www.arkintelligence.africa')
                 .replace(/https:\/\/arkintelligence\.vercel\.app/g, 'https://www.arkintelligence.africa');
             
-            // Afficher les métadonnées dans l'en-tête
             document.getElementById('ownerName').textContent = ownerName;
             document.getElementById('docType').textContent = projectName;
             document.getElementById('docInfo').style.display = 'block';
             
-            // Afficher le document
             document.getElementById('documentContent').innerHTML = htmlContent;
             
-            // Afficher la bannière si l'utilisateur n'est pas connecté
             const userData = localStorage.getItem('ark_user');
             if (!userData) {
                 document.getElementById('banner').classList.add('visible');
@@ -484,16 +475,13 @@
         }
         
         function showError(title, message) {
-            document.getElementById('documentContent').innerHTML = `
-                <div class="error">
-                    <div class="error-icon">⚠️</div>
-                    <h2>${title}</h2>
-                    <p>${message}</p>
-                </div>
-            `;
+            document.getElementById('documentContent').innerHTML = 
+                '<div class="error">' +
+                '<h2>' + title + '</h2>' +
+                '<p>' + message + '</p>' +
+                '</div>';
         }
         
-        // Charger le document au démarrage
         loadDocument();
     </script>
 </body>
