@@ -1,0 +1,125 @@
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        height: 91vh;
+        z-index: 99;
+        box-shadow: 2px 0 16px rgba(0, 0, 0, 0.15);
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s, border-color 0.3s;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+    
+    .sidebar-header {
+        padding: 5px 8px;
+        flex-shrink: 0;
+    }
+    
+    .logo-text {
+        font-size: 14px;
+    }
+    
+    .sidebar-content {
+        flex: 1;
+        overflow-y: visible;
+        padding: 3px;
+        min-height: 0;
+    }
+    
+    .sidebar-section {
+        margin-bottom: 1px;
+    }
+    
+    .folder-header {
+        padding: 4px 6px;
+        font-size: 12px;
+    }
+    
+    .doc-item {
+        padding: 4px 6px;
+        margin-bottom: 1px;
+        font-size: 11px;
+    }
+    
+    .badge-soon {
+        font-size: 8px;
+        padding: 1px 4px;
+    }
+    
+    .sidebar-footer {
+        padding: 4px;
+        flex-shrink: 0;
+        border-top: 1px solid var(--border);
+    }
+    
+    .my-docs-btn-sidebar,
+    .settings-btn {
+        padding: 6px;
+        font-size: 11px;
+        margin-bottom: 3px;
+    }
+    
+    .settings-btn {
+        margin-bottom: 0;
+    }
+
+    .hamburger-btn {
+        display: flex;
+    }
+
+    .new-project-btn-mobile {
+        display: flex;
+    }
+
+    .new-chat-btn-mobile {
+        display: flex;
+    }
+
+    .message {
+        max-width: 90%;
+    }
+
+    .welcome-steps {
+        gap: 12px;
+        margin-bottom: 32px;
+    }
+    
+    .step-card {
+        padding: 16px 20px;
+    }
+    
+    .step-number {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+    }
+    
+    .doc-dropdown-menu {
+        right: 10px;
+        top: 50px;
+        min-width: 170px;
+        max-width: 220px;
+    }
+    
+    .doc-dropdown-menu button {
+        padding: 16px 18px !important;
+        font-size: 16px !important;
+        white-space: nowrap;
+        line-height: 1.2;
+        display: block !important;
+    }
+    
+    .step-title {
+        font-size: 16px;
+    }
+    
+    .step-desc {
+        font-size: 13px;
+    }
+}
