@@ -1,0 +1,36 @@
+export const design_thinking = `Genere un document DESIGN THINKING.
+
+---
+
+# DESIGN THINKING
+## [Nom du projet]
+
+Date : {{DATE}}
+
+---
+
+## Phase 1 -- Empathie
+### 1. Utilisateur cible
+### 2. Problemes et frustrations
+### 3. Comportements et habitudes
+
+## Phase 2 -- Definition
+### 4. Probleme central
+### 5. Impact si non resolu
+
+## Phase 3 -- Ideation
+### 6. Idee principale
+### 7. Alternatives
+
+## Phase 4 -- Prototypage
+### 8. Forme du prototype
+### 9. Objectif du prototype
+
+## Phase 5 -- Test
+### 10. Utilisateurs testeurs
+### 11. Methode de test
+### 12. Criteres de validation
+
+---
+
+Document genere par Ark Intelligence`;
