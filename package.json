@@ -3,11 +3,6 @@
   "version": "2.0.0",
   "description": "Assistant de cadrage projet",
   "type": "module",
-  "scripts": {
-    "dev": "vercel dev",
-    "build": "vercel build",
-    "start": "vercel dev"
-  },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0"
   },
