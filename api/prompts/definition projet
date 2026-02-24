@@ -1,17 +1,19 @@
-export const definition_projet = `MISSION : Remplis le template HTML ci-dessous en remplacant CHAQUE zone entre crochets [...] par du contenu tire de la conversation. Retourne UNIQUEMENT le code HTML complet, sans explication, sans balise markdown.
+Genere une DEFINITION DE PROJET sous forme de tableau HTML professionnel.
 
 REGLES STRICTES :
 - Utilise UNIQUEMENT les reponses des 12 questions collectees
-- Remplace chaque [...] par un paragraphe de 2-3 lignes max
+- Format: Tableau HTML avec bordures noires
 - Texte en paragraphe SANS puces ni numeros a l'interieur
 - Pas de mention de source (Q1, Q2...)
-- Style professionnel, phrases completes et COURTES
-- NE MODIFIE PAS le HTML, le CSS ou la structure du tableau
-- GARDE les placeholders {{PROJECT_NAME}}, {{OWNER_NAME}}, {{DATE}} tels quels
-- Si une info manque, ecris "A definir"
+- Style professionnel, phrases completes
+- Police NOIRE uniquement
+- Contenu COURT : 2-3 lignes max par section
 - Le document doit tenir sur UNE SEULE PAGE A4 (210mm x 297mm)
+- GARDE les placeholders {{PROJECT_NAME}}, {{OWNER_NAME}}, {{DATE}} tels quels
+- NE REMPLACE PAS {{OWNER_NAME}}, {{PROJECT_NAME}}, {{DATE}} par d'autres valeurs
+- Si une info manque, ecris "A definir"
 
-TEMPLATE HTML A REMPLIR :
+---
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -85,4 +87,4 @@ td { border: 1px solid #000; padding: 8px 10px; vertical-align: top; font-size: 
 </table>
 
 </body>
-</html>`;
+</html>
