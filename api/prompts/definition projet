@@ -2,11 +2,14 @@ export const definition_projet = `Genere une DEFINITION DE PROJET sous forme de 
 
 REGLES STRICTES :
 - Utilise UNIQUEMENT les reponses des 12 questions collectees
-- Format: Tableau HTML avec bordures noires
+- Format: Tableau HTML avec bordures noires, une seule colonne
 - Texte en paragraphe SANS puces ni numeros a l'interieur
 - Pas de mention de source (Q1, Q2...)
-- Style professionnel, phrases completes
-- Police NOIRE uniquement
+- Style professionnel, phrases completes et COURTES (2-3 lignes max par question)
+- Police NOIRE uniquement, fond BLANC uniquement
+- PAS de couleur, PAS de fond colore, PAS de vert
+- Le document doit tenir sur UNE SEULE PAGE
+- Renvoie le HTML directement, sans balises markdown
 
 ---
 
@@ -16,111 +19,70 @@ REGLES STRICTES :
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body { font-family: Arial, sans-serif; color: #000; }
-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-th, td { border: 1px solid #000; padding: 12px; text-align: left; vertical-align: top; }
-th { background-color: #f0f0f0; font-weight: bold; }
-.header { text-align: center; font-size: 18px; font-weight: bold; text-transform: uppercase; }
-.project-name { text-align: center; font-size: 16px; font-weight: bold; }
-.info-row td { font-size: 14px; }
-.section-title { font-weight: bold; font-size: 14px; }
-.footer { text-align: center; padding: 20px; font-size: 12px; }
-.footer a { color: #4a7c59; text-decoration: none; font-weight: bold; }
-.footer a:hover { text-decoration: underline; }
+body { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; }
+table { width: 100%; max-width: 750px; margin: 0 auto; border-collapse: collapse; }
+td { border: 1px solid #000; padding: 8px 10px; vertical-align: top; font-size: 13px; line-height: 1.5; }
+.doc-title { text-align: center; font-size: 16px; font-weight: bold; text-decoration: underline; border: none; padding: 10px 0 12px; }
+.phase-title { font-weight: bold; }
+.question-title { font-weight: bold; }
 </style>
 </head>
 <body>
 
 <table>
-<tr>
-<th colspan="2" class="header">Definition de Projet</th>
-</tr>
-<tr class="info-row">
-<td colspan="2" style="padding: 16px; background-color: #f9f9f9;">
-  <div style="line-height: 1.8;">
-    <strong>Nom du projet :</strong> {{PROJECT_NAME}}<br>
-    <strong>Prepare par :</strong> {{OWNER_NAME}}<br>
-    <strong>Date de creation :</strong> {{DATE}}
-  </div>
-</td>
-</tr>
-<tr>
-<td colspan="2">
-<span class="section-title">1. Contexte</span><br><br>
-[COMMENCE par une phrase qui definit clairement le projet : son nom, sa nature exacte (type d'entreprise, de service ou de produit) et ce qu'il propose concretement. ENSUITE seulement, explique pourquoi ce projet est lance (motivation, opportunite de marche, constat). Le lecteur doit comprendre de quoi il s'agit des la premiere phrase. Paragraphe fluide, sans puces ni numeros.]
-</td>
-</tr>
-<tr>
-<td colspan="2">
-<span class="section-title">2. Probleme a resoudre</span><br><br>
-[Decris le probleme concret que le projet cherche a resoudre. Explique la situation actuelle insatisfaisante pour les clients ou utilisateurs, puis montre en quoi ce projet apporte une reponse. Paragraphe fluide, sans puces ni numeros.]
-</td>
-</tr>
-<tr>
-<td colspan="2">
-<span class="section-title">3. Beneficiaire principal</span><br><br>
-[Identifie clairement qui sont les premiers clients ou utilisateurs vises. Decris leur profil et pourquoi ils ont besoin de ce projet. Paragraphe fluide, sans puces ni numeros.]
-</td>
-</tr>
-<tr>
-<td colspan="2">
-<span class="section-title">4. Objectif strategique (12 mois)</span><br><br>
-[Decris ce que le projet aura accompli dans 12 mois. Donne des indicateurs concrets et mesurables. Paragraphe fluide, sans puces ni numeros.]
-</td>
-</tr>
-<tr>
-<td colspan="2">
-<span class="section-title">5. Besoin reel</span><br><br>
-[Explique quelles informations ou ressources sont indispensables pour lancer le projet. Paragraphe fluide, sans puces ni numeros.]
-</td>
-</tr>
-<tr>
-<td colspan="2">
-<span class="section-title">6. Limites actuelles</span><br><br>
-[Decris les freins ou obstacles qui empechent le lancement immediat du projet. Paragraphe fluide, sans puces ni numeros.]
-</td>
-</tr>
-<tr>
-<td colspan="2">
-<span class="section-title">7. Livrable attendu</span><br><br>
-[Decris le resultat concret attendu a l'issue de la phase de cadrage. Paragraphe fluide, sans puces ni numeros.]
-</td>
-</tr>
-<tr>
-<td colspan="2">
-<span class="section-title">8. Hors perimetre</span><br><br>
-[Liste ce qui ne fait PAS partie de ce projet de cadrage, pour eviter toute confusion. Paragraphe fluide, sans puces ni numeros.]
-</td>
-</tr>
-<tr>
-<td colspan="2">
-<span class="section-title">9. Exigences fonctionnelles</span><br><br>
-[Decris la capacite ou fonctionnalite prioritaire pour le succes du projet. Paragraphe fluide, sans puces ni numeros.]
-</td>
-</tr>
-<tr>
-<td colspan="2">
-<span class="section-title">10. Contraintes</span><br><br>
-[Decris les contraintes principales a prendre en compte pour le lancement. Paragraphe fluide, sans puces ni numeros.]
-</td>
-</tr>
-<tr>
-<td colspan="2">
-<span class="section-title">11. Risques</span><br><br>
-[Identifie le ou les risques majeurs qui pourraient compromettre le projet et leurs consequences. Paragraphe fluide, sans puces ni numeros.]
-</td>
-</tr>
-<tr>
-<td colspan="2">
-<span class="section-title">12. Criteres de succes</span><br><br>
-[Definis comment le succes du projet sera mesure concretement, avec des indicateurs clairs. Paragraphe fluide, sans puces ni numeros.]
-</td>
-</tr>
-</table>
+  <tr><td class="doc-title">Definition de Projet</td></tr>
 
-<div class="footer">
-<a href="{{BASE_URL}}" target="_blank">Document genere par Ark Intelligence</a>
-</div>
+  <tr><td>
+    <b>Nom du projet :</b> {{PROJECT_NAME}}<br>
+    <b>Prepare par :</b> {{OWNER_NAME}}<br>
+    <b>Date :</b> {{DATE}}
+  </td></tr>
+
+  <tr><td>
+    <span class="phase-title">Cadrage strategique :</span><br>
+    <span class="question-title">. Contexte</span><br>
+    [COMMENCE par une phrase qui definit clairement le projet : son nom, sa nature exacte et ce qu'il propose concretement. ENSUITE explique pourquoi ce projet est lance. 2-3 lignes max.]<br><br>
+    <span class="question-title">. Probleme a resoudre</span><br>
+    [Decris le probleme concret que le projet cherche a resoudre. 2-3 lignes max.]<br><br>
+    <span class="question-title">. Beneficiaire principal</span><br>
+    [Identifie qui sont les premiers clients ou utilisateurs vises. 2-3 lignes max.]<br><br>
+    <span class="question-title">. Objectif a 12 mois</span><br>
+    [Decris ce que le projet aura accompli dans 12 mois avec des indicateurs concrets. 2-3 lignes max.]
+  </td></tr>
+
+  <tr><td>
+    <span class="phase-title">Definition du probleme reel :</span><br>
+    <span class="question-title">. Besoin reel</span><br>
+    [Explique quelles informations ou ressources sont indispensables pour lancer le projet. 2-3 lignes max.]<br><br>
+    <span class="question-title">. Limites actuelles</span><br>
+    [Decris les freins ou obstacles qui empechent le lancement immediat. 2-3 lignes max.]
+  </td></tr>
+
+  <tr><td>
+    <span class="phase-title">Solution et livrable :</span><br>
+    <span class="question-title">. Livrable attendu</span><br>
+    [Decris le resultat concret attendu a l'issue de la phase de cadrage. 2-3 lignes max.]<br><br>
+    <span class="question-title">. Hors perimetre</span><br>
+    [Liste ce qui ne fait PAS partie de ce projet de cadrage. 2-3 lignes max.]
+  </td></tr>
+
+  <tr><td>
+    <span class="phase-title">Expression du besoin fonctionnel :</span><br>
+    <span class="question-title">. Exigences fonctionnelles</span><br>
+    [Decris la capacite ou fonctionnalite prioritaire pour le succes du projet. 2-3 lignes max.]
+  </td></tr>
+
+  <tr><td>
+    <span class="phase-title">Contraintes, risques et criteres de succes :</span><br>
+    <span class="question-title">. Contraintes</span><br>
+    [Decris les contraintes principales a prendre en compte. 2-3 lignes max.]<br><br>
+    <span class="question-title">. Risques</span><br>
+    [Identifie le ou les risques majeurs qui pourraient compromettre le projet. 2-3 lignes max.]<br><br>
+    <span class="question-title">. Criteres de succes</span><br>
+    [Definis comment le succes du projet sera mesure concretement. 2-3 lignes max.]
+  </td></tr>
+
+</table>
 
 </body>
 </html>`;
