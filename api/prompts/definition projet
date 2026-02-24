@@ -8,7 +8,7 @@ REGLES STRICTES :
 - Style professionnel, phrases completes et COURTES (2-3 lignes max par question)
 - Police NOIRE uniquement, fond BLANC uniquement
 - PAS de couleur, PAS de fond colore, PAS de vert
-- Le document doit tenir sur UNE SEULE PAGE
+- Le document doit tenir sur UNE SEULE PAGE A4 (210mm x 297mm)
 - Renvoie le HTML directement, sans balises markdown
 
 ---
@@ -19,8 +19,8 @@ REGLES STRICTES :
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; }
-table { width: 100%; max-width: 750px; margin: 0 auto; border-collapse: collapse; }
+body { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+table { width: 100%; border-collapse: collapse; }
 td { border: 1px solid #000; padding: 8px 10px; vertical-align: top; font-size: 13px; line-height: 1.5; }
 .doc-title { text-align: center; font-size: 16px; font-weight: bold; text-decoration: underline; border: none; padding: 10px 0 12px; }
 .phase-title { font-weight: bold; }
