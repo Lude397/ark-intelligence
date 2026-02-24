@@ -150,37 +150,6 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-        .doc-info {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
-            border: 1px solid #e8edf2;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
-
-        .doc-meta {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .doc-meta-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .doc-meta-separator {
-            width: 4px;
-            height: 4px;
-            background: #d1d5db;
-            border-radius: 50%;
-        }
-
         .document {
             background: white;
             border-radius: 12px;
@@ -281,23 +250,6 @@
             margin-bottom: 16px;
         }
 
-        .footer {
-            text-align: center;
-            padding: 24px;
-            color: #9ca3af;
-            font-size: 14px;
-        }
-
-        .footer a {
-            color: #4b5563;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-
         @media (max-width: 768px) {
             .container {
                 padding: 12px;
@@ -336,9 +288,6 @@
                 font-size: 22px;
             }
 
-            .doc-meta {
-                font-size: 12px;
-            }
         }
     </style>
 </head>
@@ -366,19 +315,6 @@
             </button>
         </div>
 
-        <div class="doc-info" id="docInfo" style="display:none;">
-            <div class="doc-meta">
-                <div class="doc-meta-item">
-                    <span>Document de</span>
-                    <span id="ownerName">Chargement...</span>
-                </div>
-                <span class="doc-meta-separator"></span>
-                <div class="doc-meta-item">
-                    <span id="docType">Document</span>
-                </div>
-            </div>
-        </div>
-
         <div class="document" id="documentContent">
             <div class="loading">
                 <div class="loading-spinner"></div>
@@ -386,9 +322,6 @@
             </div>
         </div>
 
-        <div class="footer">
-            Genere avec <a href="https://www.arkintelligence.africa/">Ark Intelligence</a> - Cadrez et structurez vos projets professionnels
-        </div>
     </div>
 
     <script>
@@ -461,10 +394,6 @@
                 .replace(/\{\{DATE\}\}/g, formattedDate)
                 .replace(/arkintelligence\.vercel\.app/g, 'www.arkintelligence.africa')
                 .replace(/https:\/\/arkintelligence\.vercel\.app/g, 'https://www.arkintelligence.africa');
-            
-            document.getElementById('ownerName').textContent = ownerName;
-            document.getElementById('docType').textContent = projectName;
-            document.getElementById('docInfo').style.display = 'block';
             
             document.getElementById('documentContent').innerHTML = htmlContent;
             
