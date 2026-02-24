@@ -378,19 +378,12 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
     <script>
-        const LOGO_BASE64 = "COLLER_VOTRE_BASE64_ICI";
-
         function applyLogo() {
-            const favicon = document.getElementById('favicon');
-            const appleTouchIcon = document.getElementById('appleTouchIcon');
-            
-            if (favicon) favicon.href = LOGO_BASE64;
-            if (appleTouchIcon) appleTouchIcon.href = LOGO_BASE64;
-            document.querySelectorAll('.app-logo').forEach(img => img.src = LOGO_BASE64);
+            document.querySelectorAll('.app-logo').forEach(img => img.src = '/assets/logo.png');
         }
 
         const SUPABASE_URL = 'https://ehaxnltgapcfxhwpqhyb.supabase.co';
-        const SUPABASE_ANON_KEY = 'COLLER_VOTRE_BASE64_ICI';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVoYXhubHRnYXBjZnhod3BxaHliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjczNDg1NjksImV4cCI6MjA4MjkyNDU2OX0.-XLe5c2sgzGxv9Olc13Lu3S0hTHjSbs2brbvVC556Ec';
         
         const arkSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
