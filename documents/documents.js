@@ -90,6 +90,7 @@ function openDocument(documentId) {
     
     state.projetNom = doc.projet_nom;
     showDocument(doc.doc_type, doc.contenu, {
+        id: doc.id,
         projetNom: doc.projet_nom,
         createdAt: doc.created_at
     });
@@ -115,7 +116,7 @@ function showDocument(docType, content, metadata) {
         .replace(/arkintelligence\.vercel\.app/g, 'www.arkintelligence.africa')
         .replace(/https:\/\/arkintelligence\.vercel\.app/g, 'https://www.arkintelligence.africa');
     
-    state.currentDoc = { type: docType, content: updatedContent };
+    state.currentDoc = { type: docType, content: updatedContent, id: (metadata && metadata.id) || null };
     el.documentTitle.textContent = DOC_NAMES[docType] || docType;
     
     const trimmed = updatedContent.trim();
@@ -199,7 +200,8 @@ async function deleteCurrentDocument() {
     const userData = JSON.parse(localStorage.getItem('ark_user'));
     if (!userData || !userData.id) return;
     
-    const doc = state.allDocuments.find(d => d.doc_type === state.currentDoc.type && d.contenu === state.currentDoc.content);
+    if (!state.currentDoc.id) { alert('Impossible de supprimer ce document'); return; }
+    const doc = state.allDocuments.find(d => d.id === state.currentDoc.id);
     if (!doc) { alert('Impossible de supprimer ce document'); return; }
     
     try {
