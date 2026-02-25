@@ -1,6 +1,7 @@
 /* ===== MES DOCUMENTS SCREEN ===== */
 .mydocs-screen {
     flex: 1;
+    width: 100%;
     display: none;
     flex-direction: column;
     overflow: hidden;
