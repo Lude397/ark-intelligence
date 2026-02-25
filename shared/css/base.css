@@ -3,7 +3,6 @@
     padding: 0;
     box-sizing: border-box;
 }
-
 /* ===== THEMES ===== */
 :root {
     --bg-primary: #0f0f0f;
@@ -19,7 +18,6 @@
     --btn-primary-hover: #4a4a4a;
     --btn-primary-text: #e5e5e5;
 }
-
 [data-theme="light"] {
     --bg-primary: #f8f8f8;
     --bg-secondary: #ffffff;
@@ -32,7 +30,6 @@
     --btn-primary-hover: #d0d0d0;
     --btn-primary-text: #2a2a2a;
 }
-
 [data-theme="vert"] {
     --bg-primary: #f0f9f4;
     --bg-secondary: #ffffff;
@@ -47,7 +44,6 @@
     --btn-primary-hover: #a5d6a7;
     --btn-primary-text: #1b5e20;
 }
-
 [data-theme="bleu"] {
     --bg-primary: #f0f7fb;
     --bg-secondary: #ffffff;
@@ -62,7 +58,6 @@
     --btn-primary-hover: #90caf9;
     --btn-primary-text: #0d47a1;
 }
-
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: var(--bg-primary);
@@ -71,19 +66,18 @@ body {
     overflow: hidden;
     transition: background 0.3s, color 0.3s;
 }
-
 .app-container {
     display: flex;
     height: 100vh;
+    width: 100%;
 }
-
 .main-content {
     flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
-
 /* ===== HAMBURGER BUTTON ===== */
 .hamburger-btn {
     width: 40px;
@@ -100,7 +94,6 @@ body {
     padding: 8px;
     transition: all 0.2s;
 }
-
 .hamburger-btn span {
     width: 20px;
     height: 2px;
@@ -108,19 +101,15 @@ body {
     border-radius: 2px;
     transition: all 0.3s;
 }
-
 .hamburger-btn.active span:nth-child(1) {
     transform: rotate(45deg) translate(5px, 5px);
 }
-
 .hamburger-btn.active span:nth-child(2) {
     opacity: 0;
 }
-
 .hamburger-btn.active span:nth-child(3) {
     transform: rotate(-45deg) translate(5px, -5px);
 }
-
 /* ===== LOADING SCREEN ===== */
 .loading-screen {
     position: fixed;
@@ -131,16 +120,13 @@ body {
     justify-content: center;
     z-index: 100;
 }
-
 .loading-screen.visible {
     display: flex;
 }
-
 .loading-content {
     text-align: center;
     color: #fff;
 }
-
 .loading-spinner {
     width: 48px;
     height: 48px;
@@ -150,11 +136,9 @@ body {
     animation: spin 1s linear infinite;
     margin: 0 auto 16px;
 }
-
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
-
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
