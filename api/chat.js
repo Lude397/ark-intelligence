@@ -110,7 +110,6 @@ async function findSimilarExamples(projectDescription) {
             return null;
         }
 
-        // Nettoyage des references geographiques
         if (similarExamples && similarExamples.length > 0) {
             similarExamples.forEach(example => {
                 const villes = [
@@ -343,7 +342,6 @@ PROJET DU CLIENT : "${projectDescription}"`;
 // ==================== HANDLE CHAT ====================
 async function handleChat(res, message, history) {
     
-    // Pre-filtre salutations (pas d'appel API)
     const salutations = ['bonjour', 'salut', 'hello', 'coucou', 'hey', 'bonsoir', 'hi', 'yo', 'bjr', 'slt'];
     const messageClean = message.toLowerCase().trim();
     
@@ -362,7 +360,6 @@ async function handleChat(res, message, history) {
         ? history.find(h => h.type === 'user')?.content 
         : message;
 
-    // RAG : Rechercher des exemples similaires
     let similarExamples = null;
     if (firstUserMessage) {
         similarExamples = await findSimilarExamples(firstUserMessage);
@@ -435,6 +432,283 @@ function getFormattedDate() {
     return new Date().toLocaleDateString('fr-FR', options);
 }
 
+// ==================== PROMPTS DOCUMENTS ====================
+const DOCUMENT_PROMPTS = {
+
+definition_projet: `Genere une DEFINITION DE PROJET sous forme de tableau HTML professionnel.
+
+REGLES STRICTES :
+- Utilise UNIQUEMENT les reponses des 12 questions collectees
+- Format: Tableau HTML avec bordures noires
+- Texte en paragraphe SANS puces ni numeros a l'interieur
+- Pas de mention de source (Q1, Q2...)
+- Style professionnel, phrases completes
+- Police NOIRE uniquement
+- Contenu COURT : 2-3 lignes max par section
+- Le document doit tenir sur UNE SEULE PAGE A4 (210mm x 297mm)
+
+---
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+table { width: 100%; border-collapse: collapse; }
+td { border: 1px solid #000; padding: 8px 10px; vertical-align: top; font-size: 13px; line-height: 1.5; }
+.doc-title { text-align: center; font-size: 16px; font-weight: bold; text-decoration: underline; border: none; padding: 10px 0 12px; }
+.phase-title { font-weight: bold; }
+.question-title { font-weight: bold; }
+</style>
+</head>
+<body>
+
+<table>
+  <tr><td class="doc-title">Definition de Projet</td></tr>
+
+  <tr><td>
+    <b>Nom du projet :</b> {{PROJECT_NAME}}<br>
+    <b>Prepare par :</b> {{OWNER_NAME}}<br>
+    <b>Date :</b> {{DATE}}
+  </td></tr>
+
+  <tr><td>
+    <span class="phase-title">Cadrage strategique :</span><br>
+    <span class="question-title">. Contexte</span><br>
+    [COMMENCE par une phrase qui definit clairement le projet : son nom, sa nature exacte et ce qu il propose concretement. ENSUITE explique pourquoi ce projet est lance. 2-3 lignes max.]<br><br>
+    <span class="question-title">. Probleme a resoudre</span><br>
+    [Decris le probleme concret que le projet cherche a resoudre. 2-3 lignes max.]<br><br>
+    <span class="question-title">. Beneficiaire principal</span><br>
+    [Identifie qui sont les premiers clients ou utilisateurs vises. 2-3 lignes max.]<br><br>
+    <span class="question-title">. Objectif a 12 mois</span><br>
+    [Decris ce que le projet aura accompli dans 12 mois avec des indicateurs concrets. 2-3 lignes max.]
+  </td></tr>
+
+  <tr><td>
+    <span class="phase-title">Definition du probleme reel :</span><br>
+    <span class="question-title">. Besoin reel</span><br>
+    [Explique quelles informations ou ressources sont indispensables pour lancer le projet. 2-3 lignes max.]<br><br>
+    <span class="question-title">. Limites actuelles</span><br>
+    [Decris les freins ou obstacles qui empechent le lancement immediat. 2-3 lignes max.]
+  </td></tr>
+
+  <tr><td>
+    <span class="phase-title">Solution et livrable :</span><br>
+    <span class="question-title">. Livrable attendu</span><br>
+    [Decris le resultat concret attendu a l issue de la phase de cadrage. 2-3 lignes max.]<br><br>
+    <span class="question-title">. Hors perimetre</span><br>
+    [Liste ce qui ne fait PAS partie de ce projet de cadrage. 2-3 lignes max.]
+  </td></tr>
+
+  <tr><td>
+    <span class="phase-title">Expression du besoin fonctionnel :</span><br>
+    <span class="question-title">. Exigences fonctionnelles</span><br>
+    [Decris la capacite ou fonctionnalite prioritaire pour le succes du projet. 2-3 lignes max.]
+  </td></tr>
+
+  <tr><td>
+    <span class="phase-title">Contraintes, risques et criteres de succes :</span><br>
+    <span class="question-title">. Contraintes</span><br>
+    [Decris les contraintes principales a prendre en compte. 2-3 lignes max.]<br><br>
+    <span class="question-title">. Risques</span><br>
+    [Identifie le ou les risques majeurs qui pourraient compromettre le projet. 2-3 lignes max.]<br><br>
+    <span class="question-title">. Criteres de succes</span><br>
+    [Definis comment le succes du projet sera mesure concretement. 2-3 lignes max.]
+  </td></tr>
+
+</table>
+
+</body>
+</html>`,
+
+orientation_solution: `Genere un document ORIENTATION DE SOLUTION.
+
+---
+
+# ORIENTATION DE SOLUTION
+## [Nom du projet]
+
+Date : {{DATE}}
+
+---
+
+### 1. Probleme valide
+### 2. Utilisateur prioritaire
+### 3. Solution envisagee
+### 4. Phrase d orientation de solution
+### 5. Alternatives ecartees
+### 6. Niveau de complexite
+### 7. Faisabilite immediate
+### 8. Premier pas concret
+### 9. Critere de bon choix
+### 10. Decision formelle
+
+---
+
+Document genere par Ark Intelligence`,
+
+formulation_solution: `Genere un document FORMULATION DE SOLUTION.
+
+---
+
+# FORMULATION DE SOLUTION
+## [Nom du projet]
+
+Date : {{DATE}}
+
+---
+
+### 1. Rappel du probleme cible
+### 2. Utilisateur cible
+### 3. Formulation centrale
+### 4. Explication de la solution
+### 5. Resultat attendu
+### 6. Frontieres de la solution
+### 7. Critere de bonne formulation
+### 8. Version courte (pitch)
+
+---
+
+Document genere par Ark Intelligence`,
+
+design_thinking: `Genere un document DESIGN THINKING.
+
+---
+
+# DESIGN THINKING
+## [Nom du projet]
+
+Date : {{DATE}}
+
+---
+
+## Phase 1 -- Empathie
+### 1. Utilisateur cible
+### 2. Problemes et frustrations
+### 3. Comportements et habitudes
+
+## Phase 2 -- Definition
+### 4. Probleme central
+### 5. Impact si non resolu
+
+## Phase 3 -- Ideation
+### 6. Idee principale
+### 7. Alternatives
+
+## Phase 4 -- Prototypage
+### 8. Forme du prototype
+### 9. Objectif du prototype
+
+## Phase 5 -- Test
+### 10. Utilisateurs testeurs
+### 11. Methode de test
+### 12. Criteres de validation
+
+---
+
+Document genere par Ark Intelligence`,
+
+business_model: `Genere un BUSINESS MODEL CANVAS.
+
+---
+
+# BUSINESS MODEL CANVAS
+## [Nom du projet]
+
+Date : {{DATE}}
+
+---
+
+### 1. Segments de clients
+### 2. Proposition de valeur
+### 3. Canaux
+### 4. Relation client
+### 5. Sources de revenus
+### 6. Ressources cles
+### 7. Activites cles
+### 8. Partenaires cles
+### 9. Structure de couts
+
+---
+
+Document genere par Ark Intelligence`,
+
+lean_startup: `Genere un document LEAN STARTUP.
+
+---
+
+# LEAN STARTUP
+## [Nom du projet]
+
+Date : {{DATE}}
+
+---
+
+## Etape 1 -- Probleme
+### 1. Probleme a tester
+### 2. Utilisateur concerne
+### 3. Solutions existantes
+
+## Etape 2 -- Hypotheses
+### 4. Hypothese de valeur
+### 5. Hypothese de croissance
+### 6. Hypothese de monetisation
+
+## Etape 3 -- MVP
+### 7. Description du MVP
+### 8. Objectif du MVP
+
+## Etape 4 -- Mesure
+### 9. Indicateur cle
+### 10. Seuil de succes
+
+## Etape 5 -- Apprentissage
+### 11. Enseignements attendus
+### 12. Decision strategique
+
+---
+
+Document genere par Ark Intelligence`,
+
+agile: `Genere un document AGILE.
+
+---
+
+# AGILE
+## [Nom du projet]
+
+Date : {{DATE}}
+
+---
+
+## Phase 1 -- Vision
+### 1. Objectif du projet
+### 2. Valeur prioritaire
+
+## Phase 2 -- Backlog
+### 3. Backlog des fonctionnalites
+### 4. Sprint en cours
+
+## Phase 3 -- Execution
+### 5. Taches du sprint
+### 6. Obstacles et bloquants
+
+## Phase 4 -- Revue
+### 7. Livrables produits
+### 8. Retours utilisateurs
+
+## Phase 5 -- Amelioration
+### 9. Enseignements du sprint
+### 10. Actions d amelioration
+### 11. Decision pour le sprint suivant
+
+---
+
+Document genere par Ark Intelligence`
+};
+
 // ==================== HANDLE GENERATE ====================
 async function handleGenerate(res, history, docType = 'definition_projet', userId = null, projetNom = null) {
     const conversationText = history.map(h => 
@@ -443,7 +717,6 @@ async function handleGenerate(res, history, docType = 'definition_projet', userI
 
     let docPrompt = DOCUMENT_PROMPTS[docType] || DOCUMENT_PROMPTS.definition_projet;
     
-    // Remplacer {{BASE_URL}}
     docPrompt = docPrompt.replace(/\{\{BASE_URL\}\}/g, 'https://www.arkintelligence.africa/');
 
     const generatePrompt = `Tu es un expert en gestion de projet PMI.
@@ -461,11 +734,11 @@ REGLES :
 - Si info manquante -> "A definir"
 - Style professionnel et clair
 - Pas de blabla, que du concret
-- PAS d'emojis
-- N'utilise JAMAIS de majuscules inappropriees
+- PAS d emojis
+- N utilise JAMAIS de majuscules inappropriees
 - Pour le HTML: garde EXACTEMENT la structure fournie
 - IMPORTANT : GARDE EXACTEMENT les placeholders {{OWNER_NAME}}, {{PROJECT_NAME}}, {{DATE}} tels quels
-- NE REMPLACE PAS {{OWNER_NAME}}, {{PROJECT_NAME}}, {{DATE}} par d'autres valeurs
+- NE REMPLACE PAS {{OWNER_NAME}}, {{PROJECT_NAME}}, {{DATE}} par d autres valeurs
 - Renvoie le HTML directement, sans balises markdown
 - Texte en paragraphe SANS puces ni numeros`;
 
@@ -828,18 +1101,12 @@ async function getSharedDocumentByOwnerProject(res, owner, project) {
 
         if (userError) {
             console.error('Erreur recherche utilisateur:', userError);
-            return res.status(500).json({ 
-                success: false, 
-                error: 'Erreur recherche utilisateur' 
-            });
+            return res.status(500).json({ success: false, error: 'Erreur recherche utilisateur' });
         }
 
         if (!users || users.length === 0) {
             console.error('Aucun utilisateur trouve');
-            return res.status(404).json({ 
-                success: false, 
-                error: 'Utilisateur introuvable' 
-            });
+            return res.status(404).json({ success: false, error: 'Utilisateur introuvable' });
         }
 
         const prenomNorm = normalizeString(prenom);
@@ -852,16 +1119,12 @@ async function getSharedDocumentByOwnerProject(res, owner, project) {
 
         if (!user) {
             console.error('Utilisateur non trouve apres normalisation');
-            return res.status(404).json({ 
-                success: false, 
-                error: 'Utilisateur introuvable' 
-            });
+            return res.status(404).json({ success: false, error: 'Utilisateur introuvable' });
         }
 
         console.log('Utilisateur trouve:', user.id);
 
         const userId = user.id;
-        
         const projectNorm = normalizeString(project.replace(/-/g, ' '));
         
         console.log('Recherche document pour userId:', userId);
@@ -874,18 +1137,12 @@ async function getSharedDocumentByOwnerProject(res, owner, project) {
 
         if (docError) {
             console.error('Erreur recherche document:', docError);
-            return res.status(500).json({ 
-                success: false, 
-                error: 'Erreur recherche document' 
-            });
+            return res.status(500).json({ success: false, error: 'Erreur recherche document' });
         }
 
         if (!documents || documents.length === 0) {
             console.error('Aucun document trouve pour cet utilisateur');
-            return res.status(404).json({ 
-                success: false, 
-                error: 'Aucun document disponible' 
-            });
+            return res.status(404).json({ success: false, error: 'Aucun document disponible' });
         }
 
         const document = documents.find(d => 
@@ -895,10 +1152,7 @@ async function getSharedDocumentByOwnerProject(res, owner, project) {
         if (!document) {
             console.error('Document non trouve apres normalisation. Projets disponibles:', 
                 documents.map(d => d.projet_nom));
-            return res.status(404).json({ 
-                success: false, 
-                error: 'Document introuvable' 
-            });
+            return res.status(404).json({ success: false, error: 'Document introuvable' });
         }
 
         console.log('Document trouve');
@@ -911,9 +1165,6 @@ async function getSharedDocumentByOwnerProject(res, owner, project) {
 
     } catch (error) {
         console.error('Erreur getSharedDocumentByOwnerProject:', error);
-        return res.status(500).json({ 
-            success: false, 
-            error: 'Erreur serveur' 
-        });
+        return res.status(500).json({ success: false, error: 'Erreur serveur' });
     }
 }
