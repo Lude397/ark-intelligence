@@ -449,21 +449,18 @@ REGLES STRICTES :
 
 ---
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
-table { width: 100%; border-collapse: collapse; }
-td { border: 1px solid #000; padding: 8px 10px; vertical-align: top; font-size: 13px; line-height: 1.5; }
-.doc-title { text-align: center; font-size: 16px; font-weight: bold; text-decoration: underline; border: none; padding: 10px 0 12px; }
-.phase-title { font-weight: bold; }
-.question-title { font-weight: bold; }
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper table { width: 100%; border-collapse: collapse; }
+.doc-wrapper td { border: 1px solid #000; padding: 8px 10px; vertical-align: top; font-size: 13px; line-height: 1.5; }
+.doc-wrapper .doc-title { text-align: center; font-size: 16px; font-weight: bold; text-decoration: underline; border: none; padding: 10px 0 12px; }
+.doc-wrapper .phase-title { font-weight: bold; }
+.doc-wrapper .question-title { font-weight: bold; }
+.doc-footer { text-align: center; padding: 20px; font-size: 12px; }
+.doc-footer a { color: #4a7c59; text-decoration: none; }
 </style>
-</head>
-<body>
+
+<div class="doc-wrapper">
 
 <table>
   <tr><td class="doc-title">Definition de Projet</td></tr>
@@ -520,8 +517,11 @@ td { border: 1px solid #000; padding: 8px 10px; vertical-align: top; font-size: 
 
 </table>
 
-</body>
-</html>`,
+<div class="doc-footer">
+  <a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
+</div>
+
+</div>`,
 
 orientation_solution: `Genere un document ORIENTATION DE SOLUTION.
 
