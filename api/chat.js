@@ -450,7 +450,7 @@ REGLES STRICTES :
 ---
 
 <style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; max-height: 287mm; overflow: hidden; box-sizing: border-box; margin: 0 auto; }
 .doc-wrapper table { width: 100%; border-collapse: collapse; }
 .doc-wrapper td { border: 1px solid #000; padding: 8px 10px; vertical-align: top; font-size: 13px; line-height: 1.5; }
 .doc-wrapper .doc-title { text-align: center; font-size: 16px; font-weight: bold; text-decoration: underline; border: none; padding: 10px 0 12px; }
