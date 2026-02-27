@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 // ==================== CONFIGURATION ====================
 const supabase = createClient(
     'https://ehaxnltgapcfxhwpqhyb.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVoYXhubHRnYXBjZnhod3BxaHliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjczNDg1NjksImV4cCI6MjA4MjkyNDU2OX0.-XLe5c2sgzGxv9Olc13Lu3S0hTHjSbs2brbvVC556Ec'
+    'COLLER_VOTRE_BASE64_ICI'
 );
 
 const MISTRAL_API_KEY = 'pnpx3zcKxb9xR2RK4kxyyOXNLDQ1paE4';
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
         const { mode, message, history, docType, userId, projetNom, documentId, sharedLinkId, viewerUserId, viewerIp, owner, project } = req.body;
 
         if (mode === 'chat') {
-            return await handleChat(res, message, history);
+            return await handleChat(res, message, history, docType);
         }
         
         if (mode === 'generate') {
@@ -151,8 +151,8 @@ async function findSimilarExamples(projectDescription) {
     }
 }
 
-// ==================== PROMPT AVEC RAG ====================
-function buildPromptWithRAG(similarExamples, projectDescription) {
+// ==================== PROMPT DEFINITION DE PROJET (12 QUESTIONS) ====================
+function buildPromptDefinition(similarExamples, projectDescription) {
     let examplesSection = '';
     
     if (similarExamples && similarExamples.length > 0) {
@@ -161,7 +161,7 @@ function buildPromptWithRAG(similarExamples, projectDescription) {
 EXEMPLES DE QUESTIONS ADAPTEES (references geographiques neutralisees)
 
 IMPORTANT : Les exemples ci-dessous utilisent des placeholders comme :
-   - [VILLE] = toute ville (pas de mention de ville specifique)
+   - [VILLE] = toute ville
    - [PAYS] = tout pays
    - [DEVISE] = toute monnaie
    - [MOBILE MONEY] = tout moyen de paiement mobile
@@ -177,7 +177,7 @@ ${similarExamples.map((ex, i) => `
 ${ex.contenu}
 `).join('\n')}
 
--> Tes questions doivent etre GENERIQUES et adaptables a n'importe quel contexte.
+-> Tes questions doivent etre GENERIQUES et adaptables a n importe quel contexte.
 ---
 `;
     }
@@ -187,32 +187,17 @@ ${ex.contenu}
 **STYLE DE COMMUNICATION (OBLIGATOIRE) :**
 - Utilise un langage SIMPLE et ACCESSIBLE, sans jargon technique ou entrepreneurial
 - Evite les termes complexes comme : "proposition de valeur", "MVP", "ROI", "KPI", "segmentation client", "business model"
-- Parle comme si tu discutais avec quelqu'un qui n'a jamais fait d'entrepreneuriat
-- Utilise des mots du quotidien : "clients" au lieu de "segments de clientele", "ce qui rend votre projet different" au lieu de "proposition de valeur unique"
+- Parle comme si tu discutais avec quelqu un qui n a jamais fait d entrepreneuriat
+- Utilise des mots du quotidien
 - Si tu dois utiliser un terme technique, explique-le simplement entre parentheses
-
-**EXEMPLES DE REFORMULATION :**
-- "Quelle est votre proposition de valeur unique ?" -> "Qu'est-ce qui rend votre projet different des autres ?"
-- "Definissez votre segmentation client" -> "Qui sont vos clients ? A qui s'adresse votre projet ?"
-- "Quels sont vos KPIs ?" -> "Comment allez-vous mesurer le succes de votre projet ?"
-- "Quel est votre business model ?" -> "Comment allez-vous gagner de l'argent avec ce projet ?"
-- "Avez-vous valide votre Product-Market Fit ?" -> "Avez-vous verifie que des gens veulent vraiment votre produit ?"
 
 **ETAPE 0 - CLASSIFICATION (OBLIGATOIRE au premier message) :**
 Analyse le message du client AVANT de poser des questions :
 
-1. QUESTION SUR L'APPLICATION ("c'est quoi", "comment ca marche", "a quoi ca sert", "qui a cree")
-   -> Reponds brievement : Ark Intelligence aide a structurer les projets via 12 questions de cadrage.
-   -> Puis demande : "Decrivez-moi votre projet pour commencer !"
-
-2. HORS SUJET (meteo, blagues, politique, sujets non lies aux projets)
-   -> Reponds : "Je suis specialise dans le cadrage de projets entrepreneuriaux. Decrivez-moi votre idee et je vous guiderai !"
-
-3. MESSAGE VAGUE ("j'ai une idee", "je veux entreprendre", "aide-moi")
-   -> Reponds : "Super ! Pouvez-vous me decrire votre projet plus precisement ? Par exemple : Je veux ouvrir une boulangerie, Je developpe une application mobile..."
-
-4. PROJET DETECTE (description d'activite, business, idee entrepreneuriale claire)
-   -> Passe directement a la MISSION ci-dessous
+1. QUESTION SUR L APPLICATION -> Reponds brievement puis demande de decrire le projet
+2. HORS SUJET -> Redirige vers le cadrage de projet
+3. MESSAGE VAGUE -> Demande plus de precision
+4. PROJET DETECTE -> Passe a la MISSION
 
 ---
 
@@ -220,9 +205,7 @@ MISSION : Poser 12 questions de cadrage sous forme de QCM ADAPTE au projet du cl
 
 ${examplesSection}
 
-REGLES IMPORTANTES - FORMAT OBLIGATOIRE POUR CHAQUE QUESTION :
-
-FORMAT STRICT (valable pour Q1, Q2, Q3... jusqu'a Q12) :
+FORMAT STRICT pour chaque question :
 
 **Je reformule** : [reformulation courte]
 
@@ -232,124 +215,215 @@ FORMAT STRICT (valable pour Q1, Q2, Q3... jusqu'a Q12) :
 
 [Question adaptee au projet EN LANGAGE SIMPLE]
 
-A) [Option specifique au projet mais GENERIQUE]
-B) [Option specifique au projet mais GENERIQUE]
-C) [Option specifique au projet mais GENERIQUE]
-D) [Option specifique au projet mais GENERIQUE]
+A) [Option specifique]
+B) [Option specifique]
+C) [Option specifique]
+D) [Option specifique]
 E) Autre (precisez)
 
-ARRETE ICI - N'ajoute AUCUN texte apres les options (pas de "Quelle est votre reponse", pas de "Choisissez", rien).
+ARRETE ICI apres les options.
 
-AUCUNE EXCEPTION : Toutes les 12 questions doivent avoir ce format avec 5 options.
-Si tu ne proposes pas A) B) C) D) E) -> C'EST UNE ERREUR GRAVE.
+AUCUNE EXCEPTION : Toutes les 12 questions doivent avoir 5 options A-E.
 
-AUTRES REGLES :
-1. Les options doivent etre SPECIFIQUES au type de projet du client
+REGLES :
+1. Options SPECIFIQUES au type de projet du client
 2. PAS de mention de lieu geographique, ville, pays, quartier ou devise
-3. Genere des exemples UNIVERSELS applicables partout dans le monde
-4. Une question a la fois
-5. LANGAGE SIMPLE : evite le jargon, parle comme a un ami
+3. Une question a la fois
+4. LANGAGE SIMPLE
 
 ---
 
-LES 12 QUESTIONS A POSER (ORGANISEES EN 5 PHASES) :
+LES 12 QUESTIONS (5 PHASES) :
 
-**PHASE 1 -- Cadrage strategique** (Questions 1 a 4)
-1. Contexte - Qu'est-ce qui declenche ce projet ?
+**PHASE 1 -- Cadrage strategique** (Q1 a Q4)
+1. Contexte - Qu est-ce qui declenche ce projet ?
 2. Probleme - Quel probleme a resoudre ?
 3. Beneficiaire - Qui en beneficie ?
-4. Objectif (12 mois) - Qu'est-ce qui aura change ?
+4. Objectif (12 mois) - Qu est-ce qui aura change ?
 
-**PHASE 2 -- Definition du probleme reel** (Questions 5 a 6)
+**PHASE 2 -- Definition du probleme reel** (Q5 a Q6)
 5. Besoin reel - Quelles informations necessaires ?
 6. Limites actuelles - Pourquoi pas encore realise ?
 
-**Phase 3 -- Solution et Livrable** (Questions 7 a 8)
-7. Livrable - Qu'attendez-vous concretement ?
+**Phase 3 -- Solution et Livrable** (Q7 a Q8)
+7. Livrable - Qu attendez-vous concretement ?
 8. Hors perimetre - Que ne doit PAS faire le projet ?
 
-**PHASE 4 -- Expression du besoin fonctionnel** (Question 9)
+**PHASE 4 -- Expression du besoin fonctionnel** (Q9)
 9. Capacite prioritaire - Quelle fonctionnalite critique ?
 
-**PHASE 5 -- Contraintes, risques et criteres de succes** (Questions 10 a 12)
+**PHASE 5 -- Contraintes, risques et criteres de succes** (Q10 a Q12)
 10. Contrainte principale - Quelle limite majeure ?
-11. Risque - Qu'est-ce qui vous inquiete ?
+11. Risque - Qu est-ce qui vous inquiete ?
 12. Critere de succes - Comment mesurer le succes ?
-
-IMPORTANT : Affiche la phase correspondante lors de chaque question.
-Exemple : Pour Q1, Q2, Q3, Q4 -> affiche "**PHASE 1 -- Cadrage strategique**"
 
 ---
 
-APRES LA QUESTION 12 (une fois que le client a choisi A/B/C/D ou E) :
+APRES LA QUESTION 12 :
 
-ETAPE 1 - REFORMULER + PROPOSER NOMS :
+ETAPE 1 :
 1. Reformule la reponse Q12
 2. Annonce "Cadrage termine !"
 3. Propose 5 noms (A, B, C, D, E)
 4. Demande "Quel nom souhaitez-vous donner a votre projet ?"
 
 ETAPE 2 - APRES CHOIX DU NOM :
+1. Identifie le nom exact choisi
+2. Ecris : **Nom du projet : [le nom exact]**
+3. Ecris : [GENERATE]
+4. ARRETE
 
-Tu poses la question des noms UNE SEULE FOIS. Ne la redemande JAMAIS.
-
-Quand le client choisit :
-1. Identifie le nom exact :
-   - Si client repond "A", "B", "C" ou "D" -> Prends le nom que tu as propose pour cette lettre
-   - Si client repond "E" ou ecrit un nom -> Prends exactement ce qu'il a ecrit
-2. Ecris sur une ligne : **Nom du projet : [le nom exact]**
-3. Ecris sur une nouvelle ligne : [GENERATE]
-4. ARRETE - Ne pose AUCUNE autre question
-
-Exemples :
-- Tu as propose B) CyberHub, client dit "B" -> **Nom du projet : CyberHub**
-- Client ecrit "Pizza Royale" -> **Nom du projet : Pizza Royale**
-
-EXEMPLE COMPLET APRES Q12 :
-**Je reformule** : Vous mesurez le succes par le nombre de clients quotidiens.
-
-Cadrage termine ! Maintenant, donnons un nom a votre projet.
-
-**Propositions de noms pour votre cybercafe :**
-
-A) CyberHub
-B) NetPoint
-C) ConnectZone
-D) Digital Access
-E) Proposez votre propre nom
-
-**Quel nom souhaitez-vous donner a votre projet ?**
-
-[CLIENT REPOND : "B"]
-
-**Nom du projet : NetPoint**
-
-[GENERATE]
-
----
-
-REGLES CRITIQUES - INTERDICTIONS ABSOLUES :
-- NE JAMAIS afficher de texte comme "Analyse de l'historique"
-- NE JAMAIS afficher de texte comme "je dois poser la question X"
-- NE JAMAIS afficher de texte comme "Note : Le client a repondu..."
-- NE JAMAIS afficher de texte comme "La prochaine etape est de..."
-- Ces reflexions internes doivent rester INVISIBLES a l'utilisateur
-- Seul le format officiel avec "**Je reformule**" et les questions est autorise
+REGLES CRITIQUES :
+- NE JAMAIS afficher de reflexions internes
+- Seul le format officiel est autorise
 
 PROJET DU CLIENT : "${projectDescription}"`;
 }
 
+// ==================== PROMPT ORIENTATION DE SOLUTION (8 QUESTIONS) ====================
+function buildPromptOrientation(projectDescription) {
+    return `Tu es Ark Intelligence, expert en orientation de solution.
+
+Le client a deja valide sa Definition de Projet. Tu recois les donnees de cette definition dans le premier message.
+Ta mission est de l aider a ORIENTER sa solution en posant 8 questions structurees.
+
+**STYLE DE COMMUNICATION (OBLIGATOIRE) :**
+- Langage SIMPLE et ACCESSIBLE, sans jargon
+- Parle comme a un ami qui n a jamais fait d entrepreneuriat
+- Une question a la fois
+
+**FORMAT STRICT POUR CHAQUE QUESTION :**
+
+**Je reformule** : [reformulation courte de sa reponse precedente]
+
+**Phase [N] -- [Titre]**
+
+**Question [N] : [Titre]**
+
+[Question adaptee au projet EN LANGAGE SIMPLE]
+
+A) [Option specifique]
+B) [Option specifique]
+C) [Option specifique]
+D) [Option specifique]
+E) Autre (precisez)
+
+ARRETE apres les options. Pas de texte supplementaire.
+
+---
+
+LES 8 QUESTIONS (3 PHASES) :
+
+**PHASE 1 -- Comprendre** (Questions 1 a 3)
+1. Validation du probleme - Le probleme identifie dans la definition est-il toujours le bon ? Quel aspect est le plus critique ?
+2. Utilisateur prioritaire - Parmi les beneficiaires identifies, qui doit etre servi EN PREMIER ?
+3. Solutions existantes - Comment les gens resolvent ce probleme aujourd hui ? Quelles alternatives existent ?
+
+**PHASE 2 -- Explorer** (Questions 4 a 6)
+4. Type de solution - Quelle forme devrait prendre votre solution ? (app, service, produit physique, plateforme...)
+5. Justification - Pourquoi cette approche plutot qu une autre ?
+6. Ressources disponibles - De quoi disposez-vous deja pour demarrer ? (competences, budget, reseau, materiel)
+
+**PHASE 3 -- Orienter** (Questions 7 a 8)
+7. Fonctionnalites prioritaires - Quelles sont les 2-3 fonctionnalites essentielles pour un premier lancement ?
+8. Premier jalon - Quel est le premier resultat concret que vous voulez atteindre dans les 3 prochains mois ?
+
+---
+
+APRES LA QUESTION 8 (reponse recue) :
+
+1. Reformule la reponse Q8
+2. Fais une synthese en 3-4 lignes : "Voici l orientation retenue : [resume]"
+3. Ecris sur une nouvelle ligne : [GENERATE]
+4. ARRETE
+
+REGLES CRITIQUES :
+- NE JAMAIS afficher de reflexions internes
+- PAS de mention de lieu geographique, ville, pays ou devise
+- Options SPECIFIQUES au projet du client
+- Le nom du projet est deja connu, pas besoin de le redemander
+
+DONNEES DU CLIENT : "${projectDescription}"`;
+}
+
+// ==================== PROMPT FORMULATION DE SOLUTION (6 QUESTIONS) ====================
+function buildPromptFormulation(projectDescription) {
+    return `Tu es Ark Intelligence, expert en formulation de solution.
+
+Le client a deja valide sa Definition de Projet ET son Orientation de Solution. Tu recois les donnees de l orientation dans le premier message.
+Ta mission est de l aider a FORMULER sa solution de maniere precise en posant 6 questions structurees.
+
+**STYLE DE COMMUNICATION (OBLIGATOIRE) :**
+- Langage SIMPLE et ACCESSIBLE, sans jargon
+- Parle comme a un ami
+- Une question a la fois
+
+**FORMAT STRICT POUR CHAQUE QUESTION :**
+
+**Je reformule** : [reformulation courte de sa reponse precedente]
+
+**Phase [N] -- [Titre]**
+
+**Question [N] : [Titre]**
+
+[Question adaptee au projet EN LANGAGE SIMPLE]
+
+A) [Option specifique]
+B) [Option specifique]
+C) [Option specifique]
+D) [Option specifique]
+E) Autre (precisez)
+
+ARRETE apres les options. Pas de texte supplementaire.
+
+---
+
+LES 6 QUESTIONS (3 PHASES) :
+
+**PHASE 1 -- Rappel et precision** (Questions 1 a 2)
+1. Confirmation du probleme - En une phrase, quel est LE probleme principal que votre solution va resoudre ?
+2. Utilisateur cible precis - Decrivez votre utilisateur ideal : qui est-il, que fait-il au quotidien, qu est-ce qui le frustre ?
+
+**PHASE 2 -- Formuler la solution** (Questions 3 a 4)
+3. Formulation centrale - Comment decririez-vous votre solution en une seule phrase simple ? (ce que ca fait, pour qui, comment)
+4. Parcours utilisateur - Concretement, quelles sont les etapes que l utilisateur suit du debut a la fin quand il utilise votre solution ?
+
+**PHASE 3 -- Valider la formulation** (Questions 5 a 6)
+5. Ce que la solution ne fait PAS - Qu est-ce qui est clairement HORS de votre solution ? (pour eviter les malentendus)
+6. Le pitch - Si vous deviez convaincre quelqu un en 30 secondes, que diriez-vous ?
+
+---
+
+APRES LA QUESTION 6 (reponse recue) :
+
+1. Reformule la reponse Q6
+2. Presente le pitch final en 2 phrases
+3. Ecris sur une nouvelle ligne : [GENERATE]
+4. ARRETE
+
+REGLES CRITIQUES :
+- NE JAMAIS afficher de reflexions internes
+- PAS de mention de lieu geographique, ville, pays ou devise
+- Options SPECIFIQUES au projet du client
+- Le nom du projet est deja connu, pas besoin de le redemander
+
+DONNEES DU CLIENT : "${projectDescription}"`;
+}
+
 // ==================== HANDLE CHAT ====================
-async function handleChat(res, message, history) {
+async function handleChat(res, message, history, docType = 'definition_projet') {
     
-    const salutations = ['bonjour', 'salut', 'hello', 'coucou', 'hey', 'bonsoir', 'hi', 'yo', 'bjr', 'slt'];
-    const messageClean = message.toLowerCase().trim();
-    
-    if ((!history || history.length === 0) && salutations.includes(messageClean)) {
-        return res.status(200).json({ 
-            action: 'continue',
-            response: "Bonjour ! Je suis **Ark Intelligence**, votre assistant de cadrage de projet.\n\nDecrivez-moi votre idee de projet et je vous guiderai a travers 12 questions pour le structurer.\n\n**Exemple** : *\"Je veux ouvrir une boulangerie\"* ou *\"Je developpe une application mobile\"*"
-        });
+    // Salutations uniquement pour definition (premier contact)
+    if (!docType || docType === 'definition_projet') {
+        const salutations = ['bonjour', 'salut', 'hello', 'coucou', 'hey', 'bonsoir', 'hi', 'yo', 'bjr', 'slt'];
+        const messageClean = message.toLowerCase().trim();
+        
+        if ((!history || history.length === 0) && salutations.includes(messageClean)) {
+            return res.status(200).json({ 
+                action: 'continue',
+                response: "Bonjour ! Je suis **Ark Intelligence**, votre assistant de cadrage de projet.\n\nDecrivez-moi votre idee de projet et je vous guiderai a travers 12 questions pour le structurer.\n\n**Exemple** : *\"Je veux ouvrir une boulangerie\"* ou *\"Je developpe une application mobile\"*"
+            });
+        }
     }
 
     const historyText = history && history.length > 0 
@@ -360,17 +434,34 @@ async function handleChat(res, message, history) {
         ? history.find(h => h.type === 'user')?.content 
         : message;
 
-    let similarExamples = null;
-    if (firstUserMessage) {
-        similarExamples = await findSimilarExamples(firstUserMessage);
-        if (similarExamples && similarExamples.length > 0) {
-            console.log(`RAG: ${similarExamples.length} exemples trouves pour "${firstUserMessage.substring(0, 50)}..."`);
+    // Construire le prompt selon le docType
+    let systemPrompt = '';
+
+    if (docType === 'orientation_solution') {
+        systemPrompt = buildPromptOrientation(firstUserMessage);
+    } else if (docType === 'formulation_solution') {
+        systemPrompt = buildPromptFormulation(firstUserMessage);
+    } else {
+        // Definition de projet (par defaut) - avec RAG
+        let similarExamples = null;
+        if (firstUserMessage) {
+            similarExamples = await findSimilarExamples(firstUserMessage);
+            if (similarExamples && similarExamples.length > 0) {
+                console.log(`RAG: ${similarExamples.length} exemples trouves pour "${firstUserMessage.substring(0, 50)}..."`);
+            }
         }
+        systemPrompt = buildPromptDefinition(similarExamples, firstUserMessage);
     }
 
-    const ragPrompt = buildPromptWithRAG(similarExamples, firstUserMessage);
+    // Nombre de questions selon le type
+    const questionCounts = {
+        definition_projet: 12,
+        orientation_solution: 8,
+        formulation_solution: 6
+    };
+    const totalQuestions = questionCounts[docType] || 12;
 
-    const fullPrompt = `${ragPrompt}
+    const fullPrompt = `${systemPrompt}
 
 ---
 HISTORIQUE DE LA CONVERSATION :
@@ -382,16 +473,17 @@ NOUVEAU MESSAGE DU CLIENT :
 
 ---
 INSTRUCTION : 
-1. Si c'est le premier message, applique l'ETAPE 0 (classification)
-2. Si un projet a ete identifie, analyse l'historique pour identifier quelle question tu as deja posee
+1. Si c est le premier message, analyse le contexte fourni et pose la Question 1
+2. Sinon, analyse l historique pour identifier quelle question tu as deja posee
 3. Pose la question SUIVANTE avec des options A) B) C) D) E) adaptees au projet EN LANGAGE SIMPLE
 4. Ne repete JAMAIS une question deja posee
 5. Les options doivent etre SPECIFIQUES au projet du client (pas generiques)
 6. AUCUNE mention de lieu geographique, ville, pays ou devise
 7. EVITE LE JARGON : parle simplement, comme a un ami
 8. NE JAMAIS afficher de texte de debug ou de reflexion interne
+9. Total de questions pour ce document : ${totalQuestions}
 
-Progression : Classification -> Q1 -> Q2 -> Q3 -> Q4 -> Q5 -> Q6 -> Q7 -> Q8 -> Q9 -> Q10 -> Q11 -> Q12 -> PROPOSITION DE NOMS -> [GENERATE]`;
+Progression : Q1 -> Q2 -> ... -> Q${totalQuestions} -> [GENERATE]`;
 
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
@@ -435,7 +527,6 @@ function getFormattedDate() {
 // ==================== PROMPTS DOCUMENTS ====================
 const DOCUMENT_PROMPTS = {
 
-// ==================== 1. DEFINITION DE PROJET ====================
 definition_projet: `Genere une DEFINITION DE PROJET sous forme de tableau HTML professionnel.
 
 REGLES STRICTES :
@@ -446,7 +537,7 @@ REGLES STRICTES :
 - Style professionnel, phrases completes
 - Contenu COURT : 2-3 lignes max par section
 - Le document doit tenir sur UNE SEULE PAGE A4
-- IMPORTANT pour le Contexte : COMMENCE par une phrase qui definit clairement le projet (son nom, sa nature exacte et ce qu il propose concretement), ENSUITE explique pourquoi ce projet est lance.
+- IMPORTANT pour le Contexte : COMMENCE par une phrase qui definit clairement le projet
 
 ---
 
@@ -465,80 +556,33 @@ REGLES STRICTES :
 </style>
 
 <div class="doc-wrapper">
-
 <img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Definition de Projet</div>
 <div class="doc-project-name">{{PROJECT_NAME}}</div>
-<div class="doc-info">
-  Proprietaire : {{OWNER_NAME}}<br>
-  Date : {{DATE}}
-</div>
-
+<div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
 <table>
-  <tr>
-    <td class="label-cell">1. Contexte</td>
-    <td class="content-cell">[COMMENCE par : "{{PROJECT_NAME}} est [nature du projet] qui [ce qu il propose concretement]." PUIS explique pourquoi ce projet est lance. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">2. Probleme a resoudre</td>
-    <td class="content-cell">[Decris le probleme concret. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">3. Beneficiaire principal</td>
-    <td class="content-cell">[Identifie les premiers clients ou utilisateurs vises. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">4. Objectif a 12 mois</td>
-    <td class="content-cell">[Objectifs concrets avec indicateurs. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">5. Besoin reel</td>
-    <td class="content-cell">[Informations ou ressources indispensables pour lancer. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">6. Limites actuelles</td>
-    <td class="content-cell">[Freins ou obstacles au lancement. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">7. Livrable attendu</td>
-    <td class="content-cell">[Resultat concret attendu. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">8. Hors perimetre</td>
-    <td class="content-cell">[Ce qui ne fait PAS partie du projet. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">9. Exigences fonctionnelles</td>
-    <td class="content-cell">[Fonctionnalite prioritaire pour le succes. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">10. Contraintes</td>
-    <td class="content-cell">[Contraintes principales. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">11. Risques</td>
-    <td class="content-cell">[Risques majeurs. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">12. Criteres de succes</td>
-    <td class="content-cell">[Comment mesurer le succes. 2-3 lignes max.]</td>
-  </tr>
+  <tr><td class="label-cell">1. Contexte</td><td class="content-cell">[COMMENCE par definir le projet puis explique pourquoi il est lance. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">2. Probleme a resoudre</td><td class="content-cell">[Decris le probleme concret. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">3. Beneficiaire principal</td><td class="content-cell">[Identifie les premiers clients. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">4. Objectif a 12 mois</td><td class="content-cell">[Objectifs concrets. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">5. Besoin reel</td><td class="content-cell">[Ressources indispensables. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">6. Limites actuelles</td><td class="content-cell">[Freins ou obstacles. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">7. Livrable attendu</td><td class="content-cell">[Resultat concret attendu. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">8. Hors perimetre</td><td class="content-cell">[Ce qui ne fait PAS partie du projet. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">9. Exigences fonctionnelles</td><td class="content-cell">[Fonctionnalite prioritaire. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">10. Contraintes</td><td class="content-cell">[Contraintes principales. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">11. Risques</td><td class="content-cell">[Risques majeurs. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">12. Criteres de succes</td><td class="content-cell">[Comment mesurer le succes. 2-3 lignes max.]</td></tr>
 </table>
-
-<div class="doc-footer">
-  <a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
-</div>
-
+<div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
 </div>`,
 
-// ==================== 2. ORIENTATION DE SOLUTION ====================
 orientation_solution: `Genere un document ORIENTATION DE SOLUTION sous forme de tableau HTML professionnel.
 
 REGLES STRICTES :
 - Ce document s appuie sur la Definition de Projet validee
 - Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
 - Texte en paragraphe SANS puces ni numeros a l interieur
-- Style professionnel, phrases completes
 - Contenu COURT : 2-3 lignes max par section
 - Le document doit tenir sur UNE SEULE PAGE A4
 
@@ -559,72 +603,31 @@ REGLES STRICTES :
 </style>
 
 <div class="doc-wrapper">
-
 <img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Orientation de Solution</div>
 <div class="doc-project-name">{{PROJECT_NAME}}</div>
-<div class="doc-info">
-  Proprietaire : {{OWNER_NAME}}<br>
-  Date : {{DATE}}
-</div>
-
+<div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
 <table>
-  <tr>
-    <td class="label-cell">1. Probleme valide</td>
-    <td class="content-cell">[Reformulation du probleme identifie dans la Definition. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">2. Utilisateur prioritaire</td>
-    <td class="content-cell">[Beneficiaire principal identifie. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">3. Solution retenue</td>
-    <td class="content-cell">[Description de la solution choisie. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">4. Justification</td>
-    <td class="content-cell">[Pourquoi cette solution et pas une autre. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">5. Analyse des contraintes</td>
-    <td class="content-cell">[Contraintes identifiees et comment les gerer. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">6. Ressources necessaires</td>
-    <td class="content-cell">[Ressources humaines, techniques et financieres necessaires. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">7. Fonctionnalites prioritaires</td>
-    <td class="content-cell">[Fonctionnalites essentielles pour le lancement. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">8. Plan de demarrage</td>
-    <td class="content-cell">[Premieres actions concretes a mener. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">9. Jalons de validation</td>
-    <td class="content-cell">[Indicateurs de validation a 3 mois. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">10. Criteres de pivot</td>
-    <td class="content-cell">[Conditions pour changer d approche. 2-3 lignes max.]</td>
-  </tr>
+  <tr><td class="label-cell">1. Probleme valide</td><td class="content-cell">[Reformulation du probleme. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">2. Utilisateur prioritaire</td><td class="content-cell">[Beneficiaire principal. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">3. Solution retenue</td><td class="content-cell">[Description de la solution. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">4. Justification</td><td class="content-cell">[Pourquoi cette solution. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">5. Analyse des contraintes</td><td class="content-cell">[Contraintes et gestion. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">6. Ressources necessaires</td><td class="content-cell">[Ressources humaines, techniques, financieres. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">7. Fonctionnalites prioritaires</td><td class="content-cell">[Fonctionnalites essentielles. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">8. Plan de demarrage</td><td class="content-cell">[Premieres actions concretes. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">9. Jalons de validation</td><td class="content-cell">[Indicateurs a 3 mois. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">10. Criteres de pivot</td><td class="content-cell">[Conditions pour changer d approche. 2-3 lignes max.]</td></tr>
 </table>
-
-<div class="doc-footer">
-  <a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
-</div>
-
+<div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
 </div>`,
 
-// ==================== 3. FORMULATION DE SOLUTION ====================
 formulation_solution: `Genere un document FORMULATION DE SOLUTION sous forme de tableau HTML professionnel.
 
 REGLES STRICTES :
 - Ce document s appuie sur l Orientation de Solution validee
 - Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
 - Texte en paragraphe SANS puces ni numeros a l interieur
-- Style professionnel, phrases completes
 - Contenu COURT : 2-3 lignes max par section
 - Le document doit tenir sur UNE SEULE PAGE A4
 
@@ -645,65 +648,29 @@ REGLES STRICTES :
 </style>
 
 <div class="doc-wrapper">
-
 <img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Formulation de Solution</div>
 <div class="doc-project-name">{{PROJECT_NAME}}</div>
-<div class="doc-info">
-  Proprietaire : {{OWNER_NAME}}<br>
-  Date : {{DATE}}
-</div>
-
+<div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
 <table>
-  <tr>
-    <td class="label-cell">1. Rappel du probleme cible</td>
-    <td class="content-cell">[Reformulation synthetique du probleme valide. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">2. Utilisateur cible</td>
-    <td class="content-cell">[Description precise de l utilisateur avec ses comportements. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">3. Formulation centrale</td>
-    <td class="content-cell">[En une phrase : que fait le projet, pour qui, comment, a quel prix. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">4. Fonctionnement de la solution</td>
-    <td class="content-cell">[Etapes du parcours utilisateur du debut a la fin. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">5. Frontieres de la solution</td>
-    <td class="content-cell">[Ce que la solution ne fait PAS. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">6. Resultat attendu</td>
-    <td class="content-cell">[Impact concret sur la vie de l utilisateur. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">7. Critere de bonne formulation</td>
-    <td class="content-cell">[Comment verifier que la solution est bien comprise. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">8. Pitch</td>
-    <td class="content-cell">[Resume en 2 phrases maximum pour convaincre un investisseur ou un client.]</td>
-  </tr>
+  <tr><td class="label-cell">1. Rappel du probleme cible</td><td class="content-cell">[Reformulation synthetique. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">2. Utilisateur cible</td><td class="content-cell">[Description precise avec comportements. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">3. Formulation centrale</td><td class="content-cell">[En une phrase : que fait le projet, pour qui, comment. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">4. Fonctionnement de la solution</td><td class="content-cell">[Etapes du parcours utilisateur. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">5. Frontieres de la solution</td><td class="content-cell">[Ce que la solution ne fait PAS. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">6. Resultat attendu</td><td class="content-cell">[Impact concret. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">7. Critere de bonne formulation</td><td class="content-cell">[Comment verifier que c est bien compris. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">8. Pitch</td><td class="content-cell">[Resume en 2 phrases pour convaincre.]</td></tr>
 </table>
-
-<div class="doc-footer">
-  <a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
-</div>
-
+<div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
 </div>`,
 
-// ==================== 4. DESIGN THINKING ====================
 design_thinking: `Genere un document DESIGN THINKING sous forme de tableau HTML professionnel.
 
 REGLES STRICTES :
-- Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
-- Texte en paragraphe SANS puces ni numeros a l interieur
-- Style professionnel, phrases completes
+- Format: Tableau HTML 2 colonnes
+- Texte en paragraphe SANS puces ni numeros
 - Contenu COURT : 2-3 lignes max par section
-- Le document doit tenir sur UNE SEULE PAGE A4
 
 ---
 
@@ -722,81 +689,33 @@ REGLES STRICTES :
 </style>
 
 <div class="doc-wrapper">
-
 <img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Design Thinking</div>
 <div class="doc-project-name">{{PROJECT_NAME}}</div>
-<div class="doc-info">
-  Proprietaire : {{OWNER_NAME}}<br>
-  Date : {{DATE}}
-</div>
-
+<div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
 <table>
-  <tr>
-    <td class="label-cell">1. Utilisateur cible</td>
-    <td class="content-cell">[Description de l utilisateur principal et de son contexte. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">2. Problemes et frustrations</td>
-    <td class="content-cell">[Frustrations et douleurs principales de l utilisateur. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">3. Comportements et habitudes</td>
-    <td class="content-cell">[Comment l utilisateur gere actuellement le probleme. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">4. Probleme central</td>
-    <td class="content-cell">[Synthese du probleme a resoudre en une formulation claire. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">5. Impact si non resolu</td>
-    <td class="content-cell">[Consequences si le probleme persiste. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">6. Idee principale</td>
-    <td class="content-cell">[Solution proposee pour repondre au probleme. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">7. Alternatives</td>
-    <td class="content-cell">[Autres pistes de solution envisagees. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">8. Forme du prototype</td>
-    <td class="content-cell">[Type de prototype a realiser pour tester l idee. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">9. Objectif du prototype</td>
-    <td class="content-cell">[Ce que le prototype doit permettre de verifier. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">10. Utilisateurs testeurs</td>
-    <td class="content-cell">[Profil des personnes qui testeront le prototype. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">11. Methode de test</td>
-    <td class="content-cell">[Comment le test sera realise. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">12. Criteres de validation</td>
-    <td class="content-cell">[Indicateurs pour considerer le test comme reussi. 2-3 lignes max.]</td>
-  </tr>
+  <tr><td class="label-cell">1. Utilisateur cible</td><td class="content-cell">[Description. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">2. Problemes et frustrations</td><td class="content-cell">[Frustrations principales. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">3. Comportements et habitudes</td><td class="content-cell">[Gestion actuelle. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">4. Probleme central</td><td class="content-cell">[Synthese. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">5. Impact si non resolu</td><td class="content-cell">[Consequences. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">6. Idee principale</td><td class="content-cell">[Solution proposee. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">7. Alternatives</td><td class="content-cell">[Autres pistes. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">8. Forme du prototype</td><td class="content-cell">[Type de prototype. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">9. Objectif du prototype</td><td class="content-cell">[Ce qu il verifie. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">10. Utilisateurs testeurs</td><td class="content-cell">[Profil testeurs. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">11. Methode de test</td><td class="content-cell">[Comment tester. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">12. Criteres de validation</td><td class="content-cell">[Indicateurs de reussite. 2-3 lignes max.]</td></tr>
 </table>
-
-<div class="doc-footer">
-  <a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
-</div>
-
+<div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
 </div>`,
 
-// ==================== 5. BUSINESS MODEL CANVAS ====================
 business_model: `Genere un BUSINESS MODEL CANVAS sous forme de tableau HTML professionnel.
 
 REGLES STRICTES :
-- Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
-- Texte en paragraphe SANS puces ni numeros a l interieur
-- Style professionnel, phrases completes
+- Format: Tableau HTML 2 colonnes
+- Texte en paragraphe SANS puces ni numeros
 - Contenu COURT : 2-3 lignes max par section
-- Le document doit tenir sur UNE SEULE PAGE A4
 
 ---
 
@@ -815,69 +734,30 @@ REGLES STRICTES :
 </style>
 
 <div class="doc-wrapper">
-
 <img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Business Model Canvas</div>
 <div class="doc-project-name">{{PROJECT_NAME}}</div>
-<div class="doc-info">
-  Proprietaire : {{OWNER_NAME}}<br>
-  Date : {{DATE}}
-</div>
-
+<div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
 <table>
-  <tr>
-    <td class="label-cell">1. Segments de clients</td>
-    <td class="content-cell">[Qui sont les clients cibles du projet. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">2. Proposition de valeur</td>
-    <td class="content-cell">[Ce qui rend le projet different et attractif pour les clients. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">3. Canaux</td>
-    <td class="content-cell">[Comment le projet atteint ses clients. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">4. Relation client</td>
-    <td class="content-cell">[Comment le projet maintient la relation avec ses clients. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">5. Sources de revenus</td>
-    <td class="content-cell">[Comment le projet gagne de l argent. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">6. Ressources cles</td>
-    <td class="content-cell">[Ressources indispensables au fonctionnement. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">7. Activites cles</td>
-    <td class="content-cell">[Actions essentielles que le projet doit realiser. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">8. Partenaires cles</td>
-    <td class="content-cell">[Partenaires ou fournisseurs strategiques. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">9. Structure de couts</td>
-    <td class="content-cell">[Principaux postes de depenses du projet. 2-3 lignes max.]</td>
-  </tr>
+  <tr><td class="label-cell">1. Segments de clients</td><td class="content-cell">[Clients cibles. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">2. Proposition de valeur</td><td class="content-cell">[Ce qui rend different. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">3. Canaux</td><td class="content-cell">[Comment atteindre les clients. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">4. Relation client</td><td class="content-cell">[Maintien de la relation. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">5. Sources de revenus</td><td class="content-cell">[Comment gagner de l argent. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">6. Ressources cles</td><td class="content-cell">[Ressources indispensables. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">7. Activites cles</td><td class="content-cell">[Actions essentielles. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">8. Partenaires cles</td><td class="content-cell">[Partenaires strategiques. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">9. Structure de couts</td><td class="content-cell">[Postes de depenses. 2-3 lignes max.]</td></tr>
 </table>
-
-<div class="doc-footer">
-  <a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
-</div>
-
+<div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
 </div>`,
 
-// ==================== 6. LEAN STARTUP ====================
 lean_startup: `Genere un document LEAN STARTUP sous forme de tableau HTML professionnel.
 
 REGLES STRICTES :
-- Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
-- Texte en paragraphe SANS puces ni numeros a l interieur
-- Style professionnel, phrases completes
+- Format: Tableau HTML 2 colonnes
+- Texte en paragraphe SANS puces ni numeros
 - Contenu COURT : 2-3 lignes max par section
-- Le document doit tenir sur UNE SEULE PAGE A4
 
 ---
 
@@ -896,81 +776,33 @@ REGLES STRICTES :
 </style>
 
 <div class="doc-wrapper">
-
 <img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Lean Startup</div>
 <div class="doc-project-name">{{PROJECT_NAME}}</div>
-<div class="doc-info">
-  Proprietaire : {{OWNER_NAME}}<br>
-  Date : {{DATE}}
-</div>
-
+<div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
 <table>
-  <tr>
-    <td class="label-cell">1. Probleme a tester</td>
-    <td class="content-cell">[Hypothese de probleme que le projet cherche a valider. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">2. Utilisateur concerne</td>
-    <td class="content-cell">[Profil de l utilisateur qui rencontre ce probleme. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">3. Solutions existantes</td>
-    <td class="content-cell">[Comment les utilisateurs reglent actuellement le probleme. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">4. Hypothese de valeur</td>
-    <td class="content-cell">[Pourquoi les utilisateurs adopteraient cette solution. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">5. Hypothese de croissance</td>
-    <td class="content-cell">[Comment le projet prevoit d attirer de nouveaux utilisateurs. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">6. Hypothese de monetisation</td>
-    <td class="content-cell">[Comment le projet prevoit de generer des revenus. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">7. Description du MVP</td>
-    <td class="content-cell">[Version minimale du produit a construire pour tester. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">8. Objectif du MVP</td>
-    <td class="content-cell">[Ce que le MVP doit permettre de valider. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">9. Indicateur cle</td>
-    <td class="content-cell">[Metrique principale pour mesurer le succes du test. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">10. Seuil de succes</td>
-    <td class="content-cell">[Valeur minimale de l indicateur pour considerer le test reussi. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">11. Enseignements attendus</td>
-    <td class="content-cell">[Ce que le projet espere apprendre de ce test. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">12. Decision strategique</td>
-    <td class="content-cell">[Perseverer, pivoter ou abandonner selon les resultats. 2-3 lignes max.]</td>
-  </tr>
+  <tr><td class="label-cell">1. Probleme a tester</td><td class="content-cell">[Hypothese de probleme. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">2. Utilisateur concerne</td><td class="content-cell">[Profil utilisateur. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">3. Solutions existantes</td><td class="content-cell">[Comment le probleme est gere. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">4. Hypothese de valeur</td><td class="content-cell">[Pourquoi adopter. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">5. Hypothese de croissance</td><td class="content-cell">[Comment attirer. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">6. Hypothese de monetisation</td><td class="content-cell">[Comment generer revenus. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">7. Description du MVP</td><td class="content-cell">[Version minimale. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">8. Objectif du MVP</td><td class="content-cell">[Ce qu il valide. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">9. Indicateur cle</td><td class="content-cell">[Metrique principale. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">10. Seuil de succes</td><td class="content-cell">[Valeur minimale. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">11. Enseignements attendus</td><td class="content-cell">[Ce qu on espere apprendre. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">12. Decision strategique</td><td class="content-cell">[Perseverer, pivoter ou abandonner. 2-3 lignes max.]</td></tr>
 </table>
-
-<div class="doc-footer">
-  <a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
-</div>
-
+<div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
 </div>`,
 
-// ==================== 7. AGILE ====================
 agile: `Genere un document AGILE sous forme de tableau HTML professionnel.
 
 REGLES STRICTES :
-- Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
-- Texte en paragraphe SANS puces ni numeros a l interieur
-- Style professionnel, phrases completes
+- Format: Tableau HTML 2 colonnes
+- Texte en paragraphe SANS puces ni numeros
 - Contenu COURT : 2-3 lignes max par section
-- Le document doit tenir sur UNE SEULE PAGE A4
 
 ---
 
@@ -989,66 +821,24 @@ REGLES STRICTES :
 </style>
 
 <div class="doc-wrapper">
-
 <img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Agile</div>
 <div class="doc-project-name">{{PROJECT_NAME}}</div>
-<div class="doc-info">
-  Proprietaire : {{OWNER_NAME}}<br>
-  Date : {{DATE}}
-</div>
-
+<div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
 <table>
-  <tr>
-    <td class="label-cell">1. Objectif du projet</td>
-    <td class="content-cell">[Vision globale et objectif principal du projet. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">2. Valeur prioritaire</td>
-    <td class="content-cell">[Ce qui apporte le plus de valeur aux utilisateurs. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">3. Backlog des fonctionnalites</td>
-    <td class="content-cell">[Liste des fonctionnalites prevues par ordre de priorite. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">4. Sprint en cours</td>
-    <td class="content-cell">[Objectif et perimetre du sprint actuel. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">5. Taches du sprint</td>
-    <td class="content-cell">[Actions concretes a realiser dans ce sprint. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">6. Obstacles et bloquants</td>
-    <td class="content-cell">[Problemes identifies qui freinent l avancement. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">7. Livrables produits</td>
-    <td class="content-cell">[Ce qui a ete livre a la fin du sprint. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">8. Retours utilisateurs</td>
-    <td class="content-cell">[Feedback des utilisateurs sur les livrables. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">9. Enseignements du sprint</td>
-    <td class="content-cell">[Ce qui a bien fonctionne et ce qui doit etre ameliore. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">10. Actions d amelioration</td>
-    <td class="content-cell">[Mesures concretes pour ameliorer le prochain sprint. 2-3 lignes max.]</td>
-  </tr>
-  <tr>
-    <td class="label-cell">11. Decision pour le sprint suivant</td>
-    <td class="content-cell">[Priorites et objectifs du prochain sprint. 2-3 lignes max.]</td>
-  </tr>
+  <tr><td class="label-cell">1. Objectif du projet</td><td class="content-cell">[Vision et objectif. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">2. Valeur prioritaire</td><td class="content-cell">[Valeur pour utilisateurs. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">3. Backlog des fonctionnalites</td><td class="content-cell">[Fonctionnalites par priorite. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">4. Sprint en cours</td><td class="content-cell">[Objectif du sprint. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">5. Taches du sprint</td><td class="content-cell">[Actions concretes. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">6. Obstacles et bloquants</td><td class="content-cell">[Problemes identifies. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">7. Livrables produits</td><td class="content-cell">[Ce qui a ete livre. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">8. Retours utilisateurs</td><td class="content-cell">[Feedback. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">9. Enseignements du sprint</td><td class="content-cell">[Ce qui a fonctionne ou pas. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">10. Actions d amelioration</td><td class="content-cell">[Mesures concretes. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">11. Decision pour le sprint suivant</td><td class="content-cell">[Priorites prochaines. 2-3 lignes max.]</td></tr>
 </table>
-
-<div class="doc-footer">
-  <a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
-</div>
-
+<div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
 </div>`
 };
 
@@ -1225,7 +1015,7 @@ async function trackView(res, sharedLinkId, viewerUserId, viewerIp) {
     try {
         const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
         
-        const { data: recentView, error: checkError } = await supabase
+        const { data: recentView } = await supabase
             .from('ark_document_views')
             .select('id')
             .eq('shared_link_id', sharedLinkId)
@@ -1346,12 +1136,7 @@ async function updateUserProfile(res, userId, profileData) {
         
         const { error } = await supabase
             .from('ark_users')
-            .update({
-                prenom: prenom,
-                nom: nom,
-                telephone: telephone,
-                email: email
-            })
+            .update({ prenom, nom, telephone, email })
             .eq('id', userId);
 
         if (error) {
@@ -1359,7 +1144,6 @@ async function updateUserProfile(res, userId, profileData) {
             return res.status(500).json({ error: 'Erreur mise a jour' });
         }
 
-        console.log(`Profil mis a jour pour user ${userId}`);
         return res.status(200).json({ success: true });
 
     } catch (error) {
@@ -1377,14 +1161,10 @@ async function getUserProfile(res, userId) {
             .single();
 
         if (error || !user) {
-            console.error('Erreur recuperation profil:', error);
             return res.status(404).json({ error: 'Utilisateur non trouve' });
         }
 
-        return res.status(200).json({
-            success: true,
-            user: user
-        });
+        return res.status(200).json({ success: true, user });
 
     } catch (error) {
         console.error('Erreur getUserProfile:', error);
@@ -1394,21 +1174,17 @@ async function getUserProfile(res, userId) {
 
 async function deleteDocument(res, documentId, userId) {
     try {
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from('ark_documents')
             .delete()
             .eq('id', documentId)
             .eq('user_id', userId);
 
         if (error) {
-            console.error('Erreur suppression document:', error);
             return res.status(500).json({ error: 'Erreur lors de la suppression' });
         }
 
-        return res.status(200).json({
-            success: true,
-            message: 'Document supprime avec succes'
-        });
+        return res.status(200).json({ success: true, message: 'Document supprime avec succes' });
 
     } catch (error) {
         console.error('Erreur deleteDocument:', error);
@@ -1418,37 +1194,21 @@ async function deleteDocument(res, documentId, userId) {
 
 async function getSharedDocumentByOwnerProject(res, owner, project) {
     try {
-        console.log('Recherche document:', { owner, project });
-        
         const normalizeString = (str) => {
-            return str
-                .toLowerCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .replace(/['']/g, ' ')
-                .replace(/[--]/g, '-')
-                .replace(/[^\w\s-]/g, '')
-                .replace(/\s+/g, ' ')
-                .trim();
+            return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/['']/g, ' ').replace(/[--]/g, '-').replace(/[^\w\s-]/g, '')
+                .replace(/\s+/g, ' ').trim();
         };
         
         const ownerParts = owner.split('-');
         const prenom = ownerParts[0];
         const nom = ownerParts.slice(1).join('-');
         
-        console.log('Recherche utilisateur:', { prenom, nom });
-        
         const { data: users, error: userError } = await supabase
             .from('ark_users')
             .select('id, prenom, nom');
 
-        if (userError) {
-            console.error('Erreur recherche utilisateur:', userError);
-            return res.status(500).json({ success: false, error: 'Erreur recherche utilisateur' });
-        }
-
-        if (!users || users.length === 0) {
-            console.error('Aucun utilisateur trouve');
+        if (userError || !users || users.length === 0) {
             return res.status(404).json({ success: false, error: 'Utilisateur introuvable' });
         }
 
@@ -1461,16 +1221,11 @@ async function getSharedDocumentByOwnerProject(res, owner, project) {
         );
 
         if (!user) {
-            console.error('Utilisateur non trouve apres normalisation');
             return res.status(404).json({ success: false, error: 'Utilisateur introuvable' });
         }
 
-        console.log('Utilisateur trouve:', user.id);
-
         const userId = user.id;
         const projectNorm = normalizeString(project.replace(/-/g, ' '));
-        
-        console.log('Recherche document pour userId:', userId);
         
         const { data: documents, error: docError } = await supabase
             .from('ark_documents')
@@ -1478,13 +1233,7 @@ async function getSharedDocumentByOwnerProject(res, owner, project) {
             .eq('user_id', userId)
             .order('created_at', { ascending: false });
 
-        if (docError) {
-            console.error('Erreur recherche document:', docError);
-            return res.status(500).json({ success: false, error: 'Erreur recherche document' });
-        }
-
-        if (!documents || documents.length === 0) {
-            console.error('Aucun document trouve pour cet utilisateur');
+        if (docError || !documents || documents.length === 0) {
             return res.status(404).json({ success: false, error: 'Aucun document disponible' });
         }
 
@@ -1493,12 +1242,8 @@ async function getSharedDocumentByOwnerProject(res, owner, project) {
         );
 
         if (!document) {
-            console.error('Document non trouve apres normalisation. Projets disponibles:', 
-                documents.map(d => d.projet_nom));
             return res.status(404).json({ success: false, error: 'Document introuvable' });
         }
-
-        console.log('Document trouve');
 
         return res.status(200).json({
             success: true,
