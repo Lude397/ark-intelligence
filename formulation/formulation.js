@@ -107,7 +107,7 @@ async function loadProjects() {
         const selectHtml = document.createElement('div');
         selectHtml.style.cssText = 'width:100%;max-width:600px;display:flex;flex-direction:column;gap:8px;margin-bottom:16px;';
         
-        orientations.forEach((ori, index) => {
+        orientations.forEach((ori) => {
             const btn = document.createElement('button');
             btn.textContent = ori.projet_nom;
             btn.style.cssText = 'padding:14px 20px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:15px;cursor:pointer;text-align:left;transition:all 0.2s;';
@@ -218,7 +218,12 @@ async function sendToAPI(message) {
         const response = await fetch(CONFIG.apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mode: 'chat', message, history: state.history.slice(0, -1) })
+            body: JSON.stringify({ 
+                mode: 'chat', 
+                message, 
+                history: state.history.slice(0, -1),
+                docType: 'formulation_solution'
+            })
         });
         hideTypingIndicator();
         const data = await response.json();
@@ -485,25 +490,20 @@ function autoResize(textarea, maxHeight) {
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
     loadUserProfile();
-
-    // Charger les projets disponibles
     loadProjects();
 
-    // Welcome events
     el.welcomeSend.addEventListener('click', handleWelcomeSend);
     el.welcomeInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleWelcomeSend(); }
     });
     el.welcomeInput.addEventListener('input', () => autoResize(el.welcomeInput, 200));
 
-    // Chat events
     el.chatSend.addEventListener('click', handleChatSend);
     el.chatInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleChatSend(); }
     });
     el.chatInput.addEventListener('input', () => autoResize(el.chatInput, 150));
 
-    // Document events
     el.documentBack.addEventListener('click', () => switchScreen('chat'));
     el.copyDoc.addEventListener('click', copyDocument);
     el.shareDoc.addEventListener('click', handleShareDocument);
@@ -511,14 +511,12 @@ document.addEventListener('DOMContentLoaded', () => {
     el.printDoc.addEventListener('click', printDocument);
     el.deleteDoc.addEventListener('click', deleteCurrentDocument);
 
-    // Share modal events
     el.shareModalClose.addEventListener('click', closeShareModal);
     el.shareModal.addEventListener('click', (e) => { if (e.target === el.shareModal) closeShareModal(); });
     el.copyLinkBtn.addEventListener('click', copyShareLink);
     el.shareWhatsApp.addEventListener('click', shareWhatsApp);
     if (el.shareEmail) el.shareEmail.addEventListener('click', shareEmail);
 
-    // New chat mobile
     el.newChatBtnMobile.addEventListener('click', () => { window.location.href = '/'; });
 
     switchScreen('welcome');
