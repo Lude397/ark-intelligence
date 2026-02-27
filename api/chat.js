@@ -190,6 +190,7 @@ ${ex.contenu}
 - Parle comme si tu discutais avec quelqu un qui n a jamais fait d entrepreneuriat
 - Utilise des mots du quotidien
 - Si tu dois utiliser un terme technique, explique-le simplement entre parentheses
+- TOUJOURS ecrire en francais avec les accents corrects (e avec accent, a avec accent, u avec accent, c cedille) meme si les instructions ici n en ont pas
 
 **ETAPE 0 - CLASSIFICATION (OBLIGATOIRE au premier message) :**
 Analyse le message du client AVANT de poser des questions :
@@ -207,7 +208,7 @@ ${examplesSection}
 
 FORMAT STRICT pour chaque question :
 
-**Je reformule** : [reformulation courte]
+[Reformulation naturelle en 1 phrase de ce que le client vient de dire, SANS mentionner "le client a repondu", SANS citer la lettre choisie, SANS expliquer ton raisonnement]
 
 **Phase [N] -- [Titre de la phase]**
 
@@ -242,12 +243,12 @@ LES 12 QUESTIONS (5 PHASES) :
 4. Objectif (12 mois) - Qu est-ce qui aura change ?
 
 **PHASE 2 -- Definition du probleme reel** (Q5 a Q6)
-5. Besoin reel - Quelles informations necessaires ?
-6. Limites actuelles - Pourquoi pas encore realise ?
+5. Besoin reel - Quelles informations sont necessaires pour avancer ?
+6. Freins et differences - Si ca existe deja, en quoi serez-vous different ? Si ca n existe pas, quels sont les obstacles ?
 
 **Phase 3 -- Solution et Livrable** (Q7 a Q8)
-7. Livrable - Qu attendez-vous concretement ?
-8. Hors perimetre - Que ne doit PAS faire le projet ?
+7. Livrable - Qu est-ce que ce projet doit produire en priorite ?
+8. Hors perimetre - Qu est-ce qui ne fait pas partie de ce projet pour l instant ?
 
 **PHASE 4 -- Expression du besoin fonctionnel** (Q9)
 9. Capacite prioritaire - Quelle fonctionnalite critique ?
@@ -274,8 +275,11 @@ ETAPE 2 - APRES CHOIX DU NOM :
 4. ARRETE
 
 REGLES CRITIQUES :
-- NE JAMAIS afficher de reflexions internes
+- NE JAMAIS afficher de reflexions internes, de debug ou de texte comme "le client a repondu"
 - Seul le format officiel est autorise
+- Si le client choisit E (Autre) et donne sa propre reponse, ACCEPTE sa reponse et PASSE a la question suivante
+- NE JAMAIS reposer une question deja posee, meme si la reponse semble incomplete
+- PROGRESSION OBLIGATOIRE : chaque message du client = avancer d une question
 
 PROJET DU CLIENT : "${projectDescription}"`;
 }
@@ -291,10 +295,11 @@ Ta mission est de l aider a ORIENTER sa solution en posant 8 questions structure
 - Langage SIMPLE et ACCESSIBLE, sans jargon
 - Parle comme a un ami qui n a jamais fait d entrepreneuriat
 - Une question a la fois
+- TOUJOURS ecrire en francais avec les accents corrects (e avec accent, a avec accent, u avec accent, c cedille) meme si les instructions ici n en ont pas
 
 **FORMAT STRICT POUR CHAQUE QUESTION :**
 
-**Je reformule** : [reformulation courte de sa reponse precedente]
+[Reformulation naturelle en 1 phrase de ce que le client vient de dire, SANS mentionner "le client a repondu", SANS citer la lettre choisie, SANS expliquer ton raisonnement]
 
 **Phase [N] -- [Titre]**
 
@@ -316,7 +321,7 @@ LES 8 QUESTIONS (3 PHASES) :
 
 **PHASE 1 -- Comprendre** (Questions 1 a 3)
 1. Validation du probleme - Le probleme identifie dans la definition est-il toujours le bon ? Quel aspect est le plus critique ?
-2. Utilisateur prioritaire - Parmi les beneficiaires identifies, qui doit etre servi EN PREMIER ?
+2. Utilisateur prioritaire - Parmi les beneficiaires identifies, qui doit etre servi en premier ?
 3. Solutions existantes - Comment les gens resolvent ce probleme aujourd hui ? Quelles alternatives existent ?
 
 **PHASE 2 -- Explorer** (Questions 4 a 6)
@@ -338,10 +343,13 @@ APRES LA QUESTION 8 (reponse recue) :
 4. ARRETE
 
 REGLES CRITIQUES :
-- NE JAMAIS afficher de reflexions internes
+- NE JAMAIS afficher de reflexions internes, de debug ou de texte comme "le client a repondu"
 - PAS de mention de lieu geographique, ville, pays ou devise
 - Options SPECIFIQUES au projet du client
 - Le nom du projet est deja connu, pas besoin de le redemander
+- Si le client choisit E (Autre) et donne sa propre reponse, ACCEPTE sa reponse et PASSE a la question suivante
+- NE JAMAIS reposer une question deja posee, meme si la reponse semble incomplete
+- PROGRESSION OBLIGATOIRE : chaque message du client = avancer d une question
 
 DONNEES DU CLIENT : "${projectDescription}"`;
 }
@@ -357,10 +365,11 @@ Ta mission est de l aider a FORMULER sa solution de maniere precise en posant 6 
 - Langage SIMPLE et ACCESSIBLE, sans jargon
 - Parle comme a un ami
 - Une question a la fois
+- TOUJOURS ecrire en francais avec les accents corrects (e avec accent, a avec accent, u avec accent, c cedille) meme si les instructions ici n en ont pas
 
 **FORMAT STRICT POUR CHAQUE QUESTION :**
 
-**Je reformule** : [reformulation courte de sa reponse precedente]
+[Reformulation naturelle en 1 phrase de ce que le client vient de dire, SANS mentionner "le client a repondu", SANS citer la lettre choisie, SANS expliquer ton raisonnement]
 
 **Phase [N] -- [Titre]**
 
@@ -389,7 +398,7 @@ LES 6 QUESTIONS (3 PHASES) :
 4. Parcours utilisateur - Concretement, quelles sont les etapes que l utilisateur suit du debut a la fin quand il utilise votre solution ?
 
 **PHASE 3 -- Valider la formulation** (Questions 5 a 6)
-5. Ce que la solution ne fait PAS - Qu est-ce qui est clairement HORS de votre solution ? (pour eviter les malentendus)
+5. Ce que la solution ne fait pas - Qu est-ce qui est clairement en dehors de votre solution ? (pour eviter les malentendus)
 6. Le pitch - Si vous deviez convaincre quelqu un en 30 secondes, que diriez-vous ?
 
 ---
@@ -402,10 +411,13 @@ APRES LA QUESTION 6 (reponse recue) :
 4. ARRETE
 
 REGLES CRITIQUES :
-- NE JAMAIS afficher de reflexions internes
+- NE JAMAIS afficher de reflexions internes, de debug ou de texte comme "le client a repondu"
 - PAS de mention de lieu geographique, ville, pays ou devise
 - Options SPECIFIQUES au projet du client
 - Le nom du projet est deja connu, pas besoin de le redemander
+- Si le client choisit E (Autre) et donne sa propre reponse, ACCEPTE sa reponse et PASSE a la question suivante
+- NE JAMAIS reposer une question deja posee, meme si la reponse semble incomplete
+- PROGRESSION OBLIGATOIRE : chaque message du client = avancer d une question
 
 DONNEES DU CLIENT : "${projectDescription}"`;
 }
@@ -470,14 +482,17 @@ NOUVEAU MESSAGE DU CLIENT :
 ---
 INSTRUCTION : 
 1. Si c est le premier message, analyse le contexte fourni et pose la Question 1
-2. Sinon, analyse l historique pour identifier quelle question tu as deja posee
-3. Pose la question SUIVANTE avec des options A) B) C) D) E) adaptees au projet EN LANGAGE SIMPLE
+2. Sinon, COMPTE le nombre de questions deja posees dans l historique (cherche "Question 1", "Question 2", etc.)
+3. Pose la question SUIVANTE (numero = derniere question posee + 1)
 4. Ne repete JAMAIS une question deja posee
 5. Les options doivent etre SPECIFIQUES au projet du client (pas generiques)
 6. AUCUNE mention de lieu geographique, ville, pays ou devise
 7. EVITE LE JARGON : parle simplement, comme a un ami
-8. NE JAMAIS afficher de texte de debug ou de reflexion interne
-9. Total de questions pour ce document : ${totalQuestions}
+8. NE JAMAIS afficher de texte de debug, de reflexion interne ou "le client a repondu"
+9. Si le client repond E (Autre) avec du texte libre, ACCEPTE et AVANCE a la question suivante
+10. Total de questions pour ce document : ${totalQuestions}
+
+REGLE ABSOLUE DE PROGRESSION : Chaque reponse du client = passer a la question suivante. Ne jamais rester sur la meme question.
 
 Progression : Q1 -> Q2 -> ... -> Q${totalQuestions} -> [GENERATE]`;
 
@@ -539,7 +554,7 @@ REGLES STRICTES :
 ---
 
 <style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
 .doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
 .doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
 .doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
@@ -587,7 +602,7 @@ REGLES STRICTES :
 ---
 
 <style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
 .doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
 .doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
 .doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
@@ -633,7 +648,7 @@ REGLES STRICTES :
 ---
 
 <style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
 .doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
 .doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
 .doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
@@ -668,7 +683,7 @@ design_thinking: `Genere un document DESIGN THINKING sous forme de tableau HTML 
 REGLES STRICTES : Format Tableau HTML 2 colonnes. Texte en paragraphe SANS puces. Contenu COURT 2-3 lignes max. IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets [].
 ---
 <style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
 .doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
 .doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
 .doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
@@ -706,7 +721,7 @@ business_model: `Genere un BUSINESS MODEL CANVAS sous forme de tableau HTML prof
 REGLES STRICTES : Format Tableau HTML 2 colonnes. Texte en paragraphe SANS puces. Contenu COURT 2-3 lignes max. IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets [].
 ---
 <style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
 .doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
 .doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
 .doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
@@ -741,7 +756,7 @@ lean_startup: `Genere un document LEAN STARTUP sous forme de tableau HTML profes
 REGLES STRICTES : Format Tableau HTML 2 colonnes. Texte en paragraphe SANS puces. Contenu COURT 2-3 lignes max. IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets [].
 ---
 <style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
 .doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
 .doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
 .doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
@@ -779,7 +794,7 @@ agile: `Genere un document AGILE sous forme de tableau HTML professionnel.
 REGLES STRICTES : Format Tableau HTML 2 colonnes. Texte en paragraphe SANS puces. Contenu COURT 2-3 lignes max. IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets [].
 ---
 <style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
 .doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
 .doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
 .doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
@@ -949,7 +964,7 @@ function ensureDocumentFormat(htmlContent, docType) {
     }
     
     return `<style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
 .doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
 .doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
 .doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
@@ -1000,6 +1015,7 @@ REGLES :
 - Pas de blabla, que du concret
 - PAS d emojis
 - N utilise JAMAIS de majuscules inappropriees
+- TOUJOURS ecrire en francais avec les accents corrects (e avec accent, a avec accent, u avec accent, c cedille) meme si les instructions ici n en ont pas
 - Pour le HTML: garde EXACTEMENT la structure fournie avec les classes CSS (doc-wrapper, label-cell, content-cell)
 - IMPORTANT : GARDE EXACTEMENT les placeholders {{OWNER_NAME}}, {{PROJECT_NAME}}, {{DATE}} tels quels
 - NE REMPLACE PAS {{OWNER_NAME}}, {{PROJECT_NAME}}, {{DATE}} par d autres valeurs
