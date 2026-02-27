@@ -1,3 +1,4 @@
+
 /* ===== WELCOME INPUT SCREEN ===== */
 .welcome-screen {
     flex: 1;
@@ -411,6 +412,7 @@
     border-radius: 12px;
     padding: 32px;
     line-height: 1.7;
+    overflow: hidden;
 }
 
 .document-body h1 { font-size: 24px; margin-bottom: 8px; color: var(--text-primary); }
