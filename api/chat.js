@@ -435,86 +435,94 @@ function getFormattedDate() {
 // ==================== PROMPTS DOCUMENTS ====================
 const DOCUMENT_PROMPTS = {
 
+// ==================== 1. DEFINITION DE PROJET ====================
 definition_projet: `Genere une DEFINITION DE PROJET sous forme de tableau HTML professionnel.
 
 REGLES STRICTES :
 - Utilise UNIQUEMENT les reponses des 12 questions collectees
-- Format: Tableau HTML avec bordures noires
-- Texte en paragraphe SANS puces ni numeros a l'interieur
+- Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
+- Texte en paragraphe SANS puces ni numeros a l interieur
 - Pas de mention de source (Q1, Q2...)
 - Style professionnel, phrases completes
-- Police NOIRE uniquement
 - Contenu COURT : 2-3 lignes max par section
-- Le document doit tenir sur UNE SEULE PAGE A4 (210mm x 297mm)
+- Le document doit tenir sur UNE SEULE PAGE A4
+- IMPORTANT pour le Contexte : COMMENCE par une phrase qui definit clairement le projet (son nom, sa nature exacte et ce qu il propose concretement), ENSUITE explique pourquoi ce projet est lance.
 
 ---
 
 <style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; max-height: 287mm; overflow: hidden; box-sizing: border-box; margin: 0 auto; }
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
+.doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
+.doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
+.doc-wrapper .doc-info { text-align: center; font-size: 12px; line-height: 1.8; margin-bottom: 16px; }
 .doc-wrapper table { width: 100%; border-collapse: collapse; }
-.doc-wrapper td { border: 1px solid #000; padding: 8px 10px; vertical-align: top; font-size: 13px; line-height: 1.5; }
-.doc-wrapper .doc-title { text-align: center; font-size: 16px; font-weight: bold; text-decoration: underline; border: none; padding: 10px 0 12px; }
-.doc-wrapper .phase-title { font-weight: bold; }
-.doc-wrapper .question-title { font-weight: bold; }
-.doc-footer { text-align: center; padding: 20px; font-size: 12px; }
+.doc-wrapper td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; font-size: 12px; line-height: 1.55; }
+.doc-wrapper .label-cell { background: #2c3e50; color: #fff; font-weight: bold; width: 28%; font-size: 11.5px; }
+.doc-wrapper .content-cell { background: #fff; width: 72%; }
+.doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
 .doc-footer a { color: #4a7c59; text-decoration: none; }
 </style>
 
 <div class="doc-wrapper">
 
+<img class="doc-logo" src="/assets/logoark.png" alt="Ark Intelligence">
+<div class="doc-title">Definition de Projet</div>
+<div class="doc-project-name">{{PROJECT_NAME}}</div>
+<div class="doc-info">
+  Proprietaire : {{OWNER_NAME}}<br>
+  Date : {{DATE}}
+</div>
+
 <table>
-  <tr><td class="doc-title">Definition de Projet</td></tr>
-
-  <tr><td>
-    <b>Nom du projet :</b> {{PROJECT_NAME}}<br>
-    <b>Prepare par :</b> {{OWNER_NAME}}<br>
-    <b>Date :</b> {{DATE}}
-  </td></tr>
-
-  <tr><td>
-    <span class="phase-title">Cadrage strategique :</span><br>
-    <span class="question-title">. Contexte</span><br>
-    [COMMENCE par une phrase qui definit clairement le projet : son nom, sa nature exacte et ce qu il propose concretement. ENSUITE explique pourquoi ce projet est lance. 2-3 lignes max.]<br><br>
-    <span class="question-title">. Probleme a resoudre</span><br>
-    [Decris le probleme concret que le projet cherche a resoudre. 2-3 lignes max.]<br><br>
-    <span class="question-title">. Beneficiaire principal</span><br>
-    [Identifie qui sont les premiers clients ou utilisateurs vises. 2-3 lignes max.]<br><br>
-    <span class="question-title">. Objectif a 12 mois</span><br>
-    [Decris ce que le projet aura accompli dans 12 mois avec des indicateurs concrets. 2-3 lignes max.]
-  </td></tr>
-
-  <tr><td>
-    <span class="phase-title">Definition du probleme reel :</span><br>
-    <span class="question-title">. Besoin reel</span><br>
-    [Explique quelles informations ou ressources sont indispensables pour lancer le projet. 2-3 lignes max.]<br><br>
-    <span class="question-title">. Limites actuelles</span><br>
-    [Decris les freins ou obstacles qui empechent le lancement immediat. 2-3 lignes max.]
-  </td></tr>
-
-  <tr><td>
-    <span class="phase-title">Solution et livrable :</span><br>
-    <span class="question-title">. Livrable attendu</span><br>
-    [Decris le resultat concret attendu a l issue de la phase de cadrage. 2-3 lignes max.]<br><br>
-    <span class="question-title">. Hors perimetre</span><br>
-    [Liste ce qui ne fait PAS partie de ce projet de cadrage. 2-3 lignes max.]
-  </td></tr>
-
-  <tr><td>
-    <span class="phase-title">Expression du besoin fonctionnel :</span><br>
-    <span class="question-title">. Exigences fonctionnelles</span><br>
-    [Decris la capacite ou fonctionnalite prioritaire pour le succes du projet. 2-3 lignes max.]
-  </td></tr>
-
-  <tr><td>
-    <span class="phase-title">Contraintes, risques et criteres de succes :</span><br>
-    <span class="question-title">. Contraintes</span><br>
-    [Decris les contraintes principales a prendre en compte. 2-3 lignes max.]<br><br>
-    <span class="question-title">. Risques</span><br>
-    [Identifie le ou les risques majeurs qui pourraient compromettre le projet. 2-3 lignes max.]<br><br>
-    <span class="question-title">. Criteres de succes</span><br>
-    [Definis comment le succes du projet sera mesure concretement. 2-3 lignes max.]
-  </td></tr>
-
+  <tr>
+    <td class="label-cell">1. Contexte</td>
+    <td class="content-cell">[COMMENCE par : "{{PROJECT_NAME}} est [nature du projet] qui [ce qu il propose concretement]." PUIS explique pourquoi ce projet est lance. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">2. Probleme a resoudre</td>
+    <td class="content-cell">[Decris le probleme concret. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">3. Beneficiaire principal</td>
+    <td class="content-cell">[Identifie les premiers clients ou utilisateurs vises. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">4. Objectif a 12 mois</td>
+    <td class="content-cell">[Objectifs concrets avec indicateurs. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">5. Besoin reel</td>
+    <td class="content-cell">[Informations ou ressources indispensables pour lancer. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">6. Limites actuelles</td>
+    <td class="content-cell">[Freins ou obstacles au lancement. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">7. Livrable attendu</td>
+    <td class="content-cell">[Resultat concret attendu. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">8. Hors perimetre</td>
+    <td class="content-cell">[Ce qui ne fait PAS partie du projet. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">9. Exigences fonctionnelles</td>
+    <td class="content-cell">[Fonctionnalite prioritaire pour le succes. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">10. Contraintes</td>
+    <td class="content-cell">[Contraintes principales. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">11. Risques</td>
+    <td class="content-cell">[Risques majeurs. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">12. Criteres de succes</td>
+    <td class="content-cell">[Comment mesurer le succes. 2-3 lignes max.]</td>
+  </tr>
 </table>
 
 <div class="doc-footer">
@@ -523,190 +531,525 @@ REGLES STRICTES :
 
 </div>`,
 
-orientation_solution: `Genere un document ORIENTATION DE SOLUTION.
+// ==================== 2. ORIENTATION DE SOLUTION ====================
+orientation_solution: `Genere un document ORIENTATION DE SOLUTION sous forme de tableau HTML professionnel.
+
+REGLES STRICTES :
+- Ce document s appuie sur la Definition de Projet validee
+- Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
+- Texte en paragraphe SANS puces ni numeros a l interieur
+- Style professionnel, phrases completes
+- Contenu COURT : 2-3 lignes max par section
+- Le document doit tenir sur UNE SEULE PAGE A4
 
 ---
 
-# ORIENTATION DE SOLUTION
-## [Nom du projet]
+<style>
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
+.doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
+.doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
+.doc-wrapper .doc-info { text-align: center; font-size: 12px; line-height: 1.8; margin-bottom: 16px; }
+.doc-wrapper table { width: 100%; border-collapse: collapse; }
+.doc-wrapper td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; font-size: 12px; line-height: 1.55; }
+.doc-wrapper .label-cell { background: #2c3e50; color: #fff; font-weight: bold; width: 28%; font-size: 11.5px; }
+.doc-wrapper .content-cell { background: #fff; width: 72%; }
+.doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
+.doc-footer a { color: #4a7c59; text-decoration: none; }
+</style>
 
-Date : {{DATE}}
+<div class="doc-wrapper">
 
----
+<img class="doc-logo" src="/assets/logoark.png" alt="Ark Intelligence">
+<div class="doc-title">Orientation de Solution</div>
+<div class="doc-project-name">{{PROJECT_NAME}}</div>
+<div class="doc-info">
+  Proprietaire : {{OWNER_NAME}}<br>
+  Date : {{DATE}}
+</div>
 
-### 1. Probleme valide
-### 2. Utilisateur prioritaire
-### 3. Solution envisagee
-### 4. Phrase d orientation de solution
-### 5. Alternatives ecartees
-### 6. Niveau de complexite
-### 7. Faisabilite immediate
-### 8. Premier pas concret
-### 9. Critere de bon choix
-### 10. Decision formelle
+<table>
+  <tr>
+    <td class="label-cell">1. Probleme valide</td>
+    <td class="content-cell">[Reformulation du probleme identifie dans la Definition. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">2. Utilisateur prioritaire</td>
+    <td class="content-cell">[Beneficiaire principal identifie. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">3. Solution retenue</td>
+    <td class="content-cell">[Description de la solution choisie. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">4. Justification</td>
+    <td class="content-cell">[Pourquoi cette solution et pas une autre. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">5. Analyse des contraintes</td>
+    <td class="content-cell">[Contraintes identifiees et comment les gerer. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">6. Ressources necessaires</td>
+    <td class="content-cell">[Ressources humaines, techniques et financieres necessaires. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">7. Fonctionnalites prioritaires</td>
+    <td class="content-cell">[Fonctionnalites essentielles pour le lancement. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">8. Plan de demarrage</td>
+    <td class="content-cell">[Premieres actions concretes a mener. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">9. Jalons de validation</td>
+    <td class="content-cell">[Indicateurs de validation a 3 mois. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">10. Criteres de pivot</td>
+    <td class="content-cell">[Conditions pour changer d approche. 2-3 lignes max.]</td>
+  </tr>
+</table>
 
----
+<div class="doc-footer">
+  <a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
+</div>
 
-Document genere par Ark Intelligence`,
+</div>`,
 
-formulation_solution: `Genere un document FORMULATION DE SOLUTION.
+// ==================== 3. FORMULATION DE SOLUTION ====================
+formulation_solution: `Genere un document FORMULATION DE SOLUTION sous forme de tableau HTML professionnel.
 
----
-
-# FORMULATION DE SOLUTION
-## [Nom du projet]
-
-Date : {{DATE}}
-
----
-
-### 1. Rappel du probleme cible
-### 2. Utilisateur cible
-### 3. Formulation centrale
-### 4. Explication de la solution
-### 5. Resultat attendu
-### 6. Frontieres de la solution
-### 7. Critere de bonne formulation
-### 8. Version courte (pitch)
-
----
-
-Document genere par Ark Intelligence`,
-
-design_thinking: `Genere un document DESIGN THINKING.
-
----
-
-# DESIGN THINKING
-## [Nom du projet]
-
-Date : {{DATE}}
-
----
-
-## Phase 1 -- Empathie
-### 1. Utilisateur cible
-### 2. Problemes et frustrations
-### 3. Comportements et habitudes
-
-## Phase 2 -- Definition
-### 4. Probleme central
-### 5. Impact si non resolu
-
-## Phase 3 -- Ideation
-### 6. Idee principale
-### 7. Alternatives
-
-## Phase 4 -- Prototypage
-### 8. Forme du prototype
-### 9. Objectif du prototype
-
-## Phase 5 -- Test
-### 10. Utilisateurs testeurs
-### 11. Methode de test
-### 12. Criteres de validation
-
----
-
-Document genere par Ark Intelligence`,
-
-business_model: `Genere un BUSINESS MODEL CANVAS.
-
----
-
-# BUSINESS MODEL CANVAS
-## [Nom du projet]
-
-Date : {{DATE}}
+REGLES STRICTES :
+- Ce document s appuie sur l Orientation de Solution validee
+- Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
+- Texte en paragraphe SANS puces ni numeros a l interieur
+- Style professionnel, phrases completes
+- Contenu COURT : 2-3 lignes max par section
+- Le document doit tenir sur UNE SEULE PAGE A4
 
 ---
 
-### 1. Segments de clients
-### 2. Proposition de valeur
-### 3. Canaux
-### 4. Relation client
-### 5. Sources de revenus
-### 6. Ressources cles
-### 7. Activites cles
-### 8. Partenaires cles
-### 9. Structure de couts
+<style>
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
+.doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
+.doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
+.doc-wrapper .doc-info { text-align: center; font-size: 12px; line-height: 1.8; margin-bottom: 16px; }
+.doc-wrapper table { width: 100%; border-collapse: collapse; }
+.doc-wrapper td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; font-size: 12px; line-height: 1.55; }
+.doc-wrapper .label-cell { background: #2c3e50; color: #fff; font-weight: bold; width: 28%; font-size: 11.5px; }
+.doc-wrapper .content-cell { background: #fff; width: 72%; }
+.doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
+.doc-footer a { color: #4a7c59; text-decoration: none; }
+</style>
+
+<div class="doc-wrapper">
+
+<img class="doc-logo" src="/assets/logoark.png" alt="Ark Intelligence">
+<div class="doc-title">Formulation de Solution</div>
+<div class="doc-project-name">{{PROJECT_NAME}}</div>
+<div class="doc-info">
+  Proprietaire : {{OWNER_NAME}}<br>
+  Date : {{DATE}}
+</div>
+
+<table>
+  <tr>
+    <td class="label-cell">1. Rappel du probleme cible</td>
+    <td class="content-cell">[Reformulation synthetique du probleme valide. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">2. Utilisateur cible</td>
+    <td class="content-cell">[Description precise de l utilisateur avec ses comportements. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">3. Formulation centrale</td>
+    <td class="content-cell">[En une phrase : que fait le projet, pour qui, comment, a quel prix. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">4. Fonctionnement de la solution</td>
+    <td class="content-cell">[Etapes du parcours utilisateur du debut a la fin. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">5. Frontieres de la solution</td>
+    <td class="content-cell">[Ce que la solution ne fait PAS. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">6. Resultat attendu</td>
+    <td class="content-cell">[Impact concret sur la vie de l utilisateur. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">7. Critere de bonne formulation</td>
+    <td class="content-cell">[Comment verifier que la solution est bien comprise. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">8. Pitch</td>
+    <td class="content-cell">[Resume en 2 phrases maximum pour convaincre un investisseur ou un client.]</td>
+  </tr>
+</table>
+
+<div class="doc-footer">
+  <a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
+</div>
+
+</div>`,
+
+// ==================== 4. DESIGN THINKING ====================
+design_thinking: `Genere un document DESIGN THINKING sous forme de tableau HTML professionnel.
+
+REGLES STRICTES :
+- Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
+- Texte en paragraphe SANS puces ni numeros a l interieur
+- Style professionnel, phrases completes
+- Contenu COURT : 2-3 lignes max par section
+- Le document doit tenir sur UNE SEULE PAGE A4
 
 ---
 
-Document genere par Ark Intelligence`,
+<style>
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
+.doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
+.doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
+.doc-wrapper .doc-info { text-align: center; font-size: 12px; line-height: 1.8; margin-bottom: 16px; }
+.doc-wrapper table { width: 100%; border-collapse: collapse; }
+.doc-wrapper td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; font-size: 12px; line-height: 1.55; }
+.doc-wrapper .label-cell { background: #2c3e50; color: #fff; font-weight: bold; width: 28%; font-size: 11.5px; }
+.doc-wrapper .content-cell { background: #fff; width: 72%; }
+.doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
+.doc-footer a { color: #4a7c59; text-decoration: none; }
+</style>
 
-lean_startup: `Genere un document LEAN STARTUP.
+<div class="doc-wrapper">
+
+<img class="doc-logo" src="/assets/logoark.png" alt="Ark Intelligence">
+<div class="doc-title">Design Thinking</div>
+<div class="doc-project-name">{{PROJECT_NAME}}</div>
+<div class="doc-info">
+  Proprietaire : {{OWNER_NAME}}<br>
+  Date : {{DATE}}
+</div>
+
+<table>
+  <tr>
+    <td class="label-cell">1. Utilisateur cible</td>
+    <td class="content-cell">[Description de l utilisateur principal et de son contexte. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">2. Problemes et frustrations</td>
+    <td class="content-cell">[Frustrations et douleurs principales de l utilisateur. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">3. Comportements et habitudes</td>
+    <td class="content-cell">[Comment l utilisateur gere actuellement le probleme. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">4. Probleme central</td>
+    <td class="content-cell">[Synthese du probleme a resoudre en une formulation claire. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">5. Impact si non resolu</td>
+    <td class="content-cell">[Consequences si le probleme persiste. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">6. Idee principale</td>
+    <td class="content-cell">[Solution proposee pour repondre au probleme. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">7. Alternatives</td>
+    <td class="content-cell">[Autres pistes de solution envisagees. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">8. Forme du prototype</td>
+    <td class="content-cell">[Type de prototype a realiser pour tester l idee. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">9. Objectif du prototype</td>
+    <td class="content-cell">[Ce que le prototype doit permettre de verifier. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">10. Utilisateurs testeurs</td>
+    <td class="content-cell">[Profil des personnes qui testeront le prototype. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">11. Methode de test</td>
+    <td class="content-cell">[Comment le test sera realise. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">12. Criteres de validation</td>
+    <td class="content-cell">[Indicateurs pour considerer le test comme reussi. 2-3 lignes max.]</td>
+  </tr>
+</table>
+
+<div class="doc-footer">
+  <a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
+</div>
+
+</div>`,
+
+// ==================== 5. BUSINESS MODEL CANVAS ====================
+business_model: `Genere un BUSINESS MODEL CANVAS sous forme de tableau HTML professionnel.
+
+REGLES STRICTES :
+- Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
+- Texte en paragraphe SANS puces ni numeros a l interieur
+- Style professionnel, phrases completes
+- Contenu COURT : 2-3 lignes max par section
+- Le document doit tenir sur UNE SEULE PAGE A4
 
 ---
 
-# LEAN STARTUP
-## [Nom du projet]
+<style>
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
+.doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
+.doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
+.doc-wrapper .doc-info { text-align: center; font-size: 12px; line-height: 1.8; margin-bottom: 16px; }
+.doc-wrapper table { width: 100%; border-collapse: collapse; }
+.doc-wrapper td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; font-size: 12px; line-height: 1.55; }
+.doc-wrapper .label-cell { background: #2c3e50; color: #fff; font-weight: bold; width: 28%; font-size: 11.5px; }
+.doc-wrapper .content-cell { background: #fff; width: 72%; }
+.doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
+.doc-footer a { color: #4a7c59; text-decoration: none; }
+</style>
 
-Date : {{DATE}}
+<div class="doc-wrapper">
+
+<img class="doc-logo" src="/assets/logoark.png" alt="Ark Intelligence">
+<div class="doc-title">Business Model Canvas</div>
+<div class="doc-project-name">{{PROJECT_NAME}}</div>
+<div class="doc-info">
+  Proprietaire : {{OWNER_NAME}}<br>
+  Date : {{DATE}}
+</div>
+
+<table>
+  <tr>
+    <td class="label-cell">1. Segments de clients</td>
+    <td class="content-cell">[Qui sont les clients cibles du projet. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">2. Proposition de valeur</td>
+    <td class="content-cell">[Ce qui rend le projet different et attractif pour les clients. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">3. Canaux</td>
+    <td class="content-cell">[Comment le projet atteint ses clients. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">4. Relation client</td>
+    <td class="content-cell">[Comment le projet maintient la relation avec ses clients. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">5. Sources de revenus</td>
+    <td class="content-cell">[Comment le projet gagne de l argent. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">6. Ressources cles</td>
+    <td class="content-cell">[Ressources indispensables au fonctionnement. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">7. Activites cles</td>
+    <td class="content-cell">[Actions essentielles que le projet doit realiser. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">8. Partenaires cles</td>
+    <td class="content-cell">[Partenaires ou fournisseurs strategiques. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">9. Structure de couts</td>
+    <td class="content-cell">[Principaux postes de depenses du projet. 2-3 lignes max.]</td>
+  </tr>
+</table>
+
+<div class="doc-footer">
+  <a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
+</div>
+
+</div>`,
+
+// ==================== 6. LEAN STARTUP ====================
+lean_startup: `Genere un document LEAN STARTUP sous forme de tableau HTML professionnel.
+
+REGLES STRICTES :
+- Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
+- Texte en paragraphe SANS puces ni numeros a l interieur
+- Style professionnel, phrases completes
+- Contenu COURT : 2-3 lignes max par section
+- Le document doit tenir sur UNE SEULE PAGE A4
 
 ---
 
-## Etape 1 -- Probleme
-### 1. Probleme a tester
-### 2. Utilisateur concerne
-### 3. Solutions existantes
+<style>
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
+.doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
+.doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
+.doc-wrapper .doc-info { text-align: center; font-size: 12px; line-height: 1.8; margin-bottom: 16px; }
+.doc-wrapper table { width: 100%; border-collapse: collapse; }
+.doc-wrapper td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; font-size: 12px; line-height: 1.55; }
+.doc-wrapper .label-cell { background: #2c3e50; color: #fff; font-weight: bold; width: 28%; font-size: 11.5px; }
+.doc-wrapper .content-cell { background: #fff; width: 72%; }
+.doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
+.doc-footer a { color: #4a7c59; text-decoration: none; }
+</style>
 
-## Etape 2 -- Hypotheses
-### 4. Hypothese de valeur
-### 5. Hypothese de croissance
-### 6. Hypothese de monetisation
+<div class="doc-wrapper">
 
-## Etape 3 -- MVP
-### 7. Description du MVP
-### 8. Objectif du MVP
+<img class="doc-logo" src="/assets/logoark.png" alt="Ark Intelligence">
+<div class="doc-title">Lean Startup</div>
+<div class="doc-project-name">{{PROJECT_NAME}}</div>
+<div class="doc-info">
+  Proprietaire : {{OWNER_NAME}}<br>
+  Date : {{DATE}}
+</div>
 
-## Etape 4 -- Mesure
-### 9. Indicateur cle
-### 10. Seuil de succes
+<table>
+  <tr>
+    <td class="label-cell">1. Probleme a tester</td>
+    <td class="content-cell">[Hypothese de probleme que le projet cherche a valider. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">2. Utilisateur concerne</td>
+    <td class="content-cell">[Profil de l utilisateur qui rencontre ce probleme. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">3. Solutions existantes</td>
+    <td class="content-cell">[Comment les utilisateurs reglent actuellement le probleme. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">4. Hypothese de valeur</td>
+    <td class="content-cell">[Pourquoi les utilisateurs adopteraient cette solution. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">5. Hypothese de croissance</td>
+    <td class="content-cell">[Comment le projet prevoit d attirer de nouveaux utilisateurs. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">6. Hypothese de monetisation</td>
+    <td class="content-cell">[Comment le projet prevoit de generer des revenus. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">7. Description du MVP</td>
+    <td class="content-cell">[Version minimale du produit a construire pour tester. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">8. Objectif du MVP</td>
+    <td class="content-cell">[Ce que le MVP doit permettre de valider. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">9. Indicateur cle</td>
+    <td class="content-cell">[Metrique principale pour mesurer le succes du test. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">10. Seuil de succes</td>
+    <td class="content-cell">[Valeur minimale de l indicateur pour considerer le test reussi. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">11. Enseignements attendus</td>
+    <td class="content-cell">[Ce que le projet espere apprendre de ce test. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">12. Decision strategique</td>
+    <td class="content-cell">[Perseverer, pivoter ou abandonner selon les resultats. 2-3 lignes max.]</td>
+  </tr>
+</table>
 
-## Etape 5 -- Apprentissage
-### 11. Enseignements attendus
-### 12. Decision strategique
+<div class="doc-footer">
+  <a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
+</div>
+
+</div>`,
+
+// ==================== 7. AGILE ====================
+agile: `Genere un document AGILE sous forme de tableau HTML professionnel.
+
+REGLES STRICTES :
+- Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
+- Texte en paragraphe SANS puces ni numeros a l interieur
+- Style professionnel, phrases completes
+- Contenu COURT : 2-3 lignes max par section
+- Le document doit tenir sur UNE SEULE PAGE A4
 
 ---
 
-Document genere par Ark Intelligence`,
+<style>
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
+.doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
+.doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
+.doc-wrapper .doc-info { text-align: center; font-size: 12px; line-height: 1.8; margin-bottom: 16px; }
+.doc-wrapper table { width: 100%; border-collapse: collapse; }
+.doc-wrapper td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; font-size: 12px; line-height: 1.55; }
+.doc-wrapper .label-cell { background: #2c3e50; color: #fff; font-weight: bold; width: 28%; font-size: 11.5px; }
+.doc-wrapper .content-cell { background: #fff; width: 72%; }
+.doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
+.doc-footer a { color: #4a7c59; text-decoration: none; }
+</style>
 
-agile: `Genere un document AGILE.
+<div class="doc-wrapper">
 
----
+<img class="doc-logo" src="/assets/logoark.png" alt="Ark Intelligence">
+<div class="doc-title">Agile</div>
+<div class="doc-project-name">{{PROJECT_NAME}}</div>
+<div class="doc-info">
+  Proprietaire : {{OWNER_NAME}}<br>
+  Date : {{DATE}}
+</div>
 
-# AGILE
-## [Nom du projet]
+<table>
+  <tr>
+    <td class="label-cell">1. Objectif du projet</td>
+    <td class="content-cell">[Vision globale et objectif principal du projet. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">2. Valeur prioritaire</td>
+    <td class="content-cell">[Ce qui apporte le plus de valeur aux utilisateurs. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">3. Backlog des fonctionnalites</td>
+    <td class="content-cell">[Liste des fonctionnalites prevues par ordre de priorite. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">4. Sprint en cours</td>
+    <td class="content-cell">[Objectif et perimetre du sprint actuel. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">5. Taches du sprint</td>
+    <td class="content-cell">[Actions concretes a realiser dans ce sprint. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">6. Obstacles et bloquants</td>
+    <td class="content-cell">[Problemes identifies qui freinent l avancement. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">7. Livrables produits</td>
+    <td class="content-cell">[Ce qui a ete livre a la fin du sprint. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">8. Retours utilisateurs</td>
+    <td class="content-cell">[Feedback des utilisateurs sur les livrables. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">9. Enseignements du sprint</td>
+    <td class="content-cell">[Ce qui a bien fonctionne et ce qui doit etre ameliore. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">10. Actions d amelioration</td>
+    <td class="content-cell">[Mesures concretes pour ameliorer le prochain sprint. 2-3 lignes max.]</td>
+  </tr>
+  <tr>
+    <td class="label-cell">11. Decision pour le sprint suivant</td>
+    <td class="content-cell">[Priorites et objectifs du prochain sprint. 2-3 lignes max.]</td>
+  </tr>
+</table>
 
-Date : {{DATE}}
+<div class="doc-footer">
+  <a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
+</div>
 
----
-
-## Phase 1 -- Vision
-### 1. Objectif du projet
-### 2. Valeur prioritaire
-
-## Phase 2 -- Backlog
-### 3. Backlog des fonctionnalites
-### 4. Sprint en cours
-
-## Phase 3 -- Execution
-### 5. Taches du sprint
-### 6. Obstacles et bloquants
-
-## Phase 4 -- Revue
-### 7. Livrables produits
-### 8. Retours utilisateurs
-
-## Phase 5 -- Amelioration
-### 9. Enseignements du sprint
-### 10. Actions d amelioration
-### 11. Decision pour le sprint suivant
-
----
-
-Document genere par Ark Intelligence`
+</div>`
 };
 
 // ==================== HANDLE GENERATE ====================
