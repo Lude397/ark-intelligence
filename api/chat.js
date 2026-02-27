@@ -413,7 +413,6 @@ DONNEES DU CLIENT : "${projectDescription}"`;
 // ==================== HANDLE CHAT ====================
 async function handleChat(res, message, history, docType = 'definition_projet') {
     
-    // Salutations uniquement pour definition (premier contact)
     if (!docType || docType === 'definition_projet') {
         const salutations = ['bonjour', 'salut', 'hello', 'coucou', 'hey', 'bonsoir', 'hi', 'yo', 'bjr', 'slt'];
         const messageClean = message.toLowerCase().trim();
@@ -434,7 +433,6 @@ async function handleChat(res, message, history, docType = 'definition_projet') 
         ? history.find(h => h.type === 'user')?.content 
         : message;
 
-    // Construire le prompt selon le docType
     let systemPrompt = '';
 
     if (docType === 'orientation_solution') {
@@ -442,7 +440,6 @@ async function handleChat(res, message, history, docType = 'definition_projet') 
     } else if (docType === 'formulation_solution') {
         systemPrompt = buildPromptFormulation(firstUserMessage);
     } else {
-        // Definition de projet (par defaut) - avec RAG
         let similarExamples = null;
         if (firstUserMessage) {
             similarExamples = await findSimilarExamples(firstUserMessage);
@@ -453,7 +450,6 @@ async function handleChat(res, message, history, docType = 'definition_projet') 
         systemPrompt = buildPromptDefinition(similarExamples, firstUserMessage);
     }
 
-    // Nombre de questions selon le type
     const questionCounts = {
         definition_projet: 12,
         orientation_solution: 8,
@@ -538,6 +534,7 @@ REGLES STRICTES :
 - Contenu COURT : 2-3 lignes max par section
 - Le document doit tenir sur UNE SEULE PAGE A4
 - IMPORTANT pour le Contexte : COMMENCE par une phrase qui definit clairement le projet
+- IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets []
 
 ---
 
@@ -585,6 +582,7 @@ REGLES STRICTES :
 - Texte en paragraphe SANS puces ni numeros a l interieur
 - Contenu COURT : 2-3 lignes max par section
 - Le document doit tenir sur UNE SEULE PAGE A4
+- IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets []
 
 ---
 
@@ -630,6 +628,7 @@ REGLES STRICTES :
 - Texte en paragraphe SANS puces ni numeros a l interieur
 - Contenu COURT : 2-3 lignes max par section
 - Le document doit tenir sur UNE SEULE PAGE A4
+- IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets []
 
 ---
 
@@ -666,14 +665,8 @@ REGLES STRICTES :
 </div>`,
 
 design_thinking: `Genere un document DESIGN THINKING sous forme de tableau HTML professionnel.
-
-REGLES STRICTES :
-- Format: Tableau HTML 2 colonnes
-- Texte en paragraphe SANS puces ni numeros
-- Contenu COURT : 2-3 lignes max par section
-
+REGLES STRICTES : Format Tableau HTML 2 colonnes. Texte en paragraphe SANS puces. Contenu COURT 2-3 lignes max. IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets [].
 ---
-
 <style>
 .doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
 .doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
@@ -687,7 +680,6 @@ REGLES STRICTES :
 .doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
 .doc-footer a { color: #4a7c59; text-decoration: none; }
 </style>
-
 <div class="doc-wrapper">
 <img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Design Thinking</div>
@@ -711,14 +703,8 @@ REGLES STRICTES :
 </div>`,
 
 business_model: `Genere un BUSINESS MODEL CANVAS sous forme de tableau HTML professionnel.
-
-REGLES STRICTES :
-- Format: Tableau HTML 2 colonnes
-- Texte en paragraphe SANS puces ni numeros
-- Contenu COURT : 2-3 lignes max par section
-
+REGLES STRICTES : Format Tableau HTML 2 colonnes. Texte en paragraphe SANS puces. Contenu COURT 2-3 lignes max. IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets [].
 ---
-
 <style>
 .doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
 .doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
@@ -732,7 +718,6 @@ REGLES STRICTES :
 .doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
 .doc-footer a { color: #4a7c59; text-decoration: none; }
 </style>
-
 <div class="doc-wrapper">
 <img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Business Model Canvas</div>
@@ -753,14 +738,8 @@ REGLES STRICTES :
 </div>`,
 
 lean_startup: `Genere un document LEAN STARTUP sous forme de tableau HTML professionnel.
-
-REGLES STRICTES :
-- Format: Tableau HTML 2 colonnes
-- Texte en paragraphe SANS puces ni numeros
-- Contenu COURT : 2-3 lignes max par section
-
+REGLES STRICTES : Format Tableau HTML 2 colonnes. Texte en paragraphe SANS puces. Contenu COURT 2-3 lignes max. IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets [].
 ---
-
 <style>
 .doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
 .doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
@@ -774,7 +753,6 @@ REGLES STRICTES :
 .doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
 .doc-footer a { color: #4a7c59; text-decoration: none; }
 </style>
-
 <div class="doc-wrapper">
 <img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Lean Startup</div>
@@ -798,14 +776,8 @@ REGLES STRICTES :
 </div>`,
 
 agile: `Genere un document AGILE sous forme de tableau HTML professionnel.
-
-REGLES STRICTES :
-- Format: Tableau HTML 2 colonnes
-- Texte en paragraphe SANS puces ni numeros
-- Contenu COURT : 2-3 lignes max par section
-
+REGLES STRICTES : Format Tableau HTML 2 colonnes. Texte en paragraphe SANS puces. Contenu COURT 2-3 lignes max. IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets [].
 ---
-
 <style>
 .doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
 .doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
@@ -819,7 +791,6 @@ REGLES STRICTES :
 .doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
 .doc-footer a { color: #4a7c59; text-decoration: none; }
 </style>
-
 <div class="doc-wrapper">
 <img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Agile</div>
@@ -842,7 +813,167 @@ REGLES STRICTES :
 </div>`
 };
 
-// ==================== HANDLE GENERATE ====================
+// ==================== FILET DE SECURITE : VERIFICATION FORMAT DOCUMENT ====================
+function ensureDocumentFormat(htmlContent, docType) {
+    // Si le HTML contient deja les bonnes classes, on le garde tel quel
+    if (htmlContent.includes('class="doc-wrapper"') && htmlContent.includes('class="label-cell"')) {
+        return htmlContent;
+    }
+    
+    console.log(`FORMAT INCORRECT detecte pour ${docType} - Reconstruction automatique...`);
+    
+    // Definir les labels attendus pour chaque type de document
+    const LABELS = {
+        definition_projet: [
+            '1. Contexte', '2. Probleme a resoudre', '3. Beneficiaire principal',
+            '4. Objectif a 12 mois', '5. Besoin reel', '6. Limites actuelles',
+            '7. Livrable attendu', '8. Hors perimetre', '9. Exigences fonctionnelles',
+            '10. Contraintes', '11. Risques', '12. Criteres de succes'
+        ],
+        orientation_solution: [
+            '1. Probleme valide', '2. Utilisateur prioritaire', '3. Solution retenue',
+            '4. Justification', '5. Analyse des contraintes', '6. Ressources necessaires',
+            '7. Fonctionnalites prioritaires', '8. Plan de demarrage',
+            '9. Jalons de validation', '10. Criteres de pivot'
+        ],
+        formulation_solution: [
+            '1. Rappel du probleme cible', '2. Utilisateur cible', '3. Formulation centrale',
+            '4. Fonctionnement de la solution', '5. Frontieres de la solution',
+            '6. Resultat attendu', '7. Critere de bonne formulation', '8. Pitch'
+        ],
+        design_thinking: [
+            '1. Utilisateur cible', '2. Problemes et frustrations', '3. Comportements et habitudes',
+            '4. Probleme central', '5. Impact si non resolu', '6. Idee principale',
+            '7. Alternatives', '8. Forme du prototype', '9. Objectif du prototype',
+            '10. Utilisateurs testeurs', '11. Methode de test', '12. Criteres de validation'
+        ],
+        business_model: [
+            '1. Segments de clients', '2. Proposition de valeur', '3. Canaux',
+            '4. Relation client', '5. Sources de revenus', '6. Ressources cles',
+            '7. Activites cles', '8. Partenaires cles', '9. Structure de couts'
+        ],
+        lean_startup: [
+            '1. Probleme a tester', '2. Utilisateur concerne', '3. Solutions existantes',
+            '4. Hypothese de valeur', '5. Hypothese de croissance', '6. Hypothese de monetisation',
+            '7. Description du MVP', '8. Objectif du MVP', '9. Indicateur cle',
+            '10. Seuil de succes', '11. Enseignements attendus', '12. Decision strategique'
+        ],
+        agile: [
+            '1. Objectif du projet', '2. Valeur prioritaire', '3. Backlog des fonctionnalites',
+            '4. Sprint en cours', '5. Taches du sprint', '6. Obstacles et bloquants',
+            '7. Livrables produits', '8. Retours utilisateurs', '9. Enseignements du sprint',
+            '10. Actions d amelioration', '11. Decision pour le sprint suivant'
+        ]
+    };
+    
+    const DOC_TITLES = {
+        definition_projet: 'Definition de Projet',
+        orientation_solution: 'Orientation de Solution',
+        formulation_solution: 'Formulation de Solution',
+        design_thinking: 'Design Thinking',
+        business_model: 'Business Model Canvas',
+        lean_startup: 'Lean Startup',
+        agile: 'Agile'
+    };
+    
+    const labels = LABELS[docType] || LABELS.definition_projet;
+    const title = DOC_TITLES[docType] || 'Document';
+    
+    // Extraire le contenu des cellules du HTML mal formate
+    const extractedContents = [];
+    
+    // Methode 1 : chercher les <td> dans le HTML
+    const tdRegex = /<td[^>]*>([\s\S]*?)<\/td>/gi;
+    const allTds = [];
+    let match;
+    while ((match = tdRegex.exec(htmlContent)) !== null) {
+        const text = match[1].replace(/<[^>]*>/g, '').trim();
+        if (text) allTds.push(text);
+    }
+    
+    // Les TDs viennent par paires : label + contenu
+    if (allTds.length >= labels.length * 2) {
+        for (let i = 0; i < allTds.length; i += 2) {
+            extractedContents.push(allTds[i + 1] || 'A definir');
+        }
+    } else if (allTds.length >= labels.length) {
+        // Parfois DeepSeek met le label dans le meme TD ou ne met que le contenu
+        // On prend les TDs qui ne matchent pas un label connu
+        allTds.forEach(td => {
+            const isLabel = labels.some(l => {
+                const labelNum = l.split('.')[0].trim();
+                return td.startsWith(labelNum + '.') || td.startsWith(labelNum + ' ');
+            });
+            if (!isLabel && td.length > 5) {
+                extractedContents.push(td);
+            }
+        });
+    }
+    
+    // Si on n'a pas pu extraire assez de contenu, essayer avec du texte brut
+    if (extractedContents.length < labels.length) {
+        // Methode 2 : chercher le texte entre les labels
+        const plainText = htmlContent.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ');
+        
+        for (let i = 0; i < labels.length; i++) {
+            if (extractedContents[i]) continue;
+            
+            const currentNum = (i + 1).toString();
+            const nextNum = (i + 2).toString();
+            
+            // Chercher le contenu entre "N. Label" et "N+1. Label"
+            const patterns = [
+                new RegExp(currentNum + '\\.[^:]*?:\\s*(.+?)(?=' + nextNum + '\\.|$)', 's'),
+                new RegExp(currentNum + '\\.[^.]+\\.\\s*(.+?)(?=' + nextNum + '\\.|$)', 's')
+            ];
+            
+            for (const pattern of patterns) {
+                const m = plainText.match(pattern);
+                if (m && m[1]) {
+                    extractedContents[i] = m[1].trim().substring(0, 500);
+                    break;
+                }
+            }
+            
+            if (!extractedContents[i]) {
+                extractedContents[i] = 'A definir';
+            }
+        }
+    }
+    
+    // Reconstruire le HTML avec le bon template
+    let rows = '';
+    for (let i = 0; i < labels.length; i++) {
+        const content = extractedContents[i] || 'A definir';
+        rows += `  <tr><td class="label-cell">${labels[i]}</td><td class="content-cell">${content}</td></tr>\n`;
+    }
+    
+    return `<style>
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
+.doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
+.doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
+.doc-wrapper .doc-info { text-align: center; font-size: 12px; line-height: 1.8; margin-bottom: 16px; }
+.doc-wrapper table { width: 100%; border-collapse: collapse; }
+.doc-wrapper td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; font-size: 12px; line-height: 1.55; }
+.doc-wrapper .label-cell { background: #2c3e50; color: #fff; font-weight: bold; width: 28%; font-size: 11.5px; }
+.doc-wrapper .content-cell { background: #fff; width: 72%; }
+.doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
+.doc-footer a { color: #4a7c59; text-decoration: none; }
+</style>
+
+<div class="doc-wrapper">
+<img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
+<div class="doc-title">${title}</div>
+<div class="doc-project-name">{{PROJECT_NAME}}</div>
+<div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
+<table>
+${rows}</table>
+<div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
+</div>`;
+}
+
+// ==================== HANDLE GENERATE (avec filet de securite) ====================
 async function handleGenerate(res, history, docType = 'definition_projet', userId = null, projetNom = null) {
     const conversationText = history.map(h => 
         `${h.type === 'user' ? 'CLIENT' : 'CONSULTANT'}: ${h.content}`
@@ -869,11 +1000,12 @@ REGLES :
 - Pas de blabla, que du concret
 - PAS d emojis
 - N utilise JAMAIS de majuscules inappropriees
-- Pour le HTML: garde EXACTEMENT la structure fournie
+- Pour le HTML: garde EXACTEMENT la structure fournie avec les classes CSS (doc-wrapper, label-cell, content-cell)
 - IMPORTANT : GARDE EXACTEMENT les placeholders {{OWNER_NAME}}, {{PROJECT_NAME}}, {{DATE}} tels quels
 - NE REMPLACE PAS {{OWNER_NAME}}, {{PROJECT_NAME}}, {{DATE}} par d autres valeurs
 - Renvoie le HTML directement, sans balises markdown
-- Texte en paragraphe SANS puces ni numeros`;
+- Texte en paragraphe SANS puces ni numeros
+- COPIE le template HTML tel quel et remplace UNIQUEMENT le texte entre crochets []`;
 
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
@@ -892,7 +1024,10 @@ REGLES :
     if (!response.ok) throw new Error('API Error');
     
     const data = await response.json();
-    const document = data.choices[0].message.content.trim();
+    const rawDocument = data.choices[0].message.content.trim();
+    
+    // FILET DE SECURITE : verifier et corriger le format si necessaire
+    const document = ensureDocumentFormat(rawDocument, docType);
     
     if (userId) {
         try {
