@@ -466,7 +466,7 @@ REGLES STRICTES :
 
 <div class="doc-wrapper">
 
-<img class="doc-logo" src="/assets/logoark.png" alt="Ark Intelligence">
+<img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Definition de Projet</div>
 <div class="doc-project-name">{{PROJECT_NAME}}</div>
 <div class="doc-info">
@@ -560,7 +560,7 @@ REGLES STRICTES :
 
 <div class="doc-wrapper">
 
-<img class="doc-logo" src="/assets/logoark.png" alt="Ark Intelligence">
+<img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Orientation de Solution</div>
 <div class="doc-project-name">{{PROJECT_NAME}}</div>
 <div class="doc-info">
@@ -646,7 +646,7 @@ REGLES STRICTES :
 
 <div class="doc-wrapper">
 
-<img class="doc-logo" src="/assets/logoark.png" alt="Ark Intelligence">
+<img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Formulation de Solution</div>
 <div class="doc-project-name">{{PROJECT_NAME}}</div>
 <div class="doc-info">
@@ -723,7 +723,7 @@ REGLES STRICTES :
 
 <div class="doc-wrapper">
 
-<img class="doc-logo" src="/assets/logoark.png" alt="Ark Intelligence">
+<img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Design Thinking</div>
 <div class="doc-project-name">{{PROJECT_NAME}}</div>
 <div class="doc-info">
@@ -816,7 +816,7 @@ REGLES STRICTES :
 
 <div class="doc-wrapper">
 
-<img class="doc-logo" src="/assets/logoark.png" alt="Ark Intelligence">
+<img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Business Model Canvas</div>
 <div class="doc-project-name">{{PROJECT_NAME}}</div>
 <div class="doc-info">
@@ -897,7 +897,7 @@ REGLES STRICTES :
 
 <div class="doc-wrapper">
 
-<img class="doc-logo" src="/assets/logoark.png" alt="Ark Intelligence">
+<img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Lean Startup</div>
 <div class="doc-project-name">{{PROJECT_NAME}}</div>
 <div class="doc-info">
@@ -990,7 +990,7 @@ REGLES STRICTES :
 
 <div class="doc-wrapper">
 
-<img class="doc-logo" src="/assets/logoark.png" alt="Ark Intelligence">
+<img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">Agile</div>
 <div class="doc-project-name">{{PROJECT_NAME}}</div>
 <div class="doc-info">
