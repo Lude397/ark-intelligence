@@ -93,7 +93,6 @@ async function loadProjects() {
     if (!definitions) return;
 
     if (definitions.length === 1) {
-        // Un seul projet : charger directement
         state.projetNom = definitions[0].projet_nom;
         state.definitionData = definitions[0].contenu;
         el.welcomeSubtitle.textContent = 'Projet : ' + state.projetNom;
@@ -102,15 +101,13 @@ async function loadProjects() {
         el.welcomeInput.style.display = 'none';
         el.welcomeSend.textContent = 'Commencer l\'orientation';
     } else {
-        // Plusieurs projets : laisser choisir
         el.welcomeSubtitle.textContent = 'Selectionnez le projet a orienter :';
         el.welcomeInputContainer.classList.add('visible');
         
-        // Creer une liste de selection
         const selectHtml = document.createElement('div');
         selectHtml.style.cssText = 'width:100%;max-width:600px;display:flex;flex-direction:column;gap:8px;margin-bottom:16px;';
         
-        definitions.forEach((def, index) => {
+        definitions.forEach((def) => {
             const btn = document.createElement('button');
             btn.textContent = def.projet_nom;
             btn.style.cssText = 'padding:14px 20px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:15px;cursor:pointer;text-align:left;transition:all 0.2s;';
@@ -134,7 +131,6 @@ async function loadProjects() {
 function startOrientation() {
     switchScreen('chat');
     
-    // Message systeme avec contexte injecte
     const contextMessage = 'Je souhaite faire l\'orientation de solution pour mon projet "' + state.projetNom + '". Voici la definition de projet validee :\n\n' + extractDefinitionSummary(state.definitionData);
     
     addMessage('Orientation de solution pour : ' + state.projetNom, 'user');
@@ -146,7 +142,6 @@ function extractDefinitionSummary(htmlContent) {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = htmlContent;
     
-    // Extraire le texte des cellules du tableau
     const cells = tempDiv.querySelectorAll('.content-cell');
     const labels = tempDiv.querySelectorAll('.label-cell');
     
@@ -157,7 +152,6 @@ function extractDefinitionSummary(htmlContent) {
         }
     });
     
-    // Fallback : extraire tout le texte
     if (!summary) {
         summary = tempDiv.textContent || tempDiv.innerText || htmlContent;
     }
@@ -224,7 +218,12 @@ async function sendToAPI(message) {
         const response = await fetch(CONFIG.apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mode: 'chat', message, history: state.history.slice(0, -1) })
+            body: JSON.stringify({ 
+                mode: 'chat', 
+                message, 
+                history: state.history.slice(0, -1),
+                docType: 'orientation_solution'
+            })
         });
         hideTypingIndicator();
         const data = await response.json();
@@ -491,25 +490,20 @@ function autoResize(textarea, maxHeight) {
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
     loadUserProfile();
-
-    // Charger les projets disponibles
     loadProjects();
 
-    // Welcome events
     el.welcomeSend.addEventListener('click', handleWelcomeSend);
     el.welcomeInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleWelcomeSend(); }
     });
     el.welcomeInput.addEventListener('input', () => autoResize(el.welcomeInput, 200));
 
-    // Chat events
     el.chatSend.addEventListener('click', handleChatSend);
     el.chatInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleChatSend(); }
     });
     el.chatInput.addEventListener('input', () => autoResize(el.chatInput, 150));
 
-    // Document events
     el.documentBack.addEventListener('click', () => switchScreen('chat'));
     el.copyDoc.addEventListener('click', copyDocument);
     el.shareDoc.addEventListener('click', handleShareDocument);
@@ -517,14 +511,12 @@ document.addEventListener('DOMContentLoaded', () => {
     el.printDoc.addEventListener('click', printDocument);
     el.deleteDoc.addEventListener('click', deleteCurrentDocument);
 
-    // Share modal events
     el.shareModalClose.addEventListener('click', closeShareModal);
     el.shareModal.addEventListener('click', (e) => { if (e.target === el.shareModal) closeShareModal(); });
     el.copyLinkBtn.addEventListener('click', copyShareLink);
     el.shareWhatsApp.addEventListener('click', shareWhatsApp);
     if (el.shareEmail) el.shareEmail.addEventListener('click', shareEmail);
 
-    // New chat mobile
     el.newChatBtnMobile.addEventListener('click', () => { window.location.href = '/'; });
 
     switchScreen('welcome');
