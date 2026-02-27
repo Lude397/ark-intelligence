@@ -2,17 +2,21 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
     <title>Formulation de solution | Ark Intelligence</title>
     <link rel="icon" type="image/png" href="/assets/logo.png">
+    <link rel="apple-touch-icon" href="/assets/logo.png">
     <link rel="stylesheet" href="/shared/css/base.css">
     <link rel="stylesheet" href="/shared/css/sidebar.css">
     <link rel="stylesheet" href="/shared/css/responsive.css">
     <link rel="stylesheet" href="/formulation/formulation.css">
 </head>
 <body data-theme="light">
+    <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <div class="app-container">
+        <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-logo">
@@ -28,9 +32,38 @@
                     <div class="folder-item">
                         <div class="folder-header"><span>Ark Project</span></div>
                         <div class="folder-content">
-                            <div class="doc-item" data-doc="definition_projet"><div class="doc-left"><span class="icon">&#8226;</span><span>Definition de projet</span></div></div>
-                            <div class="doc-item active" data-doc="orientation_solution"><div class="doc-left"><span class="icon">&#8226;</span><span>Formulation de solution</span></div></div>
-                            <div class="doc-item disabled" data-doc="formulation_solution"><div class="doc-left"><span class="icon">&#8226;</span><span>Formulation de solution</span></div><span class="badge-soon">Bientot</span></div>
+                            <div class="doc-item" data-doc="definition_projet">
+                                <div class="doc-left"><span class="icon">&#8226;</span><span>Definition de projet</span></div>
+                            </div>
+                            <div class="doc-item" data-doc="orientation_solution">
+                                <div class="doc-left"><span class="icon">&#8226;</span><span>Orientation de solution</span></div>
+                            </div>
+                            <div class="doc-item active" data-doc="formulation_solution">
+                                <div class="doc-left"><span class="icon">&#8226;</span><span>Formulation de solution</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <div class="folder-item">
+                        <div class="folder-header"><span>Ark Business</span></div>
+                        <div class="folder-content">
+                            <div class="doc-item disabled" data-doc="design_thinking">
+                                <div class="doc-left"><span class="icon">&#8226;</span><span>Design Thinking</span></div>
+                                <span class="badge-soon">Bientot</span>
+                            </div>
+                            <div class="doc-item disabled" data-doc="business_model">
+                                <div class="doc-left"><span class="icon">&#8226;</span><span>Business Model Canvas</span></div>
+                                <span class="badge-soon">Bientot</span>
+                            </div>
+                            <div class="doc-item disabled" data-doc="lean_startup">
+                                <div class="doc-left"><span class="icon">&#8226;</span><span>Lean Start Up</span></div>
+                                <span class="badge-soon">Bientot</span>
+                            </div>
+                            <div class="doc-item disabled" data-doc="agile">
+                                <div class="doc-left"><span class="icon">&#8226;</span><span>Agile</span></div>
+                                <span class="badge-soon">Bientot</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -40,21 +73,119 @@
                 <button class="settings-btn" id="settingsBtn"><span>Parametres</span></button>
             </div>
         </aside>
+
+        <!-- Main Content -->
         <main class="main-content">
-            <div class="coming-soon-page">
-                <div class="coming-soon-header">
-                    <button class="hamburger-btn" id="hamburgerBtn"><span></span><span></span><span></span></button>
-                    <div class="coming-soon-header-logo"><img class="app-logo" alt="Ark"></div>
-                    <div class="coming-soon-title">Formulation de solution</div>
+            <!-- Welcome Input Screen -->
+            <div class="welcome-screen" id="welcomeScreen">
+                <div class="welcome-header">
+                    <button class="hamburger-btn" id="hamburgerBtnWelcome">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div class="welcome-header-logo"><img class="app-logo" alt="Ark"></div>
+                    <div class="welcome-header-info">
+                        <div class="welcome-header-title" id="welcomePageTitle">Formulation de solution</div>
+                    </div>
                 </div>
-                <div class="coming-soon-content">
-                    <div class="coming-soon-icon"><img class="app-logo" alt="Ark"></div>
-                    <h2>Bientot disponible</h2>
-                    <p>Cette fonctionnalite est en cours de developpement.</p>
+                <div class="welcome-content">
+                    <div class="welcome-logo"><img class="app-logo" alt="Ark Intelligence"></div>
+                    <h1 class="welcome-title">Formulation de solution</h1>
+                    <p class="welcome-subtitle" id="welcomeSubtitle">Chargement...</p>
+                    <div class="welcome-input-container" id="welcomeInputContainer">
+                        <textarea class="welcome-textarea" id="welcomeInput" placeholder="Entrez le nom exact de votre projet..." rows="2"></textarea>
+                        <button class="welcome-send" id="welcomeSend">
+                            Continuer
+                            <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Screen -->
+            <div class="chat-screen" id="chatScreen">
+                <div class="chat-header">
+                    <button class="hamburger-btn" id="hamburgerBtnChat">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div class="chat-header-logo"><img class="app-logo" alt="Ark"></div>
+                    <div class="chat-header-info">
+                        <div class="chat-header-title" id="chatTitle">Formulation de solution</div>
+                        <div class="chat-header-subtitle" id="chatSubtitle">Ark Project</div>
+                    </div>
+                    <button class="new-chat-btn-mobile" id="newChatBtnMobile" title="Nouveau projet">+</button>
+                </div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input-container">
+                    <div class="chat-input-wrapper">
+                        <textarea class="chat-input" id="chatInput" placeholder="Ecrivez votre reponse..." rows="1"></textarea>
+                        <button class="chat-send" id="chatSend">
+                            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Generation du document...</p>
+        </div>
+    </div>
+
+    <!-- Document Screen -->
+    <div class="document-screen" id="documentScreen">
+        <div class="document-header">
+            <button class="document-back" id="documentBack">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <div class="document-title" id="documentTitle">Document</div>
+            <div class="document-actions">
+                <button id="docMenuBtn" class="doc-menu-btn">&#8942;</button>
+                <div id="docDropdownMenu" class="doc-dropdown-menu">
+                    <button id="copyDoc">Copier</button>
+                    <button id="shareDoc">Partager</button>
+                    <button id="printDoc">Imprimer</button>
+                    <button id="deleteDoc" class="delete-btn">Supprimer</button>
+                </div>
+            </div>
+        </div>
+        <div class="document-content">
+            <div class="document-body" id="documentBody"></div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div class="share-modal" id="shareModal">
+        <div class="share-modal-content">
+            <div class="share-modal-title">Partager le document</div>
+            <div class="share-link-container">
+                <input type="text" class="share-link-input" id="shareLinkInput" readonly>
+                <button class="copy-link-btn" id="copyLinkBtn">Copier</button>
+            </div>
+            <div class="share-actions">
+                <button class="share-action-btn whatsapp" id="shareWhatsApp">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                    </svg>
+                    WhatsApp
+                </button>
+                <button class="share-action-btn email" id="shareEmail">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    Email
+                </button>
+            </div>
+            <div class="share-modal-footer">
+                <button class="share-modal-close" id="shareModalClose">Fermer</button>
+            </div>
+        </div>
+    </div>
+
     <script src="/shared/js/config.js"></script>
     <script src="/shared/js/auth.js"></script>
     <script src="/shared/js/theme.js"></script>
