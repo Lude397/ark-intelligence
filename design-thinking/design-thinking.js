@@ -298,10 +298,6 @@ async function generateDocumentsInBackground() {
 }
 
 // ===== DOCUMENT DISPLAY =====
-const DOC_NAMES = {
-    'design_thinking': 'Design Thinking'
-};
-
 function showDocument(docType, content, metadata) {
     const userData = JSON.parse(localStorage.getItem('ark_user'));
     let ownerName = 'Utilisateur Ark';
