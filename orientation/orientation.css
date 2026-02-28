@@ -407,6 +407,14 @@
 .document-body {
     max-width: 800px;
     margin: 0 auto;
+    background: none;
+    border-radius: 0;
+    padding: 0;
+    line-height: 1.7;
+    overflow: hidden;
+}
+    max-width: 800px;
+    margin: 0 auto;
     background: var(--bg-secondary);
     border-radius: 12px;
     padding: 32px;
