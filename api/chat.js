@@ -8,6 +8,58 @@ const supabase = createClient(
 
 const MISTRAL_API_KEY = 'pnpx3zcKxb9xR2RK4kxyyOXNLDQ1paE4';
 
+// ==================== CONFIG PAR TYPE DE DOCUMENT ====================
+const DOC_CONFIG = {
+    definition_projet: { totalQuestions: 12, hasNameStep: true, label: 'Definition de projet' },
+    orientation_solution: { totalQuestions: 8, hasNameStep: false, label: 'Orientation de solution' },
+    formulation_solution: { totalQuestions: 6, hasNameStep: false, label: 'Formulation de solution' },
+    design_thinking: { totalQuestions: 12, hasNameStep: false, label: 'Design Thinking' },
+    business_model: { totalQuestions: 9, hasNameStep: false, label: 'Business Model Canvas' },
+    lean_startup: { totalQuestions: 12, hasNameStep: false, label: 'Lean Startup' },
+    agile: { totalQuestions: 11, hasNameStep: false, label: 'Agile' }
+};
+
+// ==================== DETECTION DE PROGRESSION (COTE SERVEUR) ====================
+function detectProgress(history, docType = 'definition_projet') {
+    const config = DOC_CONFIG[docType] || DOC_CONFIG.definition_projet;
+    const maxQ = config.totalQuestions;
+    const hasNameStep = config.hasNameStep;
+    
+    if (!history || history.length === 0) {
+        return { questionNum: 0, maxQuestions: maxQ, isComplete: false, hasNameStep, nameProposed: false };
+    }
+    
+    let questionCount = 0;
+    let nameProposed = false;
+    
+    for (const msg of history) {
+        if (msg.type === 'assistant' || msg.type === 'ai') {
+            // Chercher "Question N" dans les messages de l'IA
+            const regex = /Question\s+(\d+)/gi;
+            let match;
+            while ((match = regex.exec(msg.content)) !== null) {
+                const num = parseInt(match[1]);
+                if (num > questionCount) questionCount = num;
+            }
+            
+            // Detecter si les noms ont ete proposes (pour definition_projet)
+            if (hasNameStep && (
+                msg.content.includes('nom souhaitez-vous') || 
+                msg.content.includes('Propositions de noms') ||
+                msg.content.includes('nom a votre projet') ||
+                msg.content.includes('nom à votre projet') ||
+                msg.content.includes('donnons un nom')
+            )) {
+                nameProposed = true;
+            }
+        }
+    }
+    
+    const isComplete = questionCount >= maxQ;
+    
+    return { questionNum: questionCount, maxQuestions: maxQ, isComplete, hasNameStep, nameProposed };
+}
+
 // ==================== HANDLER ====================
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -425,6 +477,7 @@ DONNEES DU CLIENT : "${projectDescription}"`;
 // ==================== HANDLE CHAT ====================
 async function handleChat(res, message, history, docType = 'definition_projet') {
     
+    // ========== PRE-FILTRE SALUTATIONS (uniquement pour definition_projet) ==========
     if (!docType || docType === 'definition_projet') {
         const salutations = ['bonjour', 'salut', 'hello', 'coucou', 'hey', 'bonsoir', 'hi', 'yo', 'bjr', 'slt'];
         const messageClean = message.toLowerCase().trim();
@@ -437,6 +490,38 @@ async function handleChat(res, message, history, docType = 'definition_projet') 
         }
     }
 
+    // ========== DETECTION DE PROGRESSION (FILET DE SECURITE SERVEUR) ==========
+    const progress = detectProgress(history, docType);
+    console.log(`[PROGRESS] docType=${docType}, questionNum=${progress.questionNum}/${progress.maxQuestions}, isComplete=${progress.isComplete}, hasNameStep=${progress.hasNameStep}, nameProposed=${progress.nameProposed}`);
+
+    // FILET DE SECURITE : Si toutes les questions sont posees
+    if (progress.isComplete) {
+        
+        // CAS 1 : Document SANS etape de nom (orientation, formulation, etc.)
+        // -> Forcer la generation immediatement
+        if (!progress.hasNameStep) {
+            console.log(`[SAFETY NET] Toutes les ${progress.maxQuestions} questions posees pour ${docType} - FORCE GENERATE`);
+            return res.status(200).json({ 
+                action: 'generate',
+                response: "Merci pour toutes vos reponses ! Votre document est en cours de generation..."
+            });
+        }
+        
+        // CAS 2 : Document AVEC etape de nom (definition_projet)
+        // -> Si les noms ont deja ete proposes ET le client vient de repondre, forcer la generation
+        if (progress.hasNameStep && progress.nameProposed) {
+            console.log(`[SAFETY NET] Nom choisi pour definition_projet - FORCE GENERATE`);
+            return res.status(200).json({ 
+                action: 'generate',
+                response: `**Nom du projet : ${message.trim()}**\n\nGeneration de votre document en cours...`
+            });
+        }
+        
+        // CAS 3 : definition_projet, Q12 repondue mais noms pas encore proposes
+        // -> Laisser DeepSeek proposer les noms (on ne force pas encore)
+    }
+
+    // ========== CONSTRUCTION DU PROMPT ==========
     const historyText = history && history.length > 0 
         ? history.map(h => `${h.type === 'user' ? 'CLIENT' : 'ARK INTELLIGENCE'}: ${h.content}`).join('\n\n')
         : 'Premier message du client';
@@ -462,12 +547,22 @@ async function handleChat(res, message, history, docType = 'definition_projet') 
         systemPrompt = buildPromptDefinition(similarExamples, firstUserMessage);
     }
 
-    const questionCounts = {
-        definition_projet: 12,
-        orientation_solution: 8,
-        formulation_solution: 6
-    };
-    const totalQuestions = questionCounts[docType] || 12;
+    const totalQuestions = progress.maxQuestions;
+    const nextQuestion = progress.questionNum + 1;
+
+    // Construire l'instruction de progression explicite
+    let progressInstruction = '';
+    if (progress.questionNum === 0) {
+        progressInstruction = 'C est le debut. Analyse le contexte et pose la Question 1.';
+    } else if (nextQuestion <= totalQuestions) {
+        progressInstruction = `Tu as deja pose ${progress.questionNum} question(s). Pose maintenant la Question ${nextQuestion}. NE REPOSE PAS les questions precedentes.`;
+    } else if (progress.hasNameStep && !progress.nameProposed) {
+        progressInstruction = `Les ${totalQuestions} questions sont terminees. Propose 5 noms de projet (A, B, C, D, E) et demande au client de choisir.`;
+    } else if (progress.hasNameStep && progress.nameProposed) {
+        progressInstruction = `Le client vient de choisir un nom. Confirme le nom et ecris [GENERATE] sur une nouvelle ligne.`;
+    } else {
+        progressInstruction = `Les ${totalQuestions} questions sont terminees. Fais une courte synthese et ecris [GENERATE] sur une nouvelle ligne.`;
+    }
 
     const fullPrompt = `${systemPrompt}
 
@@ -480,21 +575,24 @@ NOUVEAU MESSAGE DU CLIENT :
 "${message}"
 
 ---
-INSTRUCTION : 
+PROGRESSION SERVEUR (fiable, ne pas ignorer) :
+- Derniere question detectee : ${progress.questionNum === 0 ? 'Aucune' : `Question ${progress.questionNum}`}
+- Total de questions pour ce document : ${totalQuestions}
+- Questions restantes : ${Math.max(0, totalQuestions - progress.questionNum)}
+
+INSTRUCTION PRECISE : ${progressInstruction}
+
+REGLES :
 1. Si c est le premier message, analyse le contexte fourni et pose la Question 1
-2. Sinon, COMPTE le nombre de questions deja posees dans l historique (cherche "Question 1", "Question 2", etc.)
-3. Pose la question SUIVANTE (numero = derniere question posee + 1)
-4. Ne repete JAMAIS une question deja posee
-5. Les options doivent etre SPECIFIQUES au projet du client (pas generiques)
-6. AUCUNE mention de lieu geographique, ville, pays ou devise
-7. EVITE LE JARGON : parle simplement, comme a un ami
-8. NE JAMAIS afficher de texte de debug, de reflexion interne ou "le client a repondu"
-9. Si le client repond E (Autre) avec du texte libre, ACCEPTE et AVANCE a la question suivante
-10. Total de questions pour ce document : ${totalQuestions}
+2. Pose EXACTEMENT la question indiquee ci-dessus, pas une autre
+3. Ne repete JAMAIS une question deja posee
+4. Les options doivent etre SPECIFIQUES au projet du client (pas generiques)
+5. AUCUNE mention de lieu geographique, ville, pays ou devise
+6. EVITE LE JARGON : parle simplement, comme a un ami
+7. NE JAMAIS afficher de texte de debug, de reflexion interne ou "le client a repondu"
+8. Si le client repond E (Autre) avec du texte libre, ACCEPTE et AVANCE a la question suivante
 
-REGLE ABSOLUE DE PROGRESSION : Chaque reponse du client = passer a la question suivante. Ne jamais rester sur la meme question.
-
-Progression : Q1 -> Q2 -> ... -> Q${totalQuestions} -> [GENERATE]`;
+REGLE ABSOLUE DE PROGRESSION : Chaque reponse du client = passer a la question suivante. Ne jamais rester sur la meme question.`;
 
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
@@ -830,14 +928,12 @@ REGLES STRICTES : Format Tableau HTML 2 colonnes. Texte en paragraphe SANS puces
 
 // ==================== FILET DE SECURITE : VERIFICATION FORMAT DOCUMENT ====================
 function ensureDocumentFormat(htmlContent, docType) {
-    // Si le HTML contient deja les bonnes classes, on le garde tel quel
     if (htmlContent.includes('class="doc-wrapper"') && htmlContent.includes('class="label-cell"')) {
         return htmlContent;
     }
     
     console.log(`FORMAT INCORRECT detecte pour ${docType} - Reconstruction automatique...`);
     
-    // Definir les labels attendus pour chaque type de document
     const LABELS = {
         definition_projet: [
             '1. Contexte', '2. Probleme a resoudre', '3. Beneficiaire principal',
@@ -894,10 +990,8 @@ function ensureDocumentFormat(htmlContent, docType) {
     const labels = LABELS[docType] || LABELS.definition_projet;
     const title = DOC_TITLES[docType] || 'Document';
     
-    // Extraire le contenu des cellules du HTML mal formate
     const extractedContents = [];
     
-    // Methode 1 : chercher les <td> dans le HTML
     const tdRegex = /<td[^>]*>([\s\S]*?)<\/td>/gi;
     const allTds = [];
     let match;
@@ -906,14 +1000,11 @@ function ensureDocumentFormat(htmlContent, docType) {
         if (text) allTds.push(text);
     }
     
-    // Les TDs viennent par paires : label + contenu
     if (allTds.length >= labels.length * 2) {
         for (let i = 0; i < allTds.length; i += 2) {
             extractedContents.push(allTds[i + 1] || 'A definir');
         }
     } else if (allTds.length >= labels.length) {
-        // Parfois DeepSeek met le label dans le meme TD ou ne met que le contenu
-        // On prend les TDs qui ne matchent pas un label connu
         allTds.forEach(td => {
             const isLabel = labels.some(l => {
                 const labelNum = l.split('.')[0].trim();
@@ -925,9 +1016,7 @@ function ensureDocumentFormat(htmlContent, docType) {
         });
     }
     
-    // Si on n'a pas pu extraire assez de contenu, essayer avec du texte brut
     if (extractedContents.length < labels.length) {
-        // Methode 2 : chercher le texte entre les labels
         const plainText = htmlContent.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ');
         
         for (let i = 0; i < labels.length; i++) {
@@ -936,7 +1025,6 @@ function ensureDocumentFormat(htmlContent, docType) {
             const currentNum = (i + 1).toString();
             const nextNum = (i + 2).toString();
             
-            // Chercher le contenu entre "N. Label" et "N+1. Label"
             const patterns = [
                 new RegExp(currentNum + '\\.[^:]*?:\\s*(.+?)(?=' + nextNum + '\\.|$)', 's'),
                 new RegExp(currentNum + '\\.[^.]+\\.\\s*(.+?)(?=' + nextNum + '\\.|$)', 's')
@@ -956,7 +1044,6 @@ function ensureDocumentFormat(htmlContent, docType) {
         }
     }
     
-    // Reconstruire le HTML avec le bon template
     let rows = '';
     for (let i = 0; i < labels.length; i++) {
         const content = extractedContents[i] || 'A definir';
@@ -1042,7 +1129,6 @@ REGLES :
     const data = await response.json();
     const rawDocument = data.choices[0].message.content.trim();
     
-    // FILET DE SECURITE : verifier et corriger le format si necessaire
     const document = ensureDocumentFormat(rawDocument, docType);
     
     if (userId) {
