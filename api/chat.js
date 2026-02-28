@@ -1,3 +1,6 @@
+// FICHIER : api/chat.js
+// ROLE : Backend serveur - routing, prompts interview, generation documents
+// ============================================================
 import { createClient } from '@supabase/supabase-js';
 import { DOCUMENT_PROMPTS, DOCUMENT_LABELS, DOCUMENT_TITLES, DOC_CONFIG } from './prompts/index.js';
  
