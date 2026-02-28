@@ -11,6 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save profile
     document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
 
+    // Back button
+    document.getElementById('settingsBackBtn').addEventListener('click', () => {
+        window.location.href = '/';
+    });
+
     // Logout
     document.getElementById('logoutBtn').addEventListener('click', () => {
         localStorage.removeItem('ark_user');
