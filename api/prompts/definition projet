@@ -1,90 +1,62 @@
-Genere une DEFINITION DE PROJET sous forme de tableau HTML professionnel.
+// ==================== DEFINITION DE PROJET ====================
+// Interview : 12 questions, 5 phases, avec etape de nom
+
+export const TEMPLATE = `Genere une DEFINITION DE PROJET sous forme de tableau HTML professionnel.
 
 REGLES STRICTES :
 - Utilise UNIQUEMENT les reponses des 12 questions collectees
-- Format: Tableau HTML avec bordures noires
-- Texte en paragraphe SANS puces ni numeros a l'interieur
+- Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
+- Texte en paragraphe SANS puces ni numeros a l interieur
 - Pas de mention de source (Q1, Q2...)
 - Style professionnel, phrases completes
-- Police NOIRE uniquement
 - Contenu COURT : 2-3 lignes max par section
-- Le document doit tenir sur UNE SEULE PAGE A4 (210mm x 297mm)
-- GARDE les placeholders {{PROJECT_NAME}}, {{OWNER_NAME}}, {{DATE}} tels quels
-- NE REMPLACE PAS {{OWNER_NAME}}, {{PROJECT_NAME}}, {{DATE}} par d'autres valeurs
-- Si une info manque, ecris "A definir"
+- Le document doit tenir sur UNE SEULE PAGE A4
+- IMPORTANT pour le Contexte : COMMENCE par une phrase qui definit clairement le projet
+- IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets []
 
 ---
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 210mm; max-width: 210mm; margin: 0 auto; }
-table { width: 100%; border-collapse: collapse; }
-td { border: 1px solid #000; padding: 8px 10px; vertical-align: top; font-size: 13px; line-height: 1.5; }
-.doc-title { text-align: center; font-size: 16px; font-weight: bold; text-decoration: underline; border: none; padding: 10px 0 12px; }
-.phase-title { font-weight: bold; }
-.question-title { font-weight: bold; }
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
+.doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
+.doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
+.doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
+.doc-wrapper .doc-info { text-align: center; font-size: 12px; line-height: 1.8; margin-bottom: 16px; }
+.doc-wrapper table { width: 100%; border-collapse: collapse; }
+.doc-wrapper td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; font-size: 12px; line-height: 1.55; }
+.doc-wrapper .label-cell { background: #2c3e50; color: #fff; font-weight: bold; width: 28%; font-size: 11.5px; }
+.doc-wrapper .content-cell { background: #fff; width: 72%; }
+.doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
+.doc-footer a { color: #4a7c59; text-decoration: none; }
 </style>
-</head>
-<body>
 
+<div class="doc-wrapper">
+<img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
+<div class="doc-title">Definition de Projet</div>
+<div class="doc-project-name">{{PROJECT_NAME}}</div>
+<div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
 <table>
-  <tr><td class="doc-title">Definition de Projet</td></tr>
-
-  <tr><td>
-    <b>Nom du projet :</b> {{PROJECT_NAME}}<br>
-    <b>Prepare par :</b> {{OWNER_NAME}}<br>
-    <b>Date :</b> {{DATE}}
-  </td></tr>
-
-  <tr><td>
-    <span class="phase-title">Cadrage strategique :</span><br>
-    <span class="question-title">. Contexte</span><br>
-    [COMMENCE par une phrase qui definit clairement le projet : son nom, sa nature exacte et ce qu'il propose concretement. ENSUITE explique pourquoi ce projet est lance. 2-3 lignes max.]<br><br>
-    <span class="question-title">. Probleme a resoudre</span><br>
-    [Decris le probleme concret que le projet cherche a resoudre. 2-3 lignes max.]<br><br>
-    <span class="question-title">. Beneficiaire principal</span><br>
-    [Identifie qui sont les premiers clients ou utilisateurs vises. 2-3 lignes max.]<br><br>
-    <span class="question-title">. Objectif a 12 mois</span><br>
-    [Decris ce que le projet aura accompli dans 12 mois avec des indicateurs concrets. 2-3 lignes max.]
-  </td></tr>
-
-  <tr><td>
-    <span class="phase-title">Definition du probleme reel :</span><br>
-    <span class="question-title">. Besoin reel</span><br>
-    [Explique quelles informations ou ressources sont indispensables pour lancer le projet. 2-3 lignes max.]<br><br>
-    <span class="question-title">. Limites actuelles</span><br>
-    [Decris les freins ou obstacles qui empechent le lancement immediat. 2-3 lignes max.]
-  </td></tr>
-
-  <tr><td>
-    <span class="phase-title">Solution et livrable :</span><br>
-    <span class="question-title">. Livrable attendu</span><br>
-    [Decris le resultat concret attendu a l'issue de la phase de cadrage. 2-3 lignes max.]<br><br>
-    <span class="question-title">. Hors perimetre</span><br>
-    [Liste ce qui ne fait PAS partie de ce projet de cadrage. 2-3 lignes max.]
-  </td></tr>
-
-  <tr><td>
-    <span class="phase-title">Expression du besoin fonctionnel :</span><br>
-    <span class="question-title">. Exigences fonctionnelles</span><br>
-    [Decris la capacite ou fonctionnalite prioritaire pour le succes du projet. 2-3 lignes max.]
-  </td></tr>
-
-  <tr><td>
-    <span class="phase-title">Contraintes, risques et criteres de succes :</span><br>
-    <span class="question-title">. Contraintes</span><br>
-    [Decris les contraintes principales a prendre en compte. 2-3 lignes max.]<br><br>
-    <span class="question-title">. Risques</span><br>
-    [Identifie le ou les risques majeurs qui pourraient compromettre le projet. 2-3 lignes max.]<br><br>
-    <span class="question-title">. Criteres de succes</span><br>
-    [Definis comment le succes du projet sera mesure concretement. 2-3 lignes max.]
-  </td></tr>
-
+  <tr><td class="label-cell">1. Contexte</td><td class="content-cell">[COMMENCE par definir le projet puis explique pourquoi il est lance. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">2. Probleme a resoudre</td><td class="content-cell">[Decris le probleme concret. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">3. Beneficiaire principal</td><td class="content-cell">[Identifie les premiers clients. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">4. Objectif a 12 mois</td><td class="content-cell">[Objectifs concrets. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">5. Besoin reel</td><td class="content-cell">[Ressources indispensables. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">6. Limites actuelles</td><td class="content-cell">[Freins ou obstacles. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">7. Livrable attendu</td><td class="content-cell">[Resultat concret attendu. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">8. Hors perimetre</td><td class="content-cell">[Ce qui ne fait PAS partie du projet. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">9. Exigences fonctionnelles</td><td class="content-cell">[Fonctionnalite prioritaire. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">10. Contraintes</td><td class="content-cell">[Contraintes principales. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">11. Risques</td><td class="content-cell">[Risques majeurs. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">12. Criteres de succes</td><td class="content-cell">[Comment mesurer le succes. 2-3 lignes max.]</td></tr>
 </table>
+<div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
+</div>`;
 
-</body>
-</html>
+export const LABELS = [
+    '1. Contexte', '2. Probleme a resoudre', '3. Beneficiaire principal',
+    '4. Objectif a 12 mois', '5. Besoin reel', '6. Limites actuelles',
+    '7. Livrable attendu', '8. Hors perimetre', '9. Exigences fonctionnelles',
+    '10. Contraintes', '11. Risques', '12. Criteres de succes'
+];
+export const TITLE = 'Definition de Projet';
+export const CONFIG = { totalQuestions: 12, hasNameStep: true };
