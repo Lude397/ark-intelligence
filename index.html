@@ -140,5 +140,40 @@
     <script src="/shared/js/auth.js"></script>
     <script src="/shared/js/theme.js"></script>
     <script src="/shared/js/sidebar.js"></script>
+
+     <!-- Featurebase SDK -->
+<script>
+!(function(e,t){
+  const a="featurebase-sdk";
+  function n(){
+    if(!t.getElementById(a)){
+      var e=t.createElement("script");
+      e.id=a;
+      e.src="https://do.featurebase.app/js/sdk.js";
+      t.getElementsByTagName("script")[0].parentNode.insertBefore(e,t.getElementsByTagName("script")[0]);
+    }
+  }
+  "function"!=typeof e.Featurebase&&(e.Featurebase=function(){
+    (e.Featurebase.q=e.Featurebase.q||[]).push(arguments)
+  });
+  "complete"===t.readyState||"interactive"===t.readyState?n():t.addEventListener("DOMContentLoaded",n)
+})(window,document);
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var currentTheme = document.body.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  
+  Featurebase("initialize_feedback_widget", {
+    organization: "arkintelligence",
+    theme: currentTheme,
+    placement: "right",
+    locale: "fr",
+    defaultBoard: "feature-request",
+    metadata: null
+  });
+});
+</script>
+     
 </body>
 </html>
