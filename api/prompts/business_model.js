@@ -1,6 +1,6 @@
 // FICHIER : api/prompts/business_model.js
 
-export const TEMPLATE = `Génère un BUSINESS MODEL CANVAS sous forme de GRILLE HTML authentique.
+export const TEMPLATE = `Génère un BUSINESS MODEL CANVAS sous forme de GRILLE HTML authentique. 
 
 REGLES STRICTES :
 - Utilise les réponses de l interview BMC ET la Définition de Projet
