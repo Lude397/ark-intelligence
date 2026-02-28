@@ -21,12 +21,13 @@ export const DOCUMENT_PROMPTS = {
 };
 
 // Labels pour le filet de securite (ensureDocumentFormat)
+// DT utilise COLUMNS, BMC utilise CELLS - mappes ici pour compatibilite
 export const DOCUMENT_LABELS = {
     definition_projet: definition_projet.LABELS,
     orientation_solution: orientation_solution.LABELS,
     formulation_solution: formulation_solution.LABELS,
-    design_thinking: design_thinking.LABELS,
-    business_model: business_model.LABELS,
+    design_thinking: design_thinking.COLUMNS,
+    business_model: business_model.CELLS,
     lean_startup: lean_startup.LABELS,
     agile: agile.LABELS
 };
@@ -42,7 +43,7 @@ export const DOCUMENT_TITLES = {
     agile: agile.TITLE
 };
 
-// Config par document (nombre de questions, etape de nom)
+// Config par document (nombre de questions, etape de nom, layout)
 export const DOC_CONFIG = {
     definition_projet: definition_projet.CONFIG,
     orientation_solution: orientation_solution.CONFIG,
