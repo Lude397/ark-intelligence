@@ -1,7 +1,7 @@
 // ==================== DEFINITION DE PROJET ====================
 // Interview : 12 questions, 5 phases, avec etape de nom
 
-export const TEMPLATE = `Genere une DEFINITION DE PROJET sous forme de tableau HTML professionnel.
+export const TEMPLATE = `Genere une DEFINITION DE PROJET sous forme de tableau HTML professionnel. 
 
 REGLES STRICTES :
 - Utilise UNIQUEMENT les reponses des 12 questions collectees
