@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { DOCUMENT_PROMPTS, DOCUMENT_LABELS, DOCUMENT_TITLES, DOC_CONFIG } from './prompts/index.js';
  
 // ==================== CONFIGURATION ====================
 const supabase = createClient(
@@ -8,18 +9,7 @@ const supabase = createClient(
 
 const MISTRAL_API_KEY = 'pnpx3zcKxb9xR2RK4kxyyOXNLDQ1paE4';
 
-// ==================== CONFIG PAR TYPE DE DOCUMENT ====================
-const DOC_CONFIG = {
-    definition_projet: { totalQuestions: 12, hasNameStep: true, label: 'Definition de projet' },
-    orientation_solution: { totalQuestions: 8, hasNameStep: false, label: 'Orientation de solution' },
-    formulation_solution: { totalQuestions: 6, hasNameStep: false, label: 'Formulation de solution' },
-    design_thinking: { totalQuestions: 12, hasNameStep: false, label: 'Design Thinking' },
-    business_model: { totalQuestions: 9, hasNameStep: false, label: 'Business Model Canvas' },
-    lean_startup: { totalQuestions: 12, hasNameStep: false, label: 'Lean Startup' },
-    agile: { totalQuestions: 11, hasNameStep: false, label: 'Agile' }
-};
-
-// ==================== DETECTION DE PROGRESSION (COTE SERVEUR) ====================
+// ==================== DETECTION DE PROGRESSION (FILET DE SECURITE SERVEUR) ====================
 function detectProgress(history, docType = 'definition_projet') {
     const config = DOC_CONFIG[docType] || DOC_CONFIG.definition_projet;
     const maxQ = config.totalQuestions;
@@ -34,7 +24,6 @@ function detectProgress(history, docType = 'definition_projet') {
     
     for (const msg of history) {
         if (msg.type === 'assistant' || msg.type === 'ai') {
-            // Chercher "Question N" dans les messages de l'IA
             const regex = /Question\s+(\d+)/gi;
             let match;
             while ((match = regex.exec(msg.content)) !== null) {
@@ -42,12 +31,11 @@ function detectProgress(history, docType = 'definition_projet') {
                 if (num > questionCount) questionCount = num;
             }
             
-            // Detecter si les noms ont ete proposes (pour definition_projet)
             if (hasNameStep && (
                 msg.content.includes('nom souhaitez-vous') || 
                 msg.content.includes('Propositions de noms') ||
                 msg.content.includes('nom a votre projet') ||
-                msg.content.includes('nom à votre projet') ||
+                msg.content.includes('nom \u00e0 votre projet') ||
                 msg.content.includes('donnons un nom')
             )) {
                 nameProposed = true;
@@ -69,9 +57,7 @@ export default async function handler(req, res) {
     
     if (req.method === 'GET') {
         const { token } = req.query;
-        if (token) {
-            return await getSharedDocument(res, token);
-        }
+        if (token) return await getSharedDocument(res, token);
         return res.status(400).json({ error: 'Token manquant' });
     }
     
@@ -80,45 +66,16 @@ export default async function handler(req, res) {
     try {
         const { mode, message, history, docType, userId, projetNom, documentId, sharedLinkId, viewerUserId, viewerIp, owner, project } = req.body;
 
-        if (mode === 'chat') {
-            return await handleChat(res, message, history, docType);
-        }
-        
-        if (mode === 'generate') {
-            return await handleGenerate(res, history, docType, userId, projetNom);
-        }
-
-        if (mode === 'createShareLink') {
-            return await createShareLink(res, documentId, userId, projetNom);
-        }
-
-        if (mode === 'trackView') {
-            return await trackView(res, sharedLinkId, viewerUserId, viewerIp);
-        }
-
-        if (mode === 'getStats') {
-            return await getDocumentStats(res, documentId, userId);
-        }
-
-        if (mode === 'getUserDocuments') {
-            return await getUserDocuments(res, userId);
-        }
-
-        if (mode === 'updateUserProfile') {
-            return await updateUserProfile(res, userId, req.body);
-        }
-
-        if (mode === 'getUserProfile') {
-            return await getUserProfile(res, userId);
-        }
-
-        if (mode === 'deleteDocument') {
-            return await deleteDocument(res, documentId, userId);
-        }
-
-        if (mode === 'getSharedDocument') {
-            return await getSharedDocumentByOwnerProject(res, owner, project);
-        }
+        if (mode === 'chat') return await handleChat(res, message, history, docType);
+        if (mode === 'generate') return await handleGenerate(res, history, docType, userId, projetNom);
+        if (mode === 'createShareLink') return await createShareLink(res, documentId, userId, projetNom);
+        if (mode === 'trackView') return await trackView(res, sharedLinkId, viewerUserId, viewerIp);
+        if (mode === 'getStats') return await getDocumentStats(res, documentId, userId);
+        if (mode === 'getUserDocuments') return await getUserDocuments(res, userId);
+        if (mode === 'updateUserProfile') return await updateUserProfile(res, userId, req.body);
+        if (mode === 'getUserProfile') return await getUserProfile(res, userId);
+        if (mode === 'deleteDocument') return await deleteDocument(res, documentId, userId);
+        if (mode === 'getSharedDocument') return await getSharedDocumentByOwnerProject(res, owner, project);
 
         return res.status(400).json({ error: 'Mode invalide' });
 
@@ -203,7 +160,8 @@ async function findSimilarExamples(projectDescription) {
     }
 }
 
-// ==================== PROMPT DEFINITION DE PROJET (12 QUESTIONS) ====================
+// ==================== PROMPTS D'INTERVIEW ====================
+
 function buildPromptDefinition(similarExamples, projectDescription) {
     let examplesSection = '';
     
@@ -242,7 +200,7 @@ ${ex.contenu}
 - Parle comme si tu discutais avec quelqu un qui n a jamais fait d entrepreneuriat
 - Utilise des mots du quotidien
 - Si tu dois utiliser un terme technique, explique-le simplement entre parentheses
-- TOUJOURS ecrire en francais avec les accents corrects (e avec accent, a avec accent, u avec accent, c cedille) meme si les instructions ici n en ont pas
+- TOUJOURS ecrire en francais avec les accents corrects
 
 **ETAPE 0 - CLASSIFICATION (OBLIGATOIRE au premier message) :**
 Analyse le message du client AVANT de poser des questions :
@@ -296,7 +254,7 @@ LES 12 QUESTIONS (5 PHASES) :
 
 **PHASE 2 -- Definition du probleme reel** (Q5 a Q6)
 5. Besoin reel - Quelles informations sont necessaires pour avancer ?
-6. Freins et differences - Si ca existe deja, en quoi serez-vous different ? Si ca n existe pas, quels sont les obstacles ?
+6. Freins et differences - Si ca existe deja, en quoi serez-vous different ?
 
 **Phase 3 -- Solution et Livrable** (Q7 a Q8)
 7. Livrable - Qu est-ce que ce projet doit produire en priorite ?
@@ -328,15 +286,13 @@ ETAPE 2 - APRES CHOIX DU NOM :
 
 REGLES CRITIQUES :
 - NE JAMAIS afficher de reflexions internes, de debug ou de texte comme "le client a repondu"
-- Seul le format officiel est autorise
-- Si le client choisit E (Autre) et donne sa propre reponse, ACCEPTE sa reponse et PASSE a la question suivante
-- NE JAMAIS reposer une question deja posee, meme si la reponse semble incomplete
+- Si le client choisit E (Autre), ACCEPTE et PASSE a la question suivante
+- NE JAMAIS reposer une question deja posee
 - PROGRESSION OBLIGATOIRE : chaque message du client = avancer d une question
 
 PROJET DU CLIENT : "${projectDescription}"`;
 }
 
-// ==================== PROMPT ORIENTATION DE SOLUTION (8 QUESTIONS) ====================
 function buildPromptOrientation(projectDescription) {
     return `Tu es Ark Intelligence, expert en orientation de solution.
 
@@ -347,17 +303,17 @@ Ta mission est de l aider a ORIENTER sa solution en posant 8 questions structure
 - Langage SIMPLE et ACCESSIBLE, sans jargon
 - Parle comme a un ami qui n a jamais fait d entrepreneuriat
 - Une question a la fois
-- TOUJOURS ecrire en francais avec les accents corrects (e avec accent, a avec accent, u avec accent, c cedille) meme si les instructions ici n en ont pas
+- TOUJOURS ecrire en francais avec les accents corrects
 
 **FORMAT STRICT POUR CHAQUE QUESTION :**
 
-[Reformulation naturelle en 1 phrase de ce que le client vient de dire, SANS mentionner "le client a repondu", SANS citer la lettre choisie, SANS expliquer ton raisonnement]
+[Reformulation naturelle en 1 phrase]
 
 **Phase [N] -- [Titre]**
 
 **Question [N] : [Titre]**
 
-[Question adaptee au projet EN LANGAGE SIMPLE]
+[Question adaptee EN LANGAGE SIMPLE]
 
 A) [Option specifique]
 B) [Option specifique]
@@ -365,69 +321,65 @@ C) [Option specifique]
 D) [Option specifique]
 E) Autre (precisez)
 
-ARRETE apres les options. Pas de texte supplementaire.
+ARRETE apres les options.
 
 ---
 
 LES 8 QUESTIONS (3 PHASES) :
 
 **PHASE 1 -- Comprendre** (Questions 1 a 3)
-1. Validation du probleme - Le probleme identifie dans la definition est-il toujours le bon ? Quel aspect est le plus critique ?
-2. Utilisateur prioritaire - Parmi les beneficiaires identifies, qui doit etre servi en premier ?
-3. Solutions existantes - Comment les gens resolvent ce probleme aujourd hui ? Quelles alternatives existent ?
+1. Validation du probleme
+2. Utilisateur prioritaire
+3. Solutions existantes
 
 **PHASE 2 -- Explorer** (Questions 4 a 6)
-4. Type de solution - Quelle forme devrait prendre votre solution ? (app, service, produit physique, plateforme...)
-5. Justification - Pourquoi cette approche plutot qu une autre ?
-6. Ressources disponibles - De quoi disposez-vous deja pour demarrer ? (competences, budget, reseau, materiel)
+4. Type de solution
+5. Justification
+6. Ressources disponibles
 
 **PHASE 3 -- Orienter** (Questions 7 a 8)
-7. Fonctionnalites prioritaires - Quelles sont les 2-3 fonctionnalites essentielles pour un premier lancement ?
-8. Premier jalon - Quel est le premier resultat concret que vous voulez atteindre dans les 3 prochains mois ?
+7. Fonctionnalites prioritaires
+8. Premier jalon
 
 ---
 
-APRES LA QUESTION 8 (reponse recue) :
-
+APRES LA QUESTION 8 :
 1. Reformule la reponse Q8
-2. Fais une synthese en 3-4 lignes : "Voici l orientation retenue : [resume]"
-3. Ecris sur une nouvelle ligne : [GENERATE]
+2. Synthese en 3-4 lignes
+3. Ecris : [GENERATE]
 4. ARRETE
 
 REGLES CRITIQUES :
-- NE JAMAIS afficher de reflexions internes, de debug ou de texte comme "le client a repondu"
 - PAS de mention de lieu geographique, ville, pays ou devise
 - Options SPECIFIQUES au projet du client
-- Le nom du projet est deja connu, pas besoin de le redemander
-- Si le client choisit E (Autre) et donne sa propre reponse, ACCEPTE sa reponse et PASSE a la question suivante
-- NE JAMAIS reposer une question deja posee, meme si la reponse semble incomplete
-- PROGRESSION OBLIGATOIRE : chaque message du client = avancer d une question
+- Si E (Autre), ACCEPTE et AVANCE
+- NE JAMAIS reposer une question
+- PROGRESSION OBLIGATOIRE
 
 DONNEES DU CLIENT : "${projectDescription}"`;
 }
 
-// ==================== PROMPT FORMULATION DE SOLUTION (6 QUESTIONS) ====================
 function buildPromptFormulation(projectDescription) {
     return `Tu es Ark Intelligence, expert en formulation de solution.
 
-Le client a deja valide sa Definition de Projet ET son Orientation de Solution. Tu recois les donnees de l orientation dans le premier message.
-Ta mission est de l aider a FORMULER sa solution de maniere precise en posant 6 questions structurees.
+Le client a deja valide sa Definition de Projet ET son Orientation de Solution.
+Ta mission est de l aider a FORMULER sa solution en posant 6 questions structurees.
 
 **STYLE DE COMMUNICATION (OBLIGATOIRE) :**
 - Langage SIMPLE et ACCESSIBLE, sans jargon
 - Parle comme a un ami
 - Une question a la fois
-- TOUJOURS ecrire en francais avec les accents corrects (e avec accent, a avec accent, u avec accent, c cedille) meme si les instructions ici n en ont pas
+- TOUJOURS ecrire en francais avec les accents corrects
 
 **FORMAT STRICT POUR CHAQUE QUESTION :**
 
-[Reformulation naturelle en 1 phrase de ce que le client vient de dire, SANS mentionner "le client a repondu", SANS citer la lettre choisie, SANS expliquer ton raisonnement]
+[Reformulation naturelle en 1 phrase]
 
 **Phase [N] -- [Titre]**
 
 **Question [N] : [Titre]**
 
-[Question adaptee au projet EN LANGAGE SIMPLE]
+[Question adaptee EN LANGAGE SIMPLE]
 
 A) [Option specifique]
 B) [Option specifique]
@@ -435,41 +387,38 @@ C) [Option specifique]
 D) [Option specifique]
 E) Autre (precisez)
 
-ARRETE apres les options. Pas de texte supplementaire.
+ARRETE apres les options.
 
 ---
 
 LES 6 QUESTIONS (3 PHASES) :
 
 **PHASE 1 -- Rappel et precision** (Questions 1 a 2)
-1. Confirmation du probleme - En une phrase, quel est LE probleme principal que votre solution va resoudre ?
-2. Utilisateur cible precis - Decrivez votre utilisateur ideal : qui est-il, que fait-il au quotidien, qu est-ce qui le frustre ?
+1. Confirmation du probleme
+2. Utilisateur cible precis
 
 **PHASE 2 -- Formuler la solution** (Questions 3 a 4)
-3. Formulation centrale - Comment decririez-vous votre solution en une seule phrase simple ? (ce que ca fait, pour qui, comment)
-4. Parcours utilisateur - Concretement, quelles sont les etapes que l utilisateur suit du debut a la fin quand il utilise votre solution ?
+3. Formulation centrale
+4. Parcours utilisateur
 
 **PHASE 3 -- Valider la formulation** (Questions 5 a 6)
-5. Ce que la solution ne fait pas - Qu est-ce qui est clairement en dehors de votre solution ? (pour eviter les malentendus)
-6. Le pitch - Si vous deviez convaincre quelqu un en 30 secondes, que diriez-vous ?
+5. Ce que la solution ne fait pas
+6. Le pitch
 
 ---
 
-APRES LA QUESTION 6 (reponse recue) :
-
+APRES LA QUESTION 6 :
 1. Reformule la reponse Q6
-2. Presente le pitch final en 2 phrases
-3. Ecris sur une nouvelle ligne : [GENERATE]
+2. Pitch final en 2 phrases
+3. Ecris : [GENERATE]
 4. ARRETE
 
 REGLES CRITIQUES :
-- NE JAMAIS afficher de reflexions internes, de debug ou de texte comme "le client a repondu"
 - PAS de mention de lieu geographique, ville, pays ou devise
 - Options SPECIFIQUES au projet du client
-- Le nom du projet est deja connu, pas besoin de le redemander
-- Si le client choisit E (Autre) et donne sa propre reponse, ACCEPTE sa reponse et PASSE a la question suivante
-- NE JAMAIS reposer une question deja posee, meme si la reponse semble incomplete
-- PROGRESSION OBLIGATOIRE : chaque message du client = avancer d une question
+- Si E (Autre), ACCEPTE et AVANCE
+- NE JAMAIS reposer une question
+- PROGRESSION OBLIGATOIRE
 
 DONNEES DU CLIENT : "${projectDescription}"`;
 }
@@ -477,7 +426,7 @@ DONNEES DU CLIENT : "${projectDescription}"`;
 // ==================== HANDLE CHAT ====================
 async function handleChat(res, message, history, docType = 'definition_projet') {
     
-    // ========== PRE-FILTRE SALUTATIONS (uniquement pour definition_projet) ==========
+    // Pre-filtre salutations (uniquement pour definition_projet)
     if (!docType || docType === 'definition_projet') {
         const salutations = ['bonjour', 'salut', 'hello', 'coucou', 'hey', 'bonsoir', 'hi', 'yo', 'bjr', 'slt'];
         const messageClean = message.toLowerCase().trim();
@@ -490,25 +439,21 @@ async function handleChat(res, message, history, docType = 'definition_projet') 
         }
     }
 
-    // ========== DETECTION DE PROGRESSION (FILET DE SECURITE SERVEUR) ==========
+    // ========== FILET DE SECURITE : DETECTION DE PROGRESSION ==========
     const progress = detectProgress(history, docType);
-    console.log(`[PROGRESS] docType=${docType}, questionNum=${progress.questionNum}/${progress.maxQuestions}, isComplete=${progress.isComplete}, hasNameStep=${progress.hasNameStep}, nameProposed=${progress.nameProposed}`);
+    console.log(`[PROGRESS] docType=${docType}, questionNum=${progress.questionNum}/${progress.maxQuestions}, isComplete=${progress.isComplete}, nameProposed=${progress.nameProposed}`);
 
-    // FILET DE SECURITE : Si toutes les questions sont posees
     if (progress.isComplete) {
-        
-        // CAS 1 : Document SANS etape de nom (orientation, formulation, etc.)
-        // -> Forcer la generation immediatement
+        // Document SANS etape de nom -> forcer la generation
         if (!progress.hasNameStep) {
-            console.log(`[SAFETY NET] Toutes les ${progress.maxQuestions} questions posees pour ${docType} - FORCE GENERATE`);
+            console.log(`[SAFETY NET] ${progress.maxQuestions} questions posees pour ${docType} - FORCE GENERATE`);
             return res.status(200).json({ 
                 action: 'generate',
                 response: "Merci pour toutes vos reponses ! Votre document est en cours de generation..."
             });
         }
         
-        // CAS 2 : Document AVEC etape de nom (definition_projet)
-        // -> Si les noms ont deja ete proposes ET le client vient de repondre, forcer la generation
+        // definition_projet : noms proposes ET client a repondu -> forcer la generation
         if (progress.hasNameStep && progress.nameProposed) {
             console.log(`[SAFETY NET] Nom choisi pour definition_projet - FORCE GENERATE`);
             return res.status(200).json({ 
@@ -516,9 +461,6 @@ async function handleChat(res, message, history, docType = 'definition_projet') 
                 response: `**Nom du projet : ${message.trim()}**\n\nGeneration de votre document en cours...`
             });
         }
-        
-        // CAS 3 : definition_projet, Q12 repondue mais noms pas encore proposes
-        // -> Laisser DeepSeek proposer les noms (on ne force pas encore)
     }
 
     // ========== CONSTRUCTION DU PROMPT ==========
@@ -550,7 +492,6 @@ async function handleChat(res, message, history, docType = 'definition_projet') 
     const totalQuestions = progress.maxQuestions;
     const nextQuestion = progress.questionNum + 1;
 
-    // Construire l'instruction de progression explicite
     let progressInstruction = '';
     if (progress.questionNum === 0) {
         progressInstruction = 'C est le debut. Analyse le contexte et pose la Question 1.';
@@ -583,16 +524,15 @@ PROGRESSION SERVEUR (fiable, ne pas ignorer) :
 INSTRUCTION PRECISE : ${progressInstruction}
 
 REGLES :
-1. Si c est le premier message, analyse le contexte fourni et pose la Question 1
-2. Pose EXACTEMENT la question indiquee ci-dessus, pas une autre
-3. Ne repete JAMAIS une question deja posee
-4. Les options doivent etre SPECIFIQUES au projet du client (pas generiques)
-5. AUCUNE mention de lieu geographique, ville, pays ou devise
-6. EVITE LE JARGON : parle simplement, comme a un ami
-7. NE JAMAIS afficher de texte de debug, de reflexion interne ou "le client a repondu"
-8. Si le client repond E (Autre) avec du texte libre, ACCEPTE et AVANCE a la question suivante
+1. Pose EXACTEMENT la question indiquee ci-dessus
+2. Ne repete JAMAIS une question deja posee
+3. Options SPECIFIQUES au projet du client
+4. AUCUNE mention de lieu geographique, ville, pays ou devise
+5. EVITE LE JARGON : parle simplement
+6. NE JAMAIS afficher de texte de debug ou reflexion interne
+7. Si E (Autre) avec texte libre, ACCEPTE et AVANCE
 
-REGLE ABSOLUE DE PROGRESSION : Chaque reponse du client = passer a la question suivante. Ne jamais rester sur la meme question.`;
+REGLE ABSOLUE : Chaque reponse du client = passer a la question suivante.`;
 
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
@@ -615,316 +555,11 @@ REGLE ABSOLUE DE PROGRESSION : Chaque reponse du client = passer a la question s
     
     if (aiResponse.includes('[GENERATE]')) {
         const cleanResponse = aiResponse.replace('[GENERATE]', '').trim();
-        return res.status(200).json({ 
-            action: 'generate',
-            response: cleanResponse
-        });
+        return res.status(200).json({ action: 'generate', response: cleanResponse });
     }
     
-    return res.status(200).json({ 
-        action: 'continue',
-        response: aiResponse
-    });
+    return res.status(200).json({ action: 'continue', response: aiResponse });
 }
-
-// ==================== FONCTION DATE ====================
-function getFormattedDate() {
-    const options = { day: 'numeric', month: 'long', year: 'numeric' };
-    return new Date().toLocaleDateString('fr-FR', options);
-}
-
-// ==================== PROMPTS DOCUMENTS ====================
-const DOCUMENT_PROMPTS = {
-
-definition_projet: `Genere une DEFINITION DE PROJET sous forme de tableau HTML professionnel.
-
-REGLES STRICTES :
-- Utilise UNIQUEMENT les reponses des 12 questions collectees
-- Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
-- Texte en paragraphe SANS puces ni numeros a l interieur
-- Pas de mention de source (Q1, Q2...)
-- Style professionnel, phrases completes
-- Contenu COURT : 2-3 lignes max par section
-- Le document doit tenir sur UNE SEULE PAGE A4
-- IMPORTANT pour le Contexte : COMMENCE par une phrase qui definit clairement le projet
-- IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets []
-
----
-
-<style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
-.doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
-.doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
-.doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
-.doc-wrapper .doc-info { text-align: center; font-size: 12px; line-height: 1.8; margin-bottom: 16px; }
-.doc-wrapper table { width: 100%; border-collapse: collapse; }
-.doc-wrapper td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; font-size: 12px; line-height: 1.55; }
-.doc-wrapper .label-cell { background: #2c3e50; color: #fff; font-weight: bold; width: 28%; font-size: 11.5px; }
-.doc-wrapper .content-cell { background: #fff; width: 72%; }
-.doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
-.doc-footer a { color: #4a7c59; text-decoration: none; }
-</style>
-
-<div class="doc-wrapper">
-<img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
-<div class="doc-title">Definition de Projet</div>
-<div class="doc-project-name">{{PROJECT_NAME}}</div>
-<div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
-<table>
-  <tr><td class="label-cell">1. Contexte</td><td class="content-cell">[COMMENCE par definir le projet puis explique pourquoi il est lance. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">2. Probleme a resoudre</td><td class="content-cell">[Decris le probleme concret. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">3. Beneficiaire principal</td><td class="content-cell">[Identifie les premiers clients. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">4. Objectif a 12 mois</td><td class="content-cell">[Objectifs concrets. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">5. Besoin reel</td><td class="content-cell">[Ressources indispensables. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">6. Limites actuelles</td><td class="content-cell">[Freins ou obstacles. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">7. Livrable attendu</td><td class="content-cell">[Resultat concret attendu. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">8. Hors perimetre</td><td class="content-cell">[Ce qui ne fait PAS partie du projet. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">9. Exigences fonctionnelles</td><td class="content-cell">[Fonctionnalite prioritaire. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">10. Contraintes</td><td class="content-cell">[Contraintes principales. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">11. Risques</td><td class="content-cell">[Risques majeurs. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">12. Criteres de succes</td><td class="content-cell">[Comment mesurer le succes. 2-3 lignes max.]</td></tr>
-</table>
-<div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
-</div>`,
-
-orientation_solution: `Genere un document ORIENTATION DE SOLUTION sous forme de tableau HTML professionnel.
-
-REGLES STRICTES :
-- Ce document s appuie sur la Definition de Projet validee
-- Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
-- Texte en paragraphe SANS puces ni numeros a l interieur
-- Contenu COURT : 2-3 lignes max par section
-- Le document doit tenir sur UNE SEULE PAGE A4
-- IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets []
-
----
-
-<style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
-.doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
-.doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
-.doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
-.doc-wrapper .doc-info { text-align: center; font-size: 12px; line-height: 1.8; margin-bottom: 16px; }
-.doc-wrapper table { width: 100%; border-collapse: collapse; }
-.doc-wrapper td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; font-size: 12px; line-height: 1.55; }
-.doc-wrapper .label-cell { background: #2c3e50; color: #fff; font-weight: bold; width: 28%; font-size: 11.5px; }
-.doc-wrapper .content-cell { background: #fff; width: 72%; }
-.doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
-.doc-footer a { color: #4a7c59; text-decoration: none; }
-</style>
-
-<div class="doc-wrapper">
-<img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
-<div class="doc-title">Orientation de Solution</div>
-<div class="doc-project-name">{{PROJECT_NAME}}</div>
-<div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
-<table>
-  <tr><td class="label-cell">1. Probleme valide</td><td class="content-cell">[Reformulation du probleme. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">2. Utilisateur prioritaire</td><td class="content-cell">[Beneficiaire principal. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">3. Solution retenue</td><td class="content-cell">[Description de la solution. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">4. Justification</td><td class="content-cell">[Pourquoi cette solution. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">5. Analyse des contraintes</td><td class="content-cell">[Contraintes et gestion. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">6. Ressources necessaires</td><td class="content-cell">[Ressources humaines, techniques, financieres. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">7. Fonctionnalites prioritaires</td><td class="content-cell">[Fonctionnalites essentielles. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">8. Plan de demarrage</td><td class="content-cell">[Premieres actions concretes. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">9. Jalons de validation</td><td class="content-cell">[Indicateurs a 3 mois. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">10. Criteres de pivot</td><td class="content-cell">[Conditions pour changer d approche. 2-3 lignes max.]</td></tr>
-</table>
-<div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
-</div>`,
-
-formulation_solution: `Genere un document FORMULATION DE SOLUTION sous forme de tableau HTML professionnel.
-
-REGLES STRICTES :
-- Ce document s appuie sur l Orientation de Solution validee
-- Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
-- Texte en paragraphe SANS puces ni numeros a l interieur
-- Contenu COURT : 2-3 lignes max par section
-- Le document doit tenir sur UNE SEULE PAGE A4
-- IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets []
-
----
-
-<style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
-.doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
-.doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
-.doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
-.doc-wrapper .doc-info { text-align: center; font-size: 12px; line-height: 1.8; margin-bottom: 16px; }
-.doc-wrapper table { width: 100%; border-collapse: collapse; }
-.doc-wrapper td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; font-size: 12px; line-height: 1.55; }
-.doc-wrapper .label-cell { background: #2c3e50; color: #fff; font-weight: bold; width: 28%; font-size: 11.5px; }
-.doc-wrapper .content-cell { background: #fff; width: 72%; }
-.doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
-.doc-footer a { color: #4a7c59; text-decoration: none; }
-</style>
-
-<div class="doc-wrapper">
-<img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
-<div class="doc-title">Formulation de Solution</div>
-<div class="doc-project-name">{{PROJECT_NAME}}</div>
-<div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
-<table>
-  <tr><td class="label-cell">1. Rappel du probleme cible</td><td class="content-cell">[Reformulation synthetique. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">2. Utilisateur cible</td><td class="content-cell">[Description precise avec comportements. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">3. Formulation centrale</td><td class="content-cell">[En une phrase : que fait le projet, pour qui, comment. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">4. Fonctionnement de la solution</td><td class="content-cell">[Etapes du parcours utilisateur. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">5. Frontieres de la solution</td><td class="content-cell">[Ce que la solution ne fait PAS. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">6. Resultat attendu</td><td class="content-cell">[Impact concret. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">7. Critere de bonne formulation</td><td class="content-cell">[Comment verifier que c est bien compris. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">8. Pitch</td><td class="content-cell">[Resume en 2 phrases pour convaincre.]</td></tr>
-</table>
-<div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
-</div>`,
-
-design_thinking: `Genere un document DESIGN THINKING sous forme de tableau HTML professionnel.
-REGLES STRICTES : Format Tableau HTML 2 colonnes. Texte en paragraphe SANS puces. Contenu COURT 2-3 lignes max. IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets [].
----
-<style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
-.doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
-.doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
-.doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
-.doc-wrapper .doc-info { text-align: center; font-size: 12px; line-height: 1.8; margin-bottom: 16px; }
-.doc-wrapper table { width: 100%; border-collapse: collapse; }
-.doc-wrapper td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; font-size: 12px; line-height: 1.55; }
-.doc-wrapper .label-cell { background: #2c3e50; color: #fff; font-weight: bold; width: 28%; font-size: 11.5px; }
-.doc-wrapper .content-cell { background: #fff; width: 72%; }
-.doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
-.doc-footer a { color: #4a7c59; text-decoration: none; }
-</style>
-<div class="doc-wrapper">
-<img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
-<div class="doc-title">Design Thinking</div>
-<div class="doc-project-name">{{PROJECT_NAME}}</div>
-<div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
-<table>
-  <tr><td class="label-cell">1. Utilisateur cible</td><td class="content-cell">[Description. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">2. Problemes et frustrations</td><td class="content-cell">[Frustrations principales. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">3. Comportements et habitudes</td><td class="content-cell">[Gestion actuelle. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">4. Probleme central</td><td class="content-cell">[Synthese. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">5. Impact si non resolu</td><td class="content-cell">[Consequences. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">6. Idee principale</td><td class="content-cell">[Solution proposee. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">7. Alternatives</td><td class="content-cell">[Autres pistes. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">8. Forme du prototype</td><td class="content-cell">[Type de prototype. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">9. Objectif du prototype</td><td class="content-cell">[Ce qu il verifie. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">10. Utilisateurs testeurs</td><td class="content-cell">[Profil testeurs. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">11. Methode de test</td><td class="content-cell">[Comment tester. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">12. Criteres de validation</td><td class="content-cell">[Indicateurs de reussite. 2-3 lignes max.]</td></tr>
-</table>
-<div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
-</div>`,
-
-business_model: `Genere un BUSINESS MODEL CANVAS sous forme de tableau HTML professionnel.
-REGLES STRICTES : Format Tableau HTML 2 colonnes. Texte en paragraphe SANS puces. Contenu COURT 2-3 lignes max. IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets [].
----
-<style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
-.doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
-.doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
-.doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
-.doc-wrapper .doc-info { text-align: center; font-size: 12px; line-height: 1.8; margin-bottom: 16px; }
-.doc-wrapper table { width: 100%; border-collapse: collapse; }
-.doc-wrapper td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; font-size: 12px; line-height: 1.55; }
-.doc-wrapper .label-cell { background: #2c3e50; color: #fff; font-weight: bold; width: 28%; font-size: 11.5px; }
-.doc-wrapper .content-cell { background: #fff; width: 72%; }
-.doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
-.doc-footer a { color: #4a7c59; text-decoration: none; }
-</style>
-<div class="doc-wrapper">
-<img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
-<div class="doc-title">Business Model Canvas</div>
-<div class="doc-project-name">{{PROJECT_NAME}}</div>
-<div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
-<table>
-  <tr><td class="label-cell">1. Segments de clients</td><td class="content-cell">[Clients cibles. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">2. Proposition de valeur</td><td class="content-cell">[Ce qui rend different. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">3. Canaux</td><td class="content-cell">[Comment atteindre les clients. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">4. Relation client</td><td class="content-cell">[Maintien de la relation. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">5. Sources de revenus</td><td class="content-cell">[Comment gagner de l argent. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">6. Ressources cles</td><td class="content-cell">[Ressources indispensables. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">7. Activites cles</td><td class="content-cell">[Actions essentielles. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">8. Partenaires cles</td><td class="content-cell">[Partenaires strategiques. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">9. Structure de couts</td><td class="content-cell">[Postes de depenses. 2-3 lignes max.]</td></tr>
-</table>
-<div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
-</div>`,
-
-lean_startup: `Genere un document LEAN STARTUP sous forme de tableau HTML professionnel.
-REGLES STRICTES : Format Tableau HTML 2 colonnes. Texte en paragraphe SANS puces. Contenu COURT 2-3 lignes max. IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets [].
----
-<style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
-.doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
-.doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
-.doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
-.doc-wrapper .doc-info { text-align: center; font-size: 12px; line-height: 1.8; margin-bottom: 16px; }
-.doc-wrapper table { width: 100%; border-collapse: collapse; }
-.doc-wrapper td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; font-size: 12px; line-height: 1.55; }
-.doc-wrapper .label-cell { background: #2c3e50; color: #fff; font-weight: bold; width: 28%; font-size: 11.5px; }
-.doc-wrapper .content-cell { background: #fff; width: 72%; }
-.doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
-.doc-footer a { color: #4a7c59; text-decoration: none; }
-</style>
-<div class="doc-wrapper">
-<img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
-<div class="doc-title">Lean Startup</div>
-<div class="doc-project-name">{{PROJECT_NAME}}</div>
-<div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
-<table>
-  <tr><td class="label-cell">1. Probleme a tester</td><td class="content-cell">[Hypothese de probleme. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">2. Utilisateur concerne</td><td class="content-cell">[Profil utilisateur. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">3. Solutions existantes</td><td class="content-cell">[Comment le probleme est gere. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">4. Hypothese de valeur</td><td class="content-cell">[Pourquoi adopter. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">5. Hypothese de croissance</td><td class="content-cell">[Comment attirer. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">6. Hypothese de monetisation</td><td class="content-cell">[Comment generer revenus. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">7. Description du MVP</td><td class="content-cell">[Version minimale. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">8. Objectif du MVP</td><td class="content-cell">[Ce qu il valide. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">9. Indicateur cle</td><td class="content-cell">[Metrique principale. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">10. Seuil de succes</td><td class="content-cell">[Valeur minimale. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">11. Enseignements attendus</td><td class="content-cell">[Ce qu on espere apprendre. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">12. Decision strategique</td><td class="content-cell">[Perseverer, pivoter ou abandonner. 2-3 lignes max.]</td></tr>
-</table>
-<div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
-</div>`,
-
-agile: `Genere un document AGILE sous forme de tableau HTML professionnel.
-REGLES STRICTES : Format Tableau HTML 2 colonnes. Texte en paragraphe SANS puces. Contenu COURT 2-3 lignes max. IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets [].
----
-<style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
-.doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
-.doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
-.doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
-.doc-wrapper .doc-info { text-align: center; font-size: 12px; line-height: 1.8; margin-bottom: 16px; }
-.doc-wrapper table { width: 100%; border-collapse: collapse; }
-.doc-wrapper td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; font-size: 12px; line-height: 1.55; }
-.doc-wrapper .label-cell { background: #2c3e50; color: #fff; font-weight: bold; width: 28%; font-size: 11.5px; }
-.doc-wrapper .content-cell { background: #fff; width: 72%; }
-.doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
-.doc-footer a { color: #4a7c59; text-decoration: none; }
-</style>
-<div class="doc-wrapper">
-<img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
-<div class="doc-title">Agile</div>
-<div class="doc-project-name">{{PROJECT_NAME}}</div>
-<div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
-<table>
-  <tr><td class="label-cell">1. Objectif du projet</td><td class="content-cell">[Vision et objectif. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">2. Valeur prioritaire</td><td class="content-cell">[Valeur pour utilisateurs. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">3. Backlog des fonctionnalites</td><td class="content-cell">[Fonctionnalites par priorite. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">4. Sprint en cours</td><td class="content-cell">[Objectif du sprint. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">5. Taches du sprint</td><td class="content-cell">[Actions concretes. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">6. Obstacles et bloquants</td><td class="content-cell">[Problemes identifies. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">7. Livrables produits</td><td class="content-cell">[Ce qui a ete livre. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">8. Retours utilisateurs</td><td class="content-cell">[Feedback. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">9. Enseignements du sprint</td><td class="content-cell">[Ce qui a fonctionne ou pas. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">10. Actions d amelioration</td><td class="content-cell">[Mesures concretes. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">11. Decision pour le sprint suivant</td><td class="content-cell">[Priorites prochaines. 2-3 lignes max.]</td></tr>
-</table>
-<div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
-</div>`
-};
 
 // ==================== FILET DE SECURITE : VERIFICATION FORMAT DOCUMENT ====================
 function ensureDocumentFormat(htmlContent, docType) {
@@ -934,64 +569,10 @@ function ensureDocumentFormat(htmlContent, docType) {
     
     console.log(`FORMAT INCORRECT detecte pour ${docType} - Reconstruction automatique...`);
     
-    const LABELS = {
-        definition_projet: [
-            '1. Contexte', '2. Probleme a resoudre', '3. Beneficiaire principal',
-            '4. Objectif a 12 mois', '5. Besoin reel', '6. Limites actuelles',
-            '7. Livrable attendu', '8. Hors perimetre', '9. Exigences fonctionnelles',
-            '10. Contraintes', '11. Risques', '12. Criteres de succes'
-        ],
-        orientation_solution: [
-            '1. Probleme valide', '2. Utilisateur prioritaire', '3. Solution retenue',
-            '4. Justification', '5. Analyse des contraintes', '6. Ressources necessaires',
-            '7. Fonctionnalites prioritaires', '8. Plan de demarrage',
-            '9. Jalons de validation', '10. Criteres de pivot'
-        ],
-        formulation_solution: [
-            '1. Rappel du probleme cible', '2. Utilisateur cible', '3. Formulation centrale',
-            '4. Fonctionnement de la solution', '5. Frontieres de la solution',
-            '6. Resultat attendu', '7. Critere de bonne formulation', '8. Pitch'
-        ],
-        design_thinking: [
-            '1. Utilisateur cible', '2. Problemes et frustrations', '3. Comportements et habitudes',
-            '4. Probleme central', '5. Impact si non resolu', '6. Idee principale',
-            '7. Alternatives', '8. Forme du prototype', '9. Objectif du prototype',
-            '10. Utilisateurs testeurs', '11. Methode de test', '12. Criteres de validation'
-        ],
-        business_model: [
-            '1. Segments de clients', '2. Proposition de valeur', '3. Canaux',
-            '4. Relation client', '5. Sources de revenus', '6. Ressources cles',
-            '7. Activites cles', '8. Partenaires cles', '9. Structure de couts'
-        ],
-        lean_startup: [
-            '1. Probleme a tester', '2. Utilisateur concerne', '3. Solutions existantes',
-            '4. Hypothese de valeur', '5. Hypothese de croissance', '6. Hypothese de monetisation',
-            '7. Description du MVP', '8. Objectif du MVP', '9. Indicateur cle',
-            '10. Seuil de succes', '11. Enseignements attendus', '12. Decision strategique'
-        ],
-        agile: [
-            '1. Objectif du projet', '2. Valeur prioritaire', '3. Backlog des fonctionnalites',
-            '4. Sprint en cours', '5. Taches du sprint', '6. Obstacles et bloquants',
-            '7. Livrables produits', '8. Retours utilisateurs', '9. Enseignements du sprint',
-            '10. Actions d amelioration', '11. Decision pour le sprint suivant'
-        ]
-    };
-    
-    const DOC_TITLES = {
-        definition_projet: 'Definition de Projet',
-        orientation_solution: 'Orientation de Solution',
-        formulation_solution: 'Formulation de Solution',
-        design_thinking: 'Design Thinking',
-        business_model: 'Business Model Canvas',
-        lean_startup: 'Lean Startup',
-        agile: 'Agile'
-    };
-    
-    const labels = LABELS[docType] || LABELS.definition_projet;
-    const title = DOC_TITLES[docType] || 'Document';
+    const labels = DOCUMENT_LABELS[docType] || DOCUMENT_LABELS.definition_projet;
+    const title = DOCUMENT_TITLES[docType] || 'Document';
     
     const extractedContents = [];
-    
     const tdRegex = /<td[^>]*>([\s\S]*?)<\/td>/gi;
     const allTds = [];
     let match;
@@ -1010,44 +591,31 @@ function ensureDocumentFormat(htmlContent, docType) {
                 const labelNum = l.split('.')[0].trim();
                 return td.startsWith(labelNum + '.') || td.startsWith(labelNum + ' ');
             });
-            if (!isLabel && td.length > 5) {
-                extractedContents.push(td);
-            }
+            if (!isLabel && td.length > 5) extractedContents.push(td);
         });
     }
     
     if (extractedContents.length < labels.length) {
         const plainText = htmlContent.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ');
-        
         for (let i = 0; i < labels.length; i++) {
             if (extractedContents[i]) continue;
-            
             const currentNum = (i + 1).toString();
             const nextNum = (i + 2).toString();
-            
             const patterns = [
                 new RegExp(currentNum + '\\.[^:]*?:\\s*(.+?)(?=' + nextNum + '\\.|$)', 's'),
                 new RegExp(currentNum + '\\.[^.]+\\.\\s*(.+?)(?=' + nextNum + '\\.|$)', 's')
             ];
-            
             for (const pattern of patterns) {
                 const m = plainText.match(pattern);
-                if (m && m[1]) {
-                    extractedContents[i] = m[1].trim().substring(0, 500);
-                    break;
-                }
+                if (m && m[1]) { extractedContents[i] = m[1].trim().substring(0, 500); break; }
             }
-            
-            if (!extractedContents[i]) {
-                extractedContents[i] = 'A definir';
-            }
+            if (!extractedContents[i]) extractedContents[i] = 'A definir';
         }
     }
     
     let rows = '';
     for (let i = 0; i < labels.length; i++) {
-        const content = extractedContents[i] || 'A definir';
-        rows += `  <tr><td class="label-cell">${labels[i]}</td><td class="content-cell">${content}</td></tr>\n`;
+        rows += `  <tr><td class="label-cell">${labels[i]}</td><td class="content-cell">${extractedContents[i] || 'A definir'}</td></tr>\n`;
     }
     
     return `<style>
@@ -1063,7 +631,6 @@ function ensureDocumentFormat(htmlContent, docType) {
 .doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
 .doc-footer a { color: #4a7c59; text-decoration: none; }
 </style>
-
 <div class="doc-wrapper">
 <img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
 <div class="doc-title">${title}</div>
@@ -1075,14 +642,13 @@ ${rows}</table>
 </div>`;
 }
 
-// ==================== HANDLE GENERATE (avec filet de securite) ====================
+// ==================== HANDLE GENERATE ====================
 async function handleGenerate(res, history, docType = 'definition_projet', userId = null, projetNom = null) {
     const conversationText = history.map(h => 
         `${h.type === 'user' ? 'CLIENT' : 'CONSULTANT'}: ${h.content}`
     ).join('\n\n');
 
     let docPrompt = DOCUMENT_PROMPTS[docType] || DOCUMENT_PROMPTS.definition_projet;
-    
     docPrompt = docPrompt.replace(/\{\{BASE_URL\}\}/g, 'https://www.arkintelligence.africa/');
 
     const generatePrompt = `Tu es un expert en gestion de projet PMI.
@@ -1099,13 +665,9 @@ REGLES :
 - Base-toi UNIQUEMENT sur la conversation
 - Si info manquante -> "A definir"
 - Style professionnel et clair
-- Pas de blabla, que du concret
 - PAS d emojis
-- N utilise JAMAIS de majuscules inappropriees
-- TOUJOURS ecrire en francais avec les accents corrects (e avec accent, a avec accent, u avec accent, c cedille) meme si les instructions ici n en ont pas
-- Pour le HTML: garde EXACTEMENT la structure fournie avec les classes CSS (doc-wrapper, label-cell, content-cell)
-- IMPORTANT : GARDE EXACTEMENT les placeholders {{OWNER_NAME}}, {{PROJECT_NAME}}, {{DATE}} tels quels
-- NE REMPLACE PAS {{OWNER_NAME}}, {{PROJECT_NAME}}, {{DATE}} par d autres valeurs
+- TOUJOURS ecrire en francais avec les accents corrects
+- GARDE EXACTEMENT les placeholders {{OWNER_NAME}}, {{PROJECT_NAME}}, {{DATE}} tels quels
 - Renvoie le HTML directement, sans balises markdown
 - Texte en paragraphe SANS puces ni numeros
 - COPIE le template HTML tel quel et remplace UNIQUEMENT le texte entre crochets []`;
@@ -1128,69 +690,47 @@ REGLES :
     
     const data = await response.json();
     const rawDocument = data.choices[0].message.content.trim();
-    
     const document = ensureDocumentFormat(rawDocument, docType);
     
     if (userId) {
         try {
             const finalProjetNom = projetNom || 'Projet sans nom';
-            
             await supabase.from('ark_documents').insert({
                 user_id: userId,
                 projet_nom: finalProjetNom,
                 doc_type: docType,
                 contenu: document
             });
-            
             console.log(`Document sauvegarde: ${finalProjetNom} (${docType})`);
         } catch (error) {
             console.error('Erreur sauvegarde document:', error);
         }
     }
     
-    return res.status(200).json({ 
-        success: true,
-        document: document
-    });
+    return res.status(200).json({ success: true, document: document });
 }
 
 // ==================== PARTAGE DE DOCUMENTS ====================
 
 function createSlug(text) {
-    return text
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
+    return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
 async function createShareLink(res, documentId, userId, projetNom) {
     try {
         const { data: user, error: userError } = await supabase
-            .from('ark_users')
-            .select('nom, prenom')
-            .eq('id', userId)
-            .single();
+            .from('ark_users').select('nom, prenom').eq('id', userId).single();
+        if (userError || !user) return res.status(404).json({ error: 'Utilisateur non trouve' });
 
-        if (userError || !user) {
-            return res.status(404).json({ error: 'Utilisateur non trouve' });
-        }
-
-        const prenom = user.prenom || 'utilisateur';
-        const nom = user.nom || 'ark';
-        const projet = projetNom || 'mon-projet';
-
-        const ownerName = createSlug(`${prenom}-${nom}`);
-        const projectSlug = createSlug(projet);
+        const ownerName = createSlug(`${user.prenom || 'utilisateur'}-${user.nom || 'ark'}`);
+        const projectSlug = createSlug(projetNom || 'mon-projet');
         
         return res.status(200).json({
             success: true,
             shareUrl: `/ark/${ownerName}/${projectSlug}`,
-            ownerName: ownerName,
-            projectSlug: projectSlug
+            ownerName, projectSlug
         });
-
     } catch (error) {
         console.error('Erreur createShareLink:', error);
         return res.status(500).json({ error: 'Erreur serveur' });
@@ -1201,47 +741,23 @@ async function getSharedDocument(res, token) {
     try {
         const { data: link, error: linkError } = await supabase
             .from('ark_shared_links')
-            .select(`
-                id,
-                document_id,
-                is_active,
-                ark_documents (
-                    id,
-                    projet_nom,
-                    doc_type,
-                    contenu,
-                    created_at,
-                    user_id,
-                    ark_users (
-                        nom,
-                        prenom
-                    )
-                )
-            `)
-            .eq('share_token', token)
-            .eq('is_active', true)
-            .single();
+            .select(`id, document_id, is_active, ark_documents (id, projet_nom, doc_type, contenu, created_at, user_id, ark_users (nom, prenom))`)
+            .eq('share_token', token).eq('is_active', true).single();
 
-        if (linkError || !link) {
-            return res.status(404).json({ error: 'Lien invalide ou expire' });
-        }
+        if (linkError || !link) return res.status(404).json({ error: 'Lien invalide ou expire' });
 
         const document = link.ark_documents;
         const owner = document.ark_users;
 
         return res.status(200).json({
-            success: true,
-            sharedLinkId: link.id,
+            success: true, sharedLinkId: link.id,
             document: {
-                id: document.id,
-                projet_nom: document.projet_nom,
-                doc_type: document.doc_type,
-                contenu: document.contenu,
+                id: document.id, projet_nom: document.projet_nom,
+                doc_type: document.doc_type, contenu: document.contenu,
                 created_at: document.created_at,
                 owner_name: owner ? `${owner.prenom} ${owner.nom}` : 'Utilisateur Ark'
             }
         });
-
     } catch (error) {
         console.error('Erreur getSharedDocument:', error);
         return res.status(500).json({ error: 'Erreur serveur' });
@@ -1251,49 +767,31 @@ async function getSharedDocument(res, token) {
 async function trackView(res, sharedLinkId, viewerUserId, viewerIp) {
     try {
         const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-        
         const { data: recentView } = await supabase
-            .from('ark_document_views')
-            .select('id')
-            .eq('shared_link_id', sharedLinkId)
-            .eq('viewer_ip', viewerIp)
-            .gte('viewed_at', oneDayAgo)
-            .limit(1);
+            .from('ark_document_views').select('id')
+            .eq('shared_link_id', sharedLinkId).eq('viewer_ip', viewerIp)
+            .gte('viewed_at', oneDayAgo).limit(1);
 
         if (recentView && recentView.length > 0) {
             return res.status(200).json({ success: true, counted: false });
         }
 
         let viewerName = 'Inconnu';
-
         if (viewerUserId) {
             const { data: user, error: userError } = await supabase
-                .from('ark_users')
-                .select('nom, prenom')
-                .eq('id', viewerUserId)
-                .single();
-
-            if (user && !userError) {
-                viewerName = `${user.prenom} ${user.nom}`;
-            }
+                .from('ark_users').select('nom, prenom').eq('id', viewerUserId).single();
+            if (user && !userError) viewerName = `${user.prenom} ${user.nom}`;
         }
 
         const { error: insertError } = await supabase
             .from('ark_document_views')
-            .insert({
-                shared_link_id: sharedLinkId,
-                viewer_user_id: viewerUserId,
-                viewer_name: viewerName,
-                viewer_ip: viewerIp
-            });
+            .insert({ shared_link_id: sharedLinkId, viewer_user_id: viewerUserId, viewer_name: viewerName, viewer_ip: viewerIp });
 
         if (insertError) {
             console.error('Erreur enregistrement vue:', insertError);
             return res.status(500).json({ error: 'Erreur enregistrement' });
         }
-
         return res.status(200).json({ success: true, counted: true });
-
     } catch (error) {
         console.error('Erreur trackView:', error);
         return res.status(500).json({ error: 'Erreur serveur' });
@@ -1303,26 +801,12 @@ async function trackView(res, sharedLinkId, viewerUserId, viewerIp) {
 async function getDocumentStats(res, documentId, userId) {
     try {
         const { data: doc, error: docError } = await supabase
-            .from('ark_documents')
-            .select('id')
-            .eq('id', documentId)
-            .eq('user_id', userId)
-            .single();
-
-        if (docError || !doc) {
-            return res.status(404).json({ error: 'Document non trouve' });
-        }
+            .from('ark_documents').select('id').eq('id', documentId).eq('user_id', userId).single();
+        if (docError || !doc) return res.status(404).json({ error: 'Document non trouve' });
 
         const { data: views, error: viewsError } = await supabase
             .from('ark_document_views')
-            .select(`
-                id,
-                viewer_name,
-                viewed_at,
-                ark_shared_links!inner (
-                    document_id
-                )
-            `)
+            .select(`id, viewer_name, viewed_at, ark_shared_links!inner (document_id)`)
             .eq('ark_shared_links.document_id', documentId)
             .order('viewed_at', { ascending: false });
 
@@ -1330,13 +814,7 @@ async function getDocumentStats(res, documentId, userId) {
             console.error('Erreur recuperation vues:', viewsError);
             return res.status(500).json({ error: 'Erreur recuperation stats' });
         }
-
-        return res.status(200).json({
-            success: true,
-            totalViews: views ? views.length : 0,
-            views: views || []
-        });
-
+        return res.status(200).json({ success: true, totalViews: views ? views.length : 0, views: views || [] });
     } catch (error) {
         console.error('Erreur getDocumentStats:', error);
         return res.status(500).json({ error: 'Erreur serveur' });
@@ -1346,21 +824,13 @@ async function getDocumentStats(res, documentId, userId) {
 async function getUserDocuments(res, userId) {
     try {
         const { data: documents, error } = await supabase
-            .from('ark_documents')
-            .select('*')
-            .eq('user_id', userId)
-            .order('created_at', { ascending: false});
-
+            .from('ark_documents').select('*').eq('user_id', userId)
+            .order('created_at', { ascending: false });
         if (error) {
             console.error('Erreur recuperation documents:', error);
             return res.status(500).json({ error: 'Erreur recuperation' });
         }
-
-        return res.status(200).json({
-            success: true,
-            documents: documents || []
-        });
-
+        return res.status(200).json({ success: true, documents: documents || [] });
     } catch (error) {
         console.error('Erreur getUserDocuments:', error);
         return res.status(500).json({ error: 'Erreur serveur' });
@@ -1370,19 +840,13 @@ async function getUserDocuments(res, userId) {
 async function updateUserProfile(res, userId, profileData) {
     try {
         const { prenom, nom, telephone, email } = profileData;
-        
         const { error } = await supabase
-            .from('ark_users')
-            .update({ prenom, nom, telephone, email })
-            .eq('id', userId);
-
+            .from('ark_users').update({ prenom, nom, telephone, email }).eq('id', userId);
         if (error) {
             console.error('Erreur mise a jour profil:', error);
             return res.status(500).json({ error: 'Erreur mise a jour' });
         }
-
         return res.status(200).json({ success: true });
-
     } catch (error) {
         console.error('Erreur updateUserProfile:', error);
         return res.status(500).json({ error: 'Erreur serveur' });
@@ -1392,17 +856,10 @@ async function updateUserProfile(res, userId, profileData) {
 async function getUserProfile(res, userId) {
     try {
         const { data: user, error } = await supabase
-            .from('ark_users')
-            .select('id, nom, prenom, telephone, email, type_user')
-            .eq('id', userId)
-            .single();
-
-        if (error || !user) {
-            return res.status(404).json({ error: 'Utilisateur non trouve' });
-        }
-
+            .from('ark_users').select('id, nom, prenom, telephone, email, type_user')
+            .eq('id', userId).single();
+        if (error || !user) return res.status(404).json({ error: 'Utilisateur non trouve' });
         return res.status(200).json({ success: true, user });
-
     } catch (error) {
         console.error('Erreur getUserProfile:', error);
         return res.status(500).json({ error: 'Erreur serveur' });
@@ -1412,17 +869,9 @@ async function getUserProfile(res, userId) {
 async function deleteDocument(res, documentId, userId) {
     try {
         const { error } = await supabase
-            .from('ark_documents')
-            .delete()
-            .eq('id', documentId)
-            .eq('user_id', userId);
-
-        if (error) {
-            return res.status(500).json({ error: 'Erreur lors de la suppression' });
-        }
-
+            .from('ark_documents').delete().eq('id', documentId).eq('user_id', userId);
+        if (error) return res.status(500).json({ error: 'Erreur lors de la suppression' });
         return res.status(200).json({ success: true, message: 'Document supprime avec succes' });
-
     } catch (error) {
         console.error('Erreur deleteDocument:', error);
         return res.status(500).json({ error: 'Erreur serveur' });
@@ -1442,52 +891,31 @@ async function getSharedDocumentByOwnerProject(res, owner, project) {
         const nom = ownerParts.slice(1).join('-');
         
         const { data: users, error: userError } = await supabase
-            .from('ark_users')
-            .select('id, prenom, nom');
-
+            .from('ark_users').select('id, prenom, nom');
         if (userError || !users || users.length === 0) {
             return res.status(404).json({ success: false, error: 'Utilisateur introuvable' });
         }
 
-        const prenomNorm = normalizeString(prenom);
-        const nomNorm = normalizeString(nom);
-        
         const user = users.find(u => 
-            normalizeString(u.prenom || '') === prenomNorm && 
-            normalizeString(u.nom || '') === nomNorm
+            normalizeString(u.prenom || '') === normalizeString(prenom) && 
+            normalizeString(u.nom || '') === normalizeString(nom)
         );
+        if (!user) return res.status(404).json({ success: false, error: 'Utilisateur introuvable' });
 
-        if (!user) {
-            return res.status(404).json({ success: false, error: 'Utilisateur introuvable' });
-        }
-
-        const userId = user.id;
         const projectNorm = normalizeString(project.replace(/-/g, ' '));
         
         const { data: documents, error: docError } = await supabase
-            .from('ark_documents')
-            .select('contenu, projet_nom, created_at')
-            .eq('user_id', userId)
-            .order('created_at', { ascending: false });
+            .from('ark_documents').select('contenu, projet_nom, created_at')
+            .eq('user_id', user.id).order('created_at', { ascending: false });
 
         if (docError || !documents || documents.length === 0) {
             return res.status(404).json({ success: false, error: 'Aucun document disponible' });
         }
 
-        const document = documents.find(d => 
-            normalizeString(d.projet_nom || '') === projectNorm
-        );
+        const document = documents.find(d => normalizeString(d.projet_nom || '') === projectNorm);
+        if (!document) return res.status(404).json({ success: false, error: 'Document introuvable' });
 
-        if (!document) {
-            return res.status(404).json({ success: false, error: 'Document introuvable' });
-        }
-
-        return res.status(200).json({
-            success: true,
-            document: document.contenu,
-            createdAt: document.created_at
-        });
-
+        return res.status(200).json({ success: true, document: document.contenu, createdAt: document.created_at });
     } catch (error) {
         console.error('Erreur getSharedDocumentByOwnerProject:', error);
         return res.status(500).json({ success: false, error: 'Erreur serveur' });
