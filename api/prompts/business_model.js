@@ -1,18 +1,21 @@
 // FICHIER : api/prompts/business_model.js
 
-export const TEMPLATE = `Génère un BUSINESS MODEL CANVAS sous forme de GRILLE HTML authentique. 
+export const TEMPLATE = `Genere un BUSINESS MODEL CANVAS sous forme de GRILLE HTML authentique. 
 
 REGLES STRICTES :
-- Utilise les réponses de l interview BMC ET la Définition de Projet
+- Utilise les reponses de l interview BMC ET la Definition de Projet
 - NE MODIFIE PAS le HTML/CSS ci-dessous, remplace UNIQUEMENT le texte entre [crochets]
-- Texte en paragraphe fluide, SANS puces ni numéros
-- Contenu CONCIS adapté à la taille de chaque cellule
+- Texte en paragraphe fluide, SANS puces ni numeros
+- Contenu CONCIS adapte a la taille de chaque cellule (maximum 150 caracteres par cellule)
+- Le document doit tenir sur UNE SEULE PAGE A4 PAYSAGE (297mm x 210mm)
+- LIMITE DE CONTENU : chaque cellule ne doit PAS depasser 150 caracteres. Si tu depasses, raccourcis.
 - GARDE les placeholders {{PROJECT_NAME}}, {{OWNER_NAME}}, {{DATE}} tels quels
 
 ---
 
 <style>
-.bmc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; width: 100%; max-width: 297mm; margin: 0 auto; display: flex; flex-direction: column; }
+@page { size: A4 landscape; margin: 10mm; }
+.bmc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; width: 100%; max-width: 297mm; max-height: 190mm; margin: 0 auto; display: flex; flex-direction: column; }
 .bmc-header { background: #2c3e50; padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
 .bmc-header-left { display: flex; align-items: center; gap: 14px; }
 .bmc-header-logo { height: 44px; }
@@ -48,64 +51,64 @@ REGLES STRICTES :
   </div>
   <div class="bmc-header-right">
     <div class="bmc-header-field"><span class="label">Nom du projet :</span><br><span class="value">{{PROJECT_NAME}}</span></div>
-    <div class="bmc-header-field"><span class="label">Créé par :</span><br><span class="value">{{OWNER_NAME}}</span></div>
+    <div class="bmc-header-field"><span class="label">Cree par :</span><br><span class="value">{{OWNER_NAME}}</span></div>
   </div>
 </div>
 <div class="bmc-body">
   <div class="bmc-grid">
     <div class="bmc-cell cell-partenaires">
-      <div class="bmc-cell-header">Partenaires clés</div>
-      <div class="bmc-cell-content">[Partenaires stratégiques, fournisseurs, alliances nécessaires au fonctionnement.]</div>
+      <div class="bmc-cell-header">Partenaires cles</div>
+      <div class="bmc-cell-content">[Partenaires strategiques, fournisseurs, alliances necessaires. 150 car. max.]</div>
     </div>
     <div class="bmc-cell cell-activites">
-      <div class="bmc-cell-header">Activités clés</div>
-      <div class="bmc-cell-content">[Actions essentielles au quotidien pour faire fonctionner le modèle.]</div>
+      <div class="bmc-cell-header">Activites cles</div>
+      <div class="bmc-cell-content">[Actions essentielles au quotidien. 150 car. max.]</div>
     </div>
     <div class="bmc-cell cell-ressources">
-      <div class="bmc-cell-header">Ressources clés</div>
-      <div class="bmc-cell-content">[Moyens humains, techniques, financiers indispensables.]</div>
+      <div class="bmc-cell-header">Ressources cles</div>
+      <div class="bmc-cell-content">[Moyens humains, techniques, financiers. 150 car. max.]</div>
     </div>
     <div class="bmc-cell cell-proposition">
       <div class="bmc-cell-header">Proposition de valeur</div>
-      <div class="bmc-cell-content">[Valeur unique apportée au client, ce qui différencie la solution.]</div>
+      <div class="bmc-cell-content">[Valeur unique apportee au client, ce qui differencie la solution. 150 car. max.]</div>
     </div>
     <div class="bmc-cell cell-relation">
       <div class="bmc-cell-header">Relation client</div>
-      <div class="bmc-cell-content">[Comment maintenir et fidéliser la relation avec les clients.]</div>
+      <div class="bmc-cell-content">[Comment maintenir et fideliser les clients. 150 car. max.]</div>
     </div>
     <div class="bmc-cell cell-canaux">
       <div class="bmc-cell-header">Canaux</div>
-      <div class="bmc-cell-content">[Comment atteindre et distribuer la solution aux clients.]</div>
+      <div class="bmc-cell-content">[Comment atteindre et distribuer la solution. 150 car. max.]</div>
     </div>
     <div class="bmc-cell cell-segments">
       <div class="bmc-cell-header">Segments de clients</div>
-      <div class="bmc-cell-content">[Profils détaillés des différents types de clients visés.]</div>
+      <div class="bmc-cell-content">[Profils detailles des differents types de clients vises. 150 car. max.]</div>
     </div>
     <div class="bmc-cell cell-couts">
-      <div class="bmc-cell-header">Structure de coûts</div>
-      <div class="bmc-cell-content">[Principaux postes de dépenses pour lancer et maintenir l activité.]</div>
+      <div class="bmc-cell-header">Structure de couts</div>
+      <div class="bmc-cell-content">[Principaux postes de depenses pour lancer et maintenir l activite. 150 car. max.]</div>
     </div>
     <div class="bmc-cell cell-revenus">
       <div class="bmc-cell-header">Sources de revenus</div>
-      <div class="bmc-cell-content">[Comment l activité génère de l argent, modèles de monétisation.]</div>
+      <div class="bmc-cell-content">[Comment l activite genere de l argent, modeles de monetisation. 150 car. max.]</div>
     </div>
   </div>
 </div>
 <div class="bmc-footer">
   <span class="bmc-footer-date"><strong>Date :</strong> {{DATE}}</span>
-  <a class="bmc-footer-link" href="https://www.arkintelligence.africa" target="_blank">Document généré par Ark Intelligence</a>
+  <a class="bmc-footer-link" href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
 </div>
 </div>`;
 
 export const CELLS = [
-    'Partenaires clés',
-    'Activités clés',
-    'Ressources clés',
+    'Partenaires cles',
+    'Activites cles',
+    'Ressources cles',
     'Proposition de valeur',
     'Relation client',
     'Canaux',
     'Segments de clients',
-    'Structure de coûts',
+    'Structure de couts',
     'Sources de revenus'
 ];
 
