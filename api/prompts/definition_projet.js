@@ -9,15 +9,17 @@ REGLES STRICTES :
 - Texte en paragraphe SANS puces ni numeros a l interieur
 - Pas de mention de source (Q1, Q2...)
 - Style professionnel, phrases completes
-- Contenu COURT : 2-3 lignes max par section
-- Le document doit tenir sur UNE SEULE PAGE A4
+- Contenu COURT : 2-3 lignes max par section (maximum 120 caracteres par cellule)
+- Le document doit tenir sur UNE SEULE PAGE A4 PORTRAIT (210mm x 297mm)
+- LIMITE DE CONTENU : chaque cellule ne doit PAS depasser 120 caracteres. Si tu depasses, raccourcis.
 - IMPORTANT pour le Contexte : COMMENCE par une phrase qui definit clairement le projet
 - IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets []
 
 ---
 
 <style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
+@page { size: A4 portrait; margin: 10mm; }
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; max-height: 277mm; margin: 0 auto; }
 .doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
 .doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
 .doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
@@ -36,18 +38,18 @@ REGLES STRICTES :
 <div class="doc-project-name">{{PROJECT_NAME}}</div>
 <div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
 <table>
-  <tr><td class="label-cell">1. Contexte</td><td class="content-cell">[COMMENCE par definir le projet puis explique pourquoi il est lance. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">2. Probleme a resoudre</td><td class="content-cell">[Decris le probleme concret. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">3. Beneficiaire principal</td><td class="content-cell">[Identifie les premiers clients. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">4. Objectif a 12 mois</td><td class="content-cell">[Objectifs concrets. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">5. Besoin reel</td><td class="content-cell">[Ressources indispensables. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">6. Limites actuelles</td><td class="content-cell">[Freins ou obstacles. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">7. Livrable attendu</td><td class="content-cell">[Resultat concret attendu. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">8. Hors perimetre</td><td class="content-cell">[Ce qui ne fait PAS partie du projet. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">9. Exigences fonctionnelles</td><td class="content-cell">[Fonctionnalite prioritaire. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">10. Contraintes</td><td class="content-cell">[Contraintes principales. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">11. Risques</td><td class="content-cell">[Risques majeurs. 2-3 lignes max.]</td></tr>
-  <tr><td class="label-cell">12. Criteres de succes</td><td class="content-cell">[Comment mesurer le succes. 2-3 lignes max.]</td></tr>
+  <tr><td class="label-cell">1. Contexte</td><td class="content-cell">[COMMENCE par definir le projet puis explique pourquoi il est lance. 120 car. max.]</td></tr>
+  <tr><td class="label-cell">2. Probleme a resoudre</td><td class="content-cell">[Decris le probleme concret. 120 car. max.]</td></tr>
+  <tr><td class="label-cell">3. Beneficiaire principal</td><td class="content-cell">[Identifie les premiers clients. 120 car. max.]</td></tr>
+  <tr><td class="label-cell">4. Objectif a 12 mois</td><td class="content-cell">[Objectifs concrets. 120 car. max.]</td></tr>
+  <tr><td class="label-cell">5. Besoin reel</td><td class="content-cell">[Ressources indispensables. 120 car. max.]</td></tr>
+  <tr><td class="label-cell">6. Limites actuelles</td><td class="content-cell">[Freins ou obstacles. 120 car. max.]</td></tr>
+  <tr><td class="label-cell">7. Livrable attendu</td><td class="content-cell">[Resultat concret attendu. 120 car. max.]</td></tr>
+  <tr><td class="label-cell">8. Hors perimetre</td><td class="content-cell">[Ce qui ne fait PAS partie du projet. 120 car. max.]</td></tr>
+  <tr><td class="label-cell">9. Exigences fonctionnelles</td><td class="content-cell">[Fonctionnalite prioritaire. 120 car. max.]</td></tr>
+  <tr><td class="label-cell">10. Contraintes</td><td class="content-cell">[Contraintes principales. 120 car. max.]</td></tr>
+  <tr><td class="label-cell">11. Risques</td><td class="content-cell">[Risques majeurs. 120 car. max.]</td></tr>
+  <tr><td class="label-cell">12. Criteres de succes</td><td class="content-cell">[Comment mesurer le succes. 120 car. max.]</td></tr>
 </table>
 <div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
 </div>`;
