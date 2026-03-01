@@ -127,6 +127,13 @@ function showDocument(docType, content, metadata) {
     }
     
     el.documentScreen.classList.add('visible');
+    
+    // Ajuster la police pour que le document tienne sur une page A4
+    requestAnimationFrame(function() {
+        if (typeof fitToPage === 'function') {
+            fitToPage(el.documentBody);
+        }
+    });
 }
 
 function hideDocument() {
