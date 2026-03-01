@@ -1,18 +1,21 @@
 // FICHIER : api/prompts/design_thinking.js
 
-export const TEMPLATE = `Génère un document DESIGN THINKING sous forme de CANVAS HTML.
+export const TEMPLATE = `Genere un document DESIGN THINKING sous forme de CANVAS HTML.
 
 REGLES STRICTES :
-- Utilise les réponses de l interview Design Thinking ET la Définition de Projet
+- Utilise les reponses de l interview Design Thinking ET la Definition de Projet
 - NE MODIFIE PAS le HTML/CSS ci-dessous, remplace UNIQUEMENT le texte entre [crochets]
-- Texte en paragraphe fluide, SANS puces ni numéros
-- 3 à 5 lignes par colonne, style professionnel
+- Texte en paragraphe fluide, SANS puces ni numeros
+- 3 a 5 lignes par colonne (maximum 200 caracteres par colonne), style professionnel
+- Le document doit tenir sur UNE SEULE PAGE A4 PAYSAGE (297mm x 210mm)
+- LIMITE DE CONTENU : chaque colonne ne doit PAS depasser 200 caracteres. Si tu depasses, raccourcis.
 - GARDE les placeholders {{PROJECT_NAME}}, {{OWNER_NAME}}, {{DATE}} tels quels
 
 ---
 
 <style>
-.dt-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; width: 100%; max-width: 297mm; margin: 0 auto; display: flex; flex-direction: column; }
+@page { size: A4 landscape; margin: 10mm; }
+.dt-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; width: 100%; max-width: 297mm; max-height: 190mm; margin: 0 auto; display: flex; flex-direction: column; }
 .dt-header { background: #2c3e50; padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
 .dt-header-left { display: flex; align-items: center; gap: 14px; }
 .dt-header-logo { height: 44px; }
@@ -45,53 +48,53 @@ REGLES STRICTES :
   </div>
   <div class="dt-header-right">
     <div class="dt-header-field"><span class="label">Nom du projet :</span><br><span class="value">{{PROJECT_NAME}}</span></div>
-    <div class="dt-header-field"><span class="label">Créé par :</span><br><span class="value">{{OWNER_NAME}}</span></div>
+    <div class="dt-header-field"><span class="label">Cree par :</span><br><span class="value">{{OWNER_NAME}}</span></div>
   </div>
 </div>
 <div class="dt-body">
   <div class="dt-canvas">
     <div class="dt-column">
-      <div class="dt-column-header">Expérience utilisateur</div>
-      <div class="dt-column-content">[Synthèse de la journée typique de l utilisateur, ses difficultés, frustrations, émotions et habitudes actuelles. 3-5 lignes.]</div>
+      <div class="dt-column-header">Experience utilisateur</div>
+      <div class="dt-column-content">[Synthese de la journee typique de l utilisateur, ses difficultes, frustrations et habitudes. 200 car. max.]</div>
     </div>
     <div class="dt-column">
-      <div class="dt-column-header">Définition du Problème</div>
-      <div class="dt-column-content">[Problème central reformulé et impact concret si non résolu. 3-5 lignes.]</div>
+      <div class="dt-column-header">Definition du Probleme</div>
+      <div class="dt-column-content">[Probleme central reformule et impact concret si non resolu. 200 car. max.]</div>
     </div>
     <div class="dt-column">
       <div class="dt-column-header">Solution</div>
-      <div class="dt-column-content">[Idée principale retenue, alternatives envisagées et raisons du choix. 3-5 lignes.]</div>
+      <div class="dt-column-content">[Idee principale retenue, alternatives envisagees et raisons du choix. 200 car. max.]</div>
     </div>
     <div class="dt-column">
       <div class="dt-column-header">Prototype</div>
-      <div class="dt-column-content">[Forme du prototype, ce qu il permet de tester, périmètre limité. 3-5 lignes.]</div>
+      <div class="dt-column-content">[Forme du prototype, ce qu il permet de tester, perimetre limite. 200 car. max.]</div>
     </div>
     <div class="dt-column">
       <div class="dt-column-header">Test</div>
-      <div class="dt-column-content">[Méthode de test, nombre de testeurs, critères de validation et seuil de réussite. 3-5 lignes.]</div>
+      <div class="dt-column-content">[Methode de test, nombre de testeurs, criteres de validation et seuil de reussite. 200 car. max.]</div>
     </div>
   </div>
   <div class="dt-resume-row">
     <div class="dt-resume">
-      <div class="dt-resume-header">Résumé</div>
-      <div class="dt-resume-content">[Synthèse en 3-4 phrases de l approche Design Thinking pour ce projet.]</div>
+      <div class="dt-resume-header">Resume</div>
+      <div class="dt-resume-content">[Synthese en 3-4 phrases de l approche Design Thinking pour ce projet. 200 car. max.]</div>
     </div>
     <div class="dt-resume-empty"><img src="/assets/logo.png" alt="Ark Intelligence"></div>
   </div>
 </div>
 <div class="dt-footer">
   <span class="dt-footer-date"><strong>Date :</strong> {{DATE}}</span>
-  <a class="dt-footer-link" href="https://www.arkintelligence.africa" target="_blank">Document généré par Ark Intelligence</a>
+  <a class="dt-footer-link" href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
 </div>
 </div>`;
 
 export const COLUMNS = [
-    'Expérience utilisateur',
-    'Définition du Problème',
+    'Experience utilisateur',
+    'Definition du Probleme',
     'Solution',
     'Prototype',
     'Test',
-    'Résumé'
+    'Resume'
 ];
 
 export const TITLE = 'Design Thinking';
