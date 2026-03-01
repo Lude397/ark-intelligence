@@ -324,6 +324,7 @@
 
     </div>
 
+    <script src="/shared/js/fitToPage.js"></script>
     <script>
         const LOGO_URL = "/assets/logo.png";
         const API_URL = '/api/chat';
@@ -396,6 +397,13 @@
                 .replace(/https:\/\/arkintelligence\.vercel\.app/g, 'https://www.arkintelligence.africa');
             
             document.getElementById('documentContent').innerHTML = htmlContent;
+            
+            // Ajuster la police pour que le document tienne sur une page A4
+            requestAnimationFrame(function() {
+                if (typeof fitToPage === 'function') {
+                    fitToPage(document.getElementById('documentContent'));
+                }
+            });
             
             const userData = localStorage.getItem('ark_user');
             if (!userData) {
