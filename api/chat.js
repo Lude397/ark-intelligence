@@ -780,7 +780,8 @@ function ensureDocumentFormat(htmlContent, docType) {
     }
     
     return `<style>
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
+@page { size: A4 portrait; margin: 10mm; }
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; max-height: 277mm; margin: 0 auto; }
 .doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
 .doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
 .doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
