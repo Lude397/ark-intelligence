@@ -26,6 +26,10 @@
             padding: 20px;
         }
 
+        .container.landscape {
+            max-width: 1200px;
+        }
+
         .header {
             background: #ffffff;
             border-bottom: 2px solid #e8edf2;
@@ -159,6 +163,11 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
             min-height: 400px;
         }
+
+        .container:has(.dt-wrapper), .container:has(.bmc-wrapper) { max-width: 1200px; }
+        .document:has(.dt-wrapper), .document:has(.bmc-wrapper) { max-width: 100%; }
+        .document .dt-column, .document .bmc-cell { overflow: visible; }
+        .document .dt-column-content, .document .bmc-cell-content { overflow: visible; }
 
         .document h1 {
             font-size: 28px;
@@ -397,6 +406,11 @@
                 .replace(/https:\/\/arkintelligence\.vercel\.app/g, 'https://www.arkintelligence.africa');
             
             document.getElementById('documentContent').innerHTML = htmlContent;
+            
+            // Adapter le conteneur pour les documents paysage (DT, BMC)
+            if (htmlContent.includes('dt-wrapper') || htmlContent.includes('bmc-wrapper')) {
+                document.querySelector('.container').classList.add('landscape');
+            }
             
             // Ajuster la police pour que le document tienne sur une page A4
             requestAnimationFrame(function() {
