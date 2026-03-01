@@ -120,7 +120,7 @@ function showDocument(docType, content, metadata) {
     el.documentTitle.textContent = DOC_NAMES[docType] || docType;
     
     const trimmed = updatedContent.trim();
-    if (trimmed.startsWith('<!DOCTYPE html>') || trimmed.startsWith('<html') || trimmed.includes('<table>')) {
+    if (trimmed.startsWith('<!DOCTYPE html>') || trimmed.startsWith('<html') || trimmed.includes('<table>') || trimmed.includes('dt-wrapper') || trimmed.includes('bmc-wrapper') || trimmed.includes('<style>')) {
         el.documentBody.innerHTML = updatedContent;
     } else {
         el.documentBody.innerHTML = markdownToHtml(updatedContent);
