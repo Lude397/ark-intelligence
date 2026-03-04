@@ -11,15 +11,6 @@ REGLES STRICTES :
 - Le document doit tenir sur UNE SEULE PAGE A4 PORTRAIT (210mm x 297mm)
 - LIMITE DE CONTENU : chaque cellule ne doit PAS depasser 120 caracteres. Si tu depasses, raccourcis.
 - IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets []
-- RÈGLE ABSOLUE - LANGUE FRANÇAISE :
-Tu dois TOUJOURS écrire en français correct avec tous les accents obligatoires.
-Ne jamais omettre un accent. Exemples : é, è, ê, ë, à, â, ù, û, î, ï, ô, ç, œ, æ.
-Mots courants à ne JAMAIS écrire sans accent :
-définition, problème, résoudre, bénéficiaire, critères, succès, périmètre,
-évaluation, données, système, intégration, référence, spécifique, général,
-différent, nécessaire, réel, créer, générer, stratégie, fonctionnalités,
-exigences, contraintes, préjugés, développement, objectif, période.
-Tout texte sans accent correct sera considéré comme une erreur grave.
 
 ---
 
