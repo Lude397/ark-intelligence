@@ -10,15 +10,6 @@ REGLES STRICTES :
 - Le document doit tenir sur UNE SEULE PAGE A4 PAYSAGE (297mm x 210mm)
 - LIMITE DE CONTENU : chaque cellule ne doit PAS depasser 150 caracteres. Si tu depasses, raccourcis.
 - GARDE les placeholders {{PROJECT_NAME}}, {{OWNER_NAME}}, {{DATE}} tels quels
-- RÈGLE ABSOLUE - LANGUE FRANÇAISE :
-Tu dois TOUJOURS écrire en français correct avec tous les accents obligatoires.
-Ne jamais omettre un accent. Exemples : é, è, ê, ë, à, â, ù, û, î, ï, ô, ç, œ, æ.
-Mots courants à ne JAMAIS écrire sans accent :
-définition, problème, résoudre, bénéficiaire, critères, succès, périmètre,
-évaluation, données, système, intégration, référence, spécifique, général,
-différent, nécessaire, réel, créer, générer, stratégie, fonctionnalités,
-exigences, contraintes, préjugés, développement, objectif, période.
-Tout texte sans accent correct sera considéré comme une erreur grave.
 
 ---
 
