@@ -6,12 +6,10 @@ REGLES STRICTES :
 - Utilise les reponses de l interview Design Thinking ET la Definition de Projet
 - NE MODIFIE PAS le HTML/CSS ci-dessous, remplace UNIQUEMENT le texte entre [crochets]
 - Texte en paragraphe fluide, SANS puces ni numeros
-- 3 a 5 lignes par colonne (maximum 150 caracteres par colonne), style professionnel
 - Le document doit tenir sur UNE SEULE PAGE A4 PAYSAGE (297mm x 210mm)
-- LIMITE DE CONTENU : chaque colonne ne doit PAS depasser 150 caracteres. Si tu depasses, raccourcis.
-- GARDE les placeholders {{PROJECT_NAME}}, {{OWNER_NAME}}, {{DATE}} tels quels
 - MINIMUM 120 caracteres par cellule : si ton contenu est plus court, developpe et enrichis
 - MAXIMUM 150 caracteres par cellule : si tu depasses, raccourcis sans perdre le sens
+- GARDE les placeholders {{PROJECT_NAME}}, {{OWNER_NAME}}, {{DATE}} tels quels
 
 ---
 
@@ -31,14 +29,13 @@ REGLES STRICTES :
 .dt-column { border: 1px solid #ccc; display: flex; flex-direction: column; overflow: hidden; }
 .dt-column-header { background: #2c3e50; color: #fff; font-weight: bold; font-size: 15px; padding: 11px 12px; text-align: center; flex-shrink: 0; }
 .dt-column-content { padding: 12px 13px; font-size: 15px; line-height: 1.7; color: #222; flex: 1; }
-.dt-resume-row { display: grid; grid-template-columns: 2fr 3fr; gap: 7px; margin-top: 7px; flex-shrink: 0; }
+.dt-resume-row { display: grid; grid-template-columns: 1fr; gap: 7px; margin-top: 7px; flex-shrink: 0; }
 .dt-resume { border: 1px solid #ccc; display: flex; flex-direction: column; }
 .dt-resume-header { background: #2c3e50; color: #fff; font-weight: bold; font-size: 15px; padding: 11px 12px; text-align: center; flex-shrink: 0; }
 .dt-resume-content { padding: 12px 13px; font-size: 15px; line-height: 1.7; color: #222; flex: 1; }
-.dt-resume-empty { display: flex; align-items: center; justify-content: center; }
-.dt-resume-empty img { height: 55px; opacity: 0.45; }
 .dt-footer { padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-.dt-footer-date { font-size: 15px; color: #333; border-bottom: 2.5px solid #2c3e50; padding-bottom: 4px; }
+.dt-footer-date { font-size: 15px; color: #333; border-bottom: 2.5px solid #2c3e50; padding-bottom: 4px; font-weight: bold; }
+.dt-footer-logo { height: 40px; opacity: 0.6; }
 .dt-footer-link { color: #4a7c59; text-decoration: none; font-size: 14px; font-style: italic; }
 </style>
 
@@ -57,35 +54,35 @@ REGLES STRICTES :
   <div class="dt-canvas">
     <div class="dt-column">
       <div class="dt-column-header">Experience utilisateur</div>
-      <div class="dt-column-content">[Synthese de la journee typique de l utilisateur, ses difficultes, frustrations et habitudes. 200 car. max.]</div>
+      <div class="dt-column-content">[Synthese de la journee typique de l utilisateur, ses difficultes, frustrations et habitudes. 120-150 car.]</div>
     </div>
     <div class="dt-column">
       <div class="dt-column-header">Definition du Probleme</div>
-      <div class="dt-column-content">[Probleme central reformule et impact concret si non resolu. 200 car. max.]</div>
+      <div class="dt-column-content">[Probleme central reformule et impact concret si non resolu. 120-150 car.]</div>
     </div>
     <div class="dt-column">
       <div class="dt-column-header">Solution</div>
-      <div class="dt-column-content">[Idee principale retenue, alternatives envisagees et raisons du choix. 200 car. max.]</div>
+      <div class="dt-column-content">[Idee principale retenue, alternatives envisagees et raisons du choix. 120-150 car.]</div>
     </div>
     <div class="dt-column">
       <div class="dt-column-header">Prototype</div>
-      <div class="dt-column-content">[Forme du prototype, ce qu il permet de tester, perimetre limite. 200 car. max.]</div>
+      <div class="dt-column-content">[Forme du prototype, ce qu il permet de tester, perimetre limite. 120-150 car.]</div>
     </div>
     <div class="dt-column">
       <div class="dt-column-header">Test</div>
-      <div class="dt-column-content">[Methode de test, nombre de testeurs, criteres de validation et seuil de reussite. 200 car. max.]</div>
+      <div class="dt-column-content">[Methode de test, nombre de testeurs, criteres de validation et seuil de reussite. 120-150 car.]</div>
     </div>
   </div>
   <div class="dt-resume-row">
     <div class="dt-resume">
       <div class="dt-resume-header">Resume</div>
-      <div class="dt-resume-content">[Synthese en 3-4 phrases de l approche Design Thinking pour ce projet. 200 car. max.]</div>
+      <div class="dt-resume-content">[Synthese en 3-4 phrases de l approche Design Thinking pour ce projet. 120-150 car.]</div>
     </div>
-    <div class="dt-resume-empty"><img src="/assets/logo.png" alt="Ark Intelligence"></div>
   </div>
 </div>
 <div class="dt-footer">
   <span class="dt-footer-date"><strong>Date :</strong> {{DATE}}</span>
+  <img class="dt-footer-logo" src="/assets/logo.png" alt="Ark Intelligence">
   <a class="dt-footer-link" href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
 </div>
 </div>`;
