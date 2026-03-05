@@ -205,13 +205,12 @@ ${ex.contenu}
 - Si tu dois utiliser un terme technique, explique-le simplement entre parentheses
 - TOUJOURS ecrire en francais avec les accents corrects
 
-**ETAPE 0 - CLASSIFICATION (OBLIGATOIRE au premier message) :**
-Analyse le message du client AVANT de poser des questions :
-
-1. QUESTION SUR L APPLICATION -> Reponds brievement puis demande de decrire le projet
-2. HORS SUJET -> Redirige vers le cadrage de projet
-3. MESSAGE VAGUE -> Demande plus de precision
-4. PROJET DETECTE -> Passe a la MISSION
+[CLASSIFICATION INTERNE - NE PAS AFFICHER] Analyse silencieusement le message :
+1. QUESTION SUR L APPLICATION -> Reponds brievement, ne pose pas de question de cadrage
+2. HORS SUJET -> Redirige brievement
+3. MESSAGE VAGUE -> Demande une precision
+4. PROJET DETECTE -> Passe directement a la MISSION sans aucune mention de classification
+NE JAMAIS ecrire "ETAPE 0", "CLASSIFICATION", "PROJET DETECTE" ou tout texte de debug.
 
 ---
 
@@ -244,6 +243,7 @@ REGLES :
 2. PAS de mention de lieu geographique, ville, pays, quartier ou devise
 3. Une question a la fois
 4. LANGAGE SIMPLE
+5. Quand le client repond par une lettre (A, B, C, D ou E), retrouve le TEXTE COMPLET de l option correspondante dans ta question precedente et reformule avec ce texte. NE JAMAIS mentionner la lettre dans la reformulation.
 
 ---
 
@@ -282,8 +282,8 @@ ETAPE 1 :
 4. Demande "Quel nom souhaitez-vous donner a votre projet ?"
 
 ETAPE 2 - APRES CHOIX DU NOM :
-1. Identifie le nom exact choisi
-2. Ecris : **Nom du projet : [le nom exact]**
+1. Identifie le nom exact choisi (si le client donne une lettre, retrouve le nom correspondant dans ta liste)
+2. Ecris : **Nom du projet : [le nom exact, pas la lettre]**
 3. Ecris : [GENERATE]
 4. ARRETE
 
@@ -358,6 +358,7 @@ REGLES CRITIQUES :
 - Si E (Autre), ACCEPTE et AVANCE
 - NE JAMAIS reposer une question
 - PROGRESSION OBLIGATOIRE
+- Quand le client repond par une lettre, retrouve le texte complet de l option et reformule avec ce texte
 
 DONNEES DU CLIENT : "${projectDescription}"`;
 }
@@ -422,6 +423,7 @@ REGLES CRITIQUES :
 - Si E (Autre), ACCEPTE et AVANCE
 - NE JAMAIS reposer une question
 - PROGRESSION OBLIGATOIRE
+- Quand le client repond par une lettre, retrouve le texte complet de l option et reformule avec ce texte
 
 DONNEES DU CLIENT : "${projectDescription}"`;
 }
@@ -493,6 +495,7 @@ REGLES CRITIQUES :
 - NE JAMAIS reposer une question
 - PROGRESSION OBLIGATOIRE
 - Ne repose PAS les infos deja dans la Definition de Projet, utilise-les comme contexte
+- Quand le client repond par une lettre, retrouve le texte complet de l option et reformule avec ce texte
 
 DONNEES DU CLIENT : "${projectDescription}"`;
 }
@@ -552,6 +555,7 @@ REGLES CRITIQUES :
 - NE JAMAIS reposer une question
 - PROGRESSION OBLIGATOIRE
 - Ne repose PAS les infos deja dans la Definition de Projet, utilise-les comme contexte
+- Quand le client repond par une lettre, retrouve le texte complet de l option et reformule avec ce texte
 
 DONNEES DU CLIENT : "${projectDescription}"`;
 }
@@ -589,9 +593,23 @@ async function handleChat(res, message, history, docType = 'definition_projet') 
         // definition_projet : noms proposes ET client a repondu -> forcer la generation
         if (progress.hasNameStep && progress.nameProposed) {
             console.log(`[SAFETY NET] Nom choisi pour definition_projet - FORCE GENERATE`);
+
+            // Résoudre la lettre en nom réel depuis l'historique
+            let nomChoisi = message.trim();
+            const letterMatch = nomChoisi.match(/^[A-Ea-e]$/);
+            if (letterMatch) {
+                const lastAIMsg = [...history].reverse().find(h => h.type === 'ai' || h.type === 'assistant');
+                if (lastAIMsg) {
+                    const letter = nomChoisi.toUpperCase();
+                    const regex = new RegExp(letter + '\\)\\s*(.+)', 'i');
+                    const match = lastAIMsg.content.match(regex);
+                    if (match && match[1]) nomChoisi = match[1].trim();
+                }
+            }
+
             return res.status(200).json({ 
                 action: 'generate',
-                response: `**Nom du projet : ${message.trim()}**\n\nGeneration de votre document en cours...`
+                response: `**Nom du projet : ${nomChoisi}**\n\nGeneration de votre document en cours...`
             });
         }
     }
@@ -637,7 +655,7 @@ async function handleChat(res, message, history, docType = 'definition_projet') 
     } else if (progress.hasNameStep && !progress.nameProposed) {
         progressInstruction = `Les ${totalQuestions} questions sont terminees. Propose 5 noms de projet (A, B, C, D, E) et demande au client de choisir.`;
     } else if (progress.hasNameStep && progress.nameProposed) {
-        progressInstruction = `Le client vient de choisir un nom. Confirme le nom et ecris [GENERATE] sur une nouvelle ligne.`;
+        progressInstruction = `Le client vient de choisir un nom. Si c est une lettre, retrouve le nom correspondant dans ta liste precedente. Confirme le nom exact et ecris [GENERATE] sur une nouvelle ligne.`;
     } else {
         progressInstruction = `Les ${totalQuestions} questions sont terminees. Fais une courte synthese et ecris [GENERATE] sur une nouvelle ligne.`;
     }
@@ -668,6 +686,7 @@ REGLES :
 5. EVITE LE JARGON : parle simplement
 6. NE JAMAIS afficher de texte de debug ou reflexion interne
 7. Si E (Autre) avec texte libre, ACCEPTE et AVANCE
+8. Quand le client repond par une lettre (A, B, C, D ou E), retrouve le TEXTE COMPLET de l option dans la question precedente et reformule avec ce texte. NE JAMAIS mentionner la lettre.
 
 REGLE ABSOLUE : Chaque reponse du client = passer a la question suivante.`;
 
@@ -706,7 +725,6 @@ function ensureDocumentFormat(htmlContent, docType) {
             return htmlContent;
         }
         console.log(`FORMAT INCORRECT detecte pour design_thinking - Reconstruction automatique...`);
-        // Fallback: return the template with placeholder text
         const template = DOCUMENT_PROMPTS[docType] || '';
         const cleanTemplate = template.split('---').pop().trim();
         return cleanTemplate;
@@ -780,8 +798,7 @@ function ensureDocumentFormat(htmlContent, docType) {
     }
     
     return `<style>
-@page { size: A4 portrait; margin: 10mm; }
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; max-height: 277mm; margin: 0 auto; }
+.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; margin: 0 auto; }
 .doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
 .doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
 .doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
