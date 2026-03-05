@@ -9,7 +9,7 @@ REGLES STRICTES :
 - Texte en paragraphe SANS puces ni numeros a l interieur
 - Pas de mention de source (Q1, Q2...)
 - Style professionnel, phrases completes
-- Contenu COURT : 2-3 lignes max par section (maximum 120 caracteres par cellule)
+- Contenu COURT : 2-3 lignes max par section (maximum 180 caracteres par cellule)
 - Le document doit tenir sur UNE SEULE PAGE A4 PORTRAIT (210mm x 297mm)
 - LIMITE DE CONTENU : chaque cellule ne doit PAS depasser 180 caracteres. Si tu depasses, raccourcis.
 - IMPORTANT pour le Contexte : COMMENCE par une phrase qui definit clairement le projet
