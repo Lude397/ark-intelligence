@@ -7,10 +7,12 @@ REGLES STRICTES :
 - Ce document s appuie sur l Orientation de Solution validee
 - Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
 - Texte en paragraphe SANS puces ni numeros a l interieur
-- Contenu COURT : 2-3 lignes max par section (maximum 150 caracteres par cellule)
+- Contenu COURT : 2-3 lignes max par section (maximum 180 caracteres par cellule)
 - Le document doit tenir sur UNE SEULE PAGE A4 PORTRAIT (210mm x 297mm)
-- LIMITE DE CONTENU : chaque cellule ne doit PAS depasser 150 caracteres. Si tu depasses, raccourcis.
+- LIMITE DE CONTENU : chaque cellule ne doit PAS depasser 180 caracteres. Si tu depasses, raccourcis.
 - IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets []
+- MINIMUM 150 caracteres par cellule : si ton contenu est plus court, developpe et enrichis
+- MAXIMUM 180 caracteres par cellule : si tu depasses, raccourcis sans perdre le sens
 
 ---
 
