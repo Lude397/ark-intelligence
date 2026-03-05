@@ -6,10 +6,12 @@ REGLES STRICTES :
 - Utilise les reponses de l interview Design Thinking ET la Definition de Projet
 - NE MODIFIE PAS le HTML/CSS ci-dessous, remplace UNIQUEMENT le texte entre [crochets]
 - Texte en paragraphe fluide, SANS puces ni numeros
-- 3 a 5 lignes par colonne (maximum 200 caracteres par colonne), style professionnel
+- 3 a 5 lignes par colonne (maximum 150 caracteres par colonne), style professionnel
 - Le document doit tenir sur UNE SEULE PAGE A4 PAYSAGE (297mm x 210mm)
-- LIMITE DE CONTENU : chaque colonne ne doit PAS depasser 200 caracteres. Si tu depasses, raccourcis.
+- LIMITE DE CONTENU : chaque colonne ne doit PAS depasser 150 caracteres. Si tu depasses, raccourcis.
 - GARDE les placeholders {{PROJECT_NAME}}, {{OWNER_NAME}}, {{DATE}} tels quels
+- MINIMUM 120 caracteres par cellule : si ton contenu est plus court, developpe et enrichis
+- MAXIMUM 150 caracteres par cellule : si tu depasses, raccourcis sans perdre le sens
 
 ---
 
