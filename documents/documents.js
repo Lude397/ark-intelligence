@@ -84,39 +84,64 @@ function renderMyDocuments(docs) {
     el.mydocsList.innerHTML = html;
 }
 
-
-// ===== IFRAME RENDERER =====
-function renderInIframe(container, htmlContent) {
-    container.innerHTML = '';
-    const isLandscape = htmlContent.includes('dt-wrapper') || htmlContent.includes('bmc-wrapper');
-    const iframe = document.createElement('iframe');
-    iframe.style.cssText = 'width:100%;border:none;display:block;min-height:400px;';
-    const fullHtml = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:white;padding:8px;}</style></head><body>' + htmlContent + '</body></html>';
-    iframe.srcdoc = fullHtml;
-    container.appendChild(iframe);
-    iframe.addEventListener('load', function() {
-        try {
-            const h = iframe.contentDocument.documentElement.scrollHeight;
-            iframe.style.height = (h + 20) + 'px';
-        } catch(e) {
-            iframe.style.height = isLandscape ? '650px' : '1000px';
-        }
-    });
-}
-
 // ===== OPEN DOCUMENT =====
 function openDocument(documentId) {
     const doc = state.allDocuments.find(d => d.id === documentId);
     if (!doc) return;
     
     state.projetNom = doc.projet_nom;
-    showDocument(doc.doc_type, doc.contenu, {
+    loadAndShowPdf(doc.doc_type, doc.contenu, {
         id: doc.id,
         projetNom: doc.projet_nom,
         createdAt: doc.created_at
     });
 }
 
+
+// ===== PDF DISPLAY =====
+async function loadAndShowPdf(docType, content, metadata) {
+    const userData = JSON.parse(localStorage.getItem('ark_user'));
+    let ownerName = 'Utilisateur Ark';
+    if (userData) {
+        ownerName = ((userData.prenom || '') + ' ' + (userData.nom || '')).trim() || 'Utilisateur Ark';
+    }
+    const projectName = (metadata && metadata.projetNom) || state.projetNom || 'Projet sans nom';
+
+    // Afficher le loading
+    el.documentBody.innerHTML = '<div style="text-align:center;padding:60px 20px;"><div style="width:40px;height:40px;border:3px solid #e8edf2;border-top-color:#2c3e50;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px;"></div><p style="color:#666;">Préparation du document...</p></div><style>@keyframes spin{to{transform:rotate(360deg);}}</style>';
+    el.documentScreen.classList.add('visible');
+
+    try {
+        const response = await fetch('/api/generate-pdf', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                documentId: metadata.id,
+                userId: userData ? userData.id : null,
+                ownerName: ownerName,
+                projectName: projectName,
+                createdAt: metadata.createdAt
+            })
+        });
+        const data = await response.json();
+
+        if (data.success && data.pdfUrl) {
+            el.documentBody.innerHTML = '';
+            const iframe = document.createElement('iframe');
+            iframe.src = data.pdfUrl;
+            iframe.style.cssText = 'width:100%;height:80vh;border:none;display:block;';
+            el.documentBody.appendChild(iframe);
+        } else {
+            // Fallback : afficher le HTML si PDF échoue
+            showDocumentHtml(docType, content, metadata);
+        }
+    } catch (error) {
+        console.error('Erreur PDF:', error);
+        showDocumentHtml(docType, content, metadata);
+    }
+}
+
+function showDocumentHtml(docType, content, metadata) {
 function showDocument(docType, content, metadata) {
     const userData = JSON.parse(localStorage.getItem('ark_user'));
     let ownerName = 'Utilisateur Ark';
@@ -142,12 +167,19 @@ function showDocument(docType, content, metadata) {
     
     const trimmed = updatedContent.trim();
     if (trimmed.startsWith('<!DOCTYPE html>') || trimmed.startsWith('<html') || trimmed.includes('<table>') || trimmed.includes('dt-wrapper') || trimmed.includes('bmc-wrapper') || trimmed.includes('<style>')) {
-        renderInIframe(el.documentBody, updatedContent);
+        el.documentBody.innerHTML = updatedContent;
     } else {
-        renderInIframe(el.documentBody, markdownToHtml(updatedContent));
+        el.documentBody.innerHTML = markdownToHtml(updatedContent);
     }
     
     el.documentScreen.classList.add('visible');
+    
+    requestAnimationFrame(function() {
+        if (typeof fitToPage === 'function') {
+            fitToPage(el.documentBody);
+        }
+    });
+}
 }
 
 function hideDocument() {
