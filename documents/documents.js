@@ -91,8 +91,12 @@ function renderInIframe(container, htmlContent) {
     const isLandscape = htmlContent.includes('dt-wrapper') || htmlContent.includes('bmc-wrapper');
     const desktopWidth = isLandscape ? 1100 : 820;
 
+    // Wrapper scrollable pour le zoom
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'width:100%;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom;background:white;';
+
     const iframe = document.createElement('iframe');
-    iframe.style.cssText = 'border:none;display:block;';
+    iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;opacity:0;transition:opacity 0.2s;';
     iframe.setAttribute('scrolling', 'no');
 
     const fullHtml = `<!DOCTYPE html>
@@ -108,24 +112,26 @@ body { background: white; width: ${desktopWidth}px; }
 </html>`;
 
     iframe.srcdoc = fullHtml;
-    container.appendChild(iframe);
+    wrapper.appendChild(iframe);
+    container.appendChild(wrapper);
 
     iframe.addEventListener('load', function() {
         try {
-            const iframeDoc = iframe.contentDocument;
-            const contentHeight = iframeDoc.documentElement.scrollHeight;
+            const contentHeight = iframe.contentDocument.documentElement.scrollHeight;
             const containerWidth = container.offsetWidth || window.innerWidth;
             const scale = containerWidth / desktopWidth;
 
-            iframe.style.width = desktopWidth + 'px';
             iframe.style.height = contentHeight + 'px';
             iframe.style.transformOrigin = 'top left';
             iframe.style.transform = 'scale(' + scale + ')';
-            container.style.height = Math.ceil(contentHeight * scale) + 'px';
-            container.style.overflow = 'hidden';
+            wrapper.style.height = Math.ceil(contentHeight * scale) + 'px';
+
+            // Afficher après calcul pour éviter le flash
+            iframe.style.opacity = '1';
         } catch(e) {
             iframe.style.width = '100%';
             iframe.style.height = isLandscape ? '650px' : '1000px';
+            iframe.style.opacity = '1';
         }
     });
 }
