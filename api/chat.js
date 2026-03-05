@@ -35,11 +35,15 @@ function detectProgress(history, docType = 'definition_projet') {
             }
             
             if (hasNameStep && (
-                msg.content.includes('nom souhaitez-vous') || 
-                msg.content.includes('Propositions de noms') ||
-                msg.content.includes('nom a votre projet') ||
-                msg.content.includes('nom \u00e0 votre projet') ||
-                msg.content.includes('donnons un nom')
+                msg.content.toLowerCase().includes('nom souhaitez-vous') || 
+                msg.content.toLowerCase().includes('propositions de noms') ||
+                msg.content.toLowerCase().includes('nom a votre projet') ||
+                msg.content.toLowerCase().includes('nom à votre projet') ||
+                msg.content.toLowerCase().includes('donnons un nom') ||
+                msg.content.toLowerCase().includes('lequel préférez-vous') ||
+                msg.content.toLowerCase().includes('lequel preferez-vous') ||
+                msg.content.toLowerCase().includes('quel nom') ||
+                msg.content.toLowerCase().includes('choisissez un nom')
             )) {
                 nameProposed = true;
             }
