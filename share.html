@@ -369,7 +369,7 @@
                 const data = await response.json();
                 
                 if (data.success && data.document) {
-                    showDocument(data.document, owner, project, data.createdAt);
+                    showDocument(data.document, owner, project, data.createdAt, data.documentId);
                 } else {
                     showError('Document introuvable', 'Ce document n\'existe pas ou n\'est plus disponible.');
                 }
@@ -380,7 +380,7 @@
             }
         }
         
-        function showDocument(htmlContent, owner, project, createdAt) {
+        async function showDocument(htmlContent, owner, project, createdAt, documentId) {
             const ownerName = owner.split('-').map(word => 
                 word.charAt(0).toUpperCase() + word.slice(1)
             ).join(' ');
@@ -388,54 +388,63 @@
             const projectName = project.split('-').map(word => 
                 word.charAt(0).toUpperCase() + word.slice(1)
             ).join(' ');
-            
+
+            // Afficher le loading
+            const docDiv = document.getElementById('documentContent');
+            docDiv.innerHTML = '<div style="text-align:center;padding:60px 20px;"><div style="width:40px;height:40px;border:3px solid #e8edf2;border-top-color:#2c3e50;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px;"></div><p style="color:#666;">Préparation du document...</p></div><style>@keyframes spin{to{transform:rotate(360deg);}}</style>';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        mode: 'generateSharedPdf',
+                        documentId: documentId,
+                        ownerName: ownerName,
+                        projectName: projectName,
+                        createdAt: createdAt
+                    })
+                });
+                const data = await response.json();
+
+                if (data.success && data.pdfUrl) {
+                    docDiv.innerHTML = '';
+                    docDiv.style.padding = '0';
+                    docDiv.style.background = 'transparent';
+                    docDiv.style.border = 'none';
+                    docDiv.style.boxShadow = 'none';
+                    const iframe = document.createElement('iframe');
+                    iframe.src = data.pdfUrl;
+                    iframe.style.cssText = 'width:100%;height:85vh;border:none;display:block;border-radius:12px;';
+                    docDiv.appendChild(iframe);
+                } else {
+                    showDocumentHtml(htmlContent, ownerName, projectName, createdAt);
+                }
+            } catch(e) {
+                showDocumentHtml(htmlContent, ownerName, projectName, createdAt);
+            }
+
+            const userData = localStorage.getItem('ark_user');
+            if (!userData) {
+                document.getElementById('banner').classList.add('visible');
+            }
+        }
+
+        function showDocumentHtml(htmlContent, ownerName, projectName, createdAt) {
             let formattedDate = 'Document partage';
             if (createdAt) {
                 const date = new Date(createdAt);
                 formattedDate = date.toLocaleDateString('fr-FR', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
+                    day: 'numeric', month: 'long', year: 'numeric'
                 });
             }
-            
             htmlContent = htmlContent
                 .replace(/\{\{OWNER_NAME\}\}/g, ownerName)
                 .replace(/\{\{PROJECT_NAME\}\}/g, projectName)
                 .replace(/\{\{DATE\}\}/g, formattedDate)
                 .replace(/arkintelligence\.vercel\.app/g, 'www.arkintelligence.africa')
                 .replace(/https:\/\/arkintelligence\.vercel\.app/g, 'https://www.arkintelligence.africa');
-            
-            const docDiv = document.getElementById('documentContent');
-            docDiv.innerHTML = '';
-            docDiv.style.padding = '0';
-            docDiv.style.background = 'transparent';
-            docDiv.style.border = 'none';
-            docDiv.style.boxShadow = 'none';
-            const isLandscape = htmlContent.includes('dt-wrapper') || htmlContent.includes('bmc-wrapper');
-            const iframe = document.createElement('iframe');
-            iframe.style.cssText = 'width:100%;border:none;display:block;min-height:400px;border-radius:12px;';
-            const fullHtml = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:white;padding:8px;}</style></head><body>' + htmlContent + '</body></html>';
-            iframe.srcdoc = fullHtml;
-            docDiv.appendChild(iframe);
-            iframe.addEventListener('load', function() {
-                try {
-                    const h = iframe.contentDocument.documentElement.scrollHeight;
-                    iframe.style.height = (h + 20) + 'px';
-                } catch(e) {
-                    iframe.style.height = isLandscape ? '650px' : '1000px';
-                }
-            });
-            
-            // Adapter le conteneur pour les documents paysage (DT, BMC)
-            if (htmlContent.includes('dt-wrapper') || htmlContent.includes('bmc-wrapper')) {
-                document.querySelector('.container').classList.add('landscape');
-            }
-            
-            const userData = localStorage.getItem('ark_user');
-            if (!userData) {
-                document.getElementById('banner').classList.add('visible');
-            }
+            document.getElementById('documentContent').innerHTML = htmlContent;
         }
         
         function showError(title, message) {
