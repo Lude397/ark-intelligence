@@ -1,3 +1,5 @@
+// FICHIER : definition/definition.js
+
 // ===== STATE =====
 const state = {
     history: [],
@@ -6,6 +8,8 @@ const state = {
     cadrageComplete: false,
     projetNom: null
 };
+
+const MODULE = 'definition_projet';
 
 // ===== ELEMENTS =====
 const el = {
@@ -142,6 +146,7 @@ async function sendToAPI(message) {
             showCadrageComplete();
         } else {
             addMessage(data.response, 'ai', true);
+            await SessionManager.saveSession(MODULE, state.history, state.history.length);
         }
     } catch (error) {
         hideTypingIndicator();
@@ -161,13 +166,13 @@ function disableChatInput() {
 
 function showCadrageComplete() {
     state.cadrageComplete = true;
+    SessionManager.completeSession(MODULE);
     el.chatInput.disabled = true;
     el.chatSend.disabled = true;
     el.chatInput.placeholder = 'Cadrage termine - Consultez votre document';
     el.chatInput.style.opacity = '0.6';
     el.chatSend.style.opacity = '0.6';
 
-    // Afficher automatiquement le document
     if (state.documentCache['definition_projet']) {
         showDocument('definition_projet', state.documentCache['definition_projet'], {
             projetNom: state.projetNom,
@@ -318,7 +323,6 @@ async function deleteCurrentDocument() {
         return;
     }
 
-    // Redirect to documents page after deletion attempt
     window.location.href = '/documents/documents.html';
 }
 
@@ -390,6 +394,32 @@ function autoResize(textarea, maxHeight) {
     textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + 'px';
 }
 
+// ===== SESSION =====
+function restoreConversationUI(history) {
+    el.chatMessages.innerHTML = '';
+    history.forEach(msg => addMessage(msg.content, msg.type, false));
+    switchScreen('chat');
+}
+
+async function initInterview() {
+    const session = await SessionManager.getSession(MODULE);
+    if (session) {
+        document.getElementById('resume-modal').style.display = 'block';
+        document.getElementById('btn-resume').addEventListener('click', () => {
+            document.getElementById('resume-modal').style.display = 'none';
+            state.history = session.conversation_history;
+            restoreConversationUI(state.history);
+        });
+        document.getElementById('btn-restart').addEventListener('click', async () => {
+            await SessionManager.deleteSession(MODULE);
+            document.getElementById('resume-modal').style.display = 'none';
+            switchScreen('welcome');
+        });
+    } else {
+        switchScreen('welcome');
+    }
+}
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
     loadUserProfile();
@@ -427,5 +457,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // New chat mobile
     el.newChatBtnMobile.addEventListener('click', () => { window.location.href = '/'; });
 
-    switchScreen('welcome');
+    initInterview();
 });
