@@ -1,3 +1,4 @@
+// FICHIER : documents/documents.js
 // ===== STATE =====
 const state = {
     allDocuments: [],
@@ -83,6 +84,26 @@ function renderMyDocuments(docs) {
     el.mydocsList.innerHTML = html;
 }
 
+
+// ===== IFRAME RENDERER =====
+function renderInIframe(container, htmlContent) {
+    container.innerHTML = '';
+    const isLandscape = htmlContent.includes('dt-wrapper') || htmlContent.includes('bmc-wrapper');
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'width:100%;border:none;display:block;min-height:400px;';
+    const fullHtml = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:white;padding:8px;}</style></head><body>' + htmlContent + '</body></html>';
+    iframe.srcdoc = fullHtml;
+    container.appendChild(iframe);
+    iframe.addEventListener('load', function() {
+        try {
+            const h = iframe.contentDocument.documentElement.scrollHeight;
+            iframe.style.height = (h + 20) + 'px';
+        } catch(e) {
+            iframe.style.height = isLandscape ? '650px' : '1000px';
+        }
+    });
+}
+
 // ===== OPEN DOCUMENT =====
 function openDocument(documentId) {
     const doc = state.allDocuments.find(d => d.id === documentId);
@@ -121,19 +142,12 @@ function showDocument(docType, content, metadata) {
     
     const trimmed = updatedContent.trim();
     if (trimmed.startsWith('<!DOCTYPE html>') || trimmed.startsWith('<html') || trimmed.includes('<table>') || trimmed.includes('dt-wrapper') || trimmed.includes('bmc-wrapper') || trimmed.includes('<style>')) {
-        el.documentBody.innerHTML = updatedContent;
+        renderInIframe(el.documentBody, updatedContent);
     } else {
-        el.documentBody.innerHTML = markdownToHtml(updatedContent);
+        renderInIframe(el.documentBody, markdownToHtml(updatedContent));
     }
     
     el.documentScreen.classList.add('visible');
-    
-    // Ajuster la police pour que le document tienne sur une page A4
-    requestAnimationFrame(function() {
-        if (typeof fitToPage === 'function') {
-            fitToPage(el.documentBody);
-        }
-    });
 }
 
 function hideDocument() {
