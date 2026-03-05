@@ -3,7 +3,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Document partage - Ark Intelligence</title>
     <link rel="icon" type="image/png" href="/assets/logo.png">
     <style>
@@ -381,67 +381,49 @@
         }
         
         function showDocument(htmlContent, owner, project, createdAt) {
-            const ownerName = owner.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-            const projectName = project.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            const ownerName = owner.split('-').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+            
+            const projectName = project.split('-').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+            
             let formattedDate = 'Document partage';
             if (createdAt) {
-                formattedDate = new Date(createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+                const date = new Date(createdAt);
+                formattedDate = date.toLocaleDateString('fr-FR', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
             }
+            
             htmlContent = htmlContent
                 .replace(/\{\{OWNER_NAME\}\}/g, ownerName)
                 .replace(/\{\{PROJECT_NAME\}\}/g, projectName)
                 .replace(/\{\{DATE\}\}/g, formattedDate)
                 .replace(/arkintelligence\.vercel\.app/g, 'www.arkintelligence.africa')
                 .replace(/https:\/\/arkintelligence\.vercel\.app/g, 'https://www.arkintelligence.africa');
-
-            const isLandscape = htmlContent.includes('dt-wrapper') || htmlContent.includes('bmc-wrapper');
-            const desktopWidth = isLandscape ? 1100 : 820;
-            const isMobile = window.innerWidth <= 768;
-
-            const docDiv = document.getElementById('documentContent');
-            docDiv.innerHTML = '';
-            docDiv.style.padding = '0';
-            docDiv.style.background = 'transparent';
-            docDiv.style.border = 'none';
-            docDiv.style.boxShadow = 'none';
-
-            const wrapper = document.createElement('div');
-            const iframe = document.createElement('iframe');
-            iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;opacity:0;transition:opacity 0.2s;';
-            iframe.setAttribute('scrolling', 'no');
-
-            const fullHtml = '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:white;width:' + desktopWidth + 'px;}</style></head><body>' + htmlContent + '</body></html>';
-            iframe.srcdoc = fullHtml;
-            wrapper.appendChild(iframe);
-            docDiv.appendChild(wrapper);
-
-            iframe.addEventListener('load', function() {
-                try {
-                    const contentHeight = iframe.contentDocument.documentElement.scrollHeight;
-                    iframe.style.height = contentHeight + 'px';
-
-                    if (isMobile) {
-                        wrapper.style.cssText = 'width:100%;overflow:auto;-webkit-overflow-scrolling:touch;background:white;border-radius:12px;';
-                        wrapper.style.height = contentHeight + 'px';
-                    } else {
-                        const containerWidth = docDiv.offsetWidth || window.innerWidth;
-                        const scale = Math.min(1, containerWidth / desktopWidth);
-                        iframe.style.transformOrigin = 'top left';
-                        iframe.style.transform = 'scale(' + scale + ')';
-                        wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;border-radius:12px;';
-                        wrapper.style.height = Math.ceil(contentHeight * scale) + 'px';
-                    }
-
-                    iframe.style.opacity = '1';
-                } catch(e) {
-                    iframe.style.width = '100%';
-                    iframe.style.height = isLandscape ? '650px' : '1000px';
-                    iframe.style.opacity = '1';
+            
+            document.getElementById('documentContent').innerHTML = htmlContent;
+            
+            // Adapter le conteneur pour les documents paysage (DT, BMC)
+            if (htmlContent.includes('dt-wrapper') || htmlContent.includes('bmc-wrapper')) {
+                document.querySelector('.container').classList.add('landscape');
+            }
+            
+            // Ajuster la police pour que le document tienne sur une page A4
+            requestAnimationFrame(function() {
+                if (typeof fitToPage === 'function') {
+                    fitToPage(document.getElementById('documentContent'));
                 }
             });
-
+            
             const userData = localStorage.getItem('ark_user');
-            if (!userData) { document.getElementById('banner').classList.add('visible'); }
+            if (!userData) {
+                document.getElementById('banner').classList.add('visible');
+            }
         }
         
         function showError(title, message) {
