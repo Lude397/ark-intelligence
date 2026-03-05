@@ -4,9 +4,7 @@
   "description": "Assistant de cadrage projet",
   "type": "module",
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.0",
-    "@sparticuz/chromium-min": "^123.0.0",
-    "puppeteer-core": "^22.0.0"
+    "@supabase/supabase-js": "^2.39.0"
   },
   "engines": {
     "node": ">=18"
