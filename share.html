@@ -381,17 +381,11 @@
         }
         
         function showDocument(htmlContent, owner, project, createdAt) {
-            const ownerName = owner.split('-').map(word => 
-                word.charAt(0).toUpperCase() + word.slice(1)
-            ).join(' ');
-            const projectName = project.split('-').map(word => 
-                word.charAt(0).toUpperCase() + word.slice(1)
-            ).join(' ');
+            const ownerName = owner.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            const projectName = project.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
             let formattedDate = 'Document partage';
             if (createdAt) {
-                formattedDate = new Date(createdAt).toLocaleDateString('fr-FR', {
-                    day: 'numeric', month: 'long', year: 'numeric'
-                });
+                formattedDate = new Date(createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
             }
             htmlContent = htmlContent
                 .replace(/\{\{OWNER_NAME\}\}/g, ownerName)
@@ -402,6 +396,8 @@
 
             const isLandscape = htmlContent.includes('dt-wrapper') || htmlContent.includes('bmc-wrapper');
             const desktopWidth = isLandscape ? 1100 : 820;
+            const isMobile = window.innerWidth <= 768;
+
             const docDiv = document.getElementById('documentContent');
             docDiv.innerHTML = '';
             docDiv.style.padding = '0';
@@ -410,8 +406,6 @@
             docDiv.style.boxShadow = 'none';
 
             const wrapper = document.createElement('div');
-            wrapper.style.cssText = 'width:100%;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom;background:white;border-radius:12px;';
-
             const iframe = document.createElement('iframe');
             iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;opacity:0;transition:opacity 0.2s;';
             iframe.setAttribute('scrolling', 'no');
@@ -424,12 +418,20 @@
             iframe.addEventListener('load', function() {
                 try {
                     const contentHeight = iframe.contentDocument.documentElement.scrollHeight;
-                    const containerWidth = docDiv.offsetWidth || window.innerWidth;
-                    const scale = containerWidth / desktopWidth;
                     iframe.style.height = contentHeight + 'px';
-                    iframe.style.transformOrigin = 'top left';
-                    iframe.style.transform = 'scale(' + scale + ')';
-                    wrapper.style.height = Math.ceil(contentHeight * scale) + 'px';
+
+                    if (isMobile) {
+                        wrapper.style.cssText = 'width:100%;overflow:auto;-webkit-overflow-scrolling:touch;background:white;border-radius:12px;';
+                        wrapper.style.height = contentHeight + 'px';
+                    } else {
+                        const containerWidth = docDiv.offsetWidth || window.innerWidth;
+                        const scale = Math.min(1, containerWidth / desktopWidth);
+                        iframe.style.transformOrigin = 'top left';
+                        iframe.style.transform = 'scale(' + scale + ')';
+                        wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;border-radius:12px;';
+                        wrapper.style.height = Math.ceil(contentHeight * scale) + 'px';
+                    }
+
                     iframe.style.opacity = '1';
                 } catch(e) {
                     iframe.style.width = '100%';
@@ -439,9 +441,7 @@
             });
 
             const userData = localStorage.getItem('ark_user');
-            if (!userData) {
-                document.getElementById('banner').classList.add('visible');
-            }
+            if (!userData) { document.getElementById('banner').classList.add('visible'); }
         }
         
         function showError(title, message) {
