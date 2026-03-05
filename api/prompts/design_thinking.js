@@ -37,6 +37,25 @@ REGLES STRICTES :
 .dt-footer-date { font-size: 15px; color: #333; border-bottom: 2.5px solid #2c3e50; padding-bottom: 4px; font-weight: bold; }
 .dt-footer-logo { height: 40px; opacity: 0.6; }
 .dt-footer-link { color: #4a7c59; text-decoration: none; font-size: 14px; font-style: italic; }
+
+@media screen and (max-width: 768px) {
+    .dt-wrapper { max-width: 100%; max-height: none; }
+    .dt-header { flex-direction: column; align-items: flex-start; gap: 10px; padding: 12px; }
+    .dt-header-left { gap: 10px; }
+    .dt-header-logo { height: 36px; }
+    .dt-header-title { font-size: 22px; }
+    .dt-header-right { flex-direction: column; gap: 6px; }
+    .dt-header-field .value { font-size: 14px; }
+    .dt-body { padding: 10px 12px; }
+    .dt-canvas { grid-template-columns: 1fr; gap: 6px; }
+    .dt-column-header { font-size: 13px; padding: 8px 10px; }
+    .dt-column-content { font-size: 13px; line-height: 1.5; padding: 10px; }
+    .dt-resume-header { font-size: 13px; padding: 8px 10px; }
+    .dt-resume-content { font-size: 13px; line-height: 1.5; padding: 10px; }
+    .dt-footer { flex-direction: column; gap: 8px; align-items: flex-start; padding: 10px 12px; }
+    .dt-footer-logo { height: 32px; }
+    .dt-footer-link { font-size: 12px; }
+}
 </style>
 
 <div class="dt-wrapper">
