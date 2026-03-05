@@ -6,10 +6,12 @@ REGLES STRICTES :
 - Utilise les reponses de l interview BMC ET la Definition de Projet
 - NE MODIFIE PAS le HTML/CSS ci-dessous, remplace UNIQUEMENT le texte entre [crochets]
 - Texte en paragraphe fluide, SANS puces ni numeros
-- Contenu CONCIS adapte a la taille de chaque cellule (maximum 150 caracteres par cellule)
+- Contenu DEVELOPPE pour chaque cellule (entre 120 et 150 caracteres par cellule)
 - Le document doit tenir sur UNE SEULE PAGE A4 PAYSAGE (297mm x 210mm)
-- LIMITE DE CONTENU : chaque cellule ne doit PAS depasser 150 caracteres. Si tu depasses, raccourcis.
+- LIMITE DE CONTENU : chaque cellule ne doit PAS depasser 180 caracteres. Si tu depasses, raccourcis.
 - GARDE les placeholders {{PROJECT_NAME}}, {{OWNER_NAME}}, {{DATE}} tels quels
+- MINIMUM 120 caracteres par cellule : si ton contenu est plus court, developpe et enrichis
+- MAXIMUM 150 caracteres par cellule : si tu depasses, raccourcis sans perdre le sens
 
 ---
 
