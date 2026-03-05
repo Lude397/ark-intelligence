@@ -94,10 +94,9 @@ function renderInIframe(container, htmlContent) {
 
     const wrapper = document.createElement('div');
     const iframe = document.createElement('iframe');
-    iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;opacity:0;transition:opacity 0.2s;';
     iframe.setAttribute('scrolling', 'no');
 
-    const fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:white;width:${desktopWidth}px;}</style></head><body>${htmlContent}</body></html>`;
+    const fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:white;width:${desktopWidth}px;}</style></head><body>${htmlContent}</body></html>`;
     iframe.srcdoc = fullHtml;
     wrapper.appendChild(iframe);
     container.appendChild(wrapper);
@@ -108,24 +107,19 @@ function renderInIframe(container, htmlContent) {
             iframe.style.height = contentHeight + 'px';
 
             if (isMobile) {
-                // Mobile : scrollable, zoom natif
+                // Mobile : taille réelle, scroll libre, zoom natif activé
+                iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;opacity:1;';
                 wrapper.style.cssText = 'width:100%;overflow:auto;-webkit-overflow-scrolling:touch;background:white;';
-                wrapper.style.height = contentHeight + 'px';
+                wrapper.style.height = Math.min(contentHeight, window.innerHeight * 0.8) + 'px';
             } else {
-                // Desktop : scale pour adapter sans scrollbar
+                // Desktop : scale pour tenir dans la largeur
                 const containerWidth = container.offsetWidth || window.innerWidth;
                 const scale = Math.min(1, containerWidth / desktopWidth);
-                iframe.style.transformOrigin = 'top left';
-                iframe.style.transform = 'scale(' + scale + ')';
-                wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;';
-                wrapper.style.height = Math.ceil(contentHeight * scale) + 'px';
+                iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale + ');opacity:1;';
+                wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
             }
-
-            iframe.style.opacity = '1';
         } catch(e) {
-            iframe.style.width = '100%';
-            iframe.style.height = isLandscape ? '650px' : '1000px';
-            iframe.style.opacity = '1';
+            iframe.style.cssText = 'border:none;display:block;width:100%;height:' + (isLandscape ? '650px' : '1000px') + ';opacity:1;';
         }
     });
 }
