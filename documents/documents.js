@@ -90,27 +90,14 @@ function renderInIframe(container, htmlContent) {
     container.innerHTML = '';
     const isLandscape = htmlContent.includes('dt-wrapper') || htmlContent.includes('bmc-wrapper');
     const desktopWidth = isLandscape ? 1100 : 820;
+    const isMobile = window.innerWidth <= 768;
 
-    // Wrapper scrollable pour le zoom
     const wrapper = document.createElement('div');
-    wrapper.style.cssText = 'width:100%;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom;background:white;';
-
     const iframe = document.createElement('iframe');
     iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;opacity:0;transition:opacity 0.2s;';
     iframe.setAttribute('scrolling', 'no');
 
-    const fullHtml = `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: white; width: ${desktopWidth}px; }
-</style>
-</head>
-<body>${htmlContent}</body>
-</html>`;
-
+    const fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:white;width:${desktopWidth}px;}</style></head><body>${htmlContent}</body></html>`;
     iframe.srcdoc = fullHtml;
     wrapper.appendChild(iframe);
     container.appendChild(wrapper);
@@ -118,15 +105,22 @@ body { background: white; width: ${desktopWidth}px; }
     iframe.addEventListener('load', function() {
         try {
             const contentHeight = iframe.contentDocument.documentElement.scrollHeight;
-            const containerWidth = container.offsetWidth || window.innerWidth;
-            const scale = containerWidth / desktopWidth;
-
             iframe.style.height = contentHeight + 'px';
-            iframe.style.transformOrigin = 'top left';
-            iframe.style.transform = 'scale(' + scale + ')';
-            wrapper.style.height = Math.ceil(contentHeight * scale) + 'px';
 
-            // Afficher après calcul pour éviter le flash
+            if (isMobile) {
+                // Mobile : scrollable, zoom natif
+                wrapper.style.cssText = 'width:100%;overflow:auto;-webkit-overflow-scrolling:touch;background:white;';
+                wrapper.style.height = contentHeight + 'px';
+            } else {
+                // Desktop : scale pour adapter sans scrollbar
+                const containerWidth = container.offsetWidth || window.innerWidth;
+                const scale = Math.min(1, containerWidth / desktopWidth);
+                iframe.style.transformOrigin = 'top left';
+                iframe.style.transform = 'scale(' + scale + ')';
+                wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;';
+                wrapper.style.height = Math.ceil(contentHeight * scale) + 'px';
+            }
+
             iframe.style.opacity = '1';
         } catch(e) {
             iframe.style.width = '100%';
