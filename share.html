@@ -1,3 +1,4 @@
+<!-- FICHIER : share.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -405,19 +406,31 @@
                 .replace(/arkintelligence\.vercel\.app/g, 'www.arkintelligence.africa')
                 .replace(/https:\/\/arkintelligence\.vercel\.app/g, 'https://www.arkintelligence.africa');
             
-            document.getElementById('documentContent').innerHTML = htmlContent;
+            const docDiv = document.getElementById('documentContent');
+            docDiv.innerHTML = '';
+            docDiv.style.padding = '0';
+            docDiv.style.background = 'transparent';
+            docDiv.style.border = 'none';
+            docDiv.style.boxShadow = 'none';
+            const isLandscape = htmlContent.includes('dt-wrapper') || htmlContent.includes('bmc-wrapper');
+            const iframe = document.createElement('iframe');
+            iframe.style.cssText = 'width:100%;border:none;display:block;min-height:400px;border-radius:12px;';
+            const fullHtml = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:white;padding:8px;}</style></head><body>' + htmlContent + '</body></html>';
+            iframe.srcdoc = fullHtml;
+            docDiv.appendChild(iframe);
+            iframe.addEventListener('load', function() {
+                try {
+                    const h = iframe.contentDocument.documentElement.scrollHeight;
+                    iframe.style.height = (h + 20) + 'px';
+                } catch(e) {
+                    iframe.style.height = isLandscape ? '650px' : '1000px';
+                }
+            });
             
             // Adapter le conteneur pour les documents paysage (DT, BMC)
             if (htmlContent.includes('dt-wrapper') || htmlContent.includes('bmc-wrapper')) {
                 document.querySelector('.container').classList.add('landscape');
             }
-            
-            // Ajuster la police pour que le document tienne sur une page A4
-            requestAnimationFrame(function() {
-                if (typeof fitToPage === 'function') {
-                    fitToPage(document.getElementById('documentContent'));
-                }
-            });
             
             const userData = localStorage.getItem('ark_user');
             if (!userData) {
