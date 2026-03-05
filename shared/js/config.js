@@ -1,6 +1,12 @@
-// ===== CONFIGURATION CENTRALISEE =====
+// FICHIER : shared/js/config.js
+
 const LOGO_URL = "/assets/logo.png";
 const CONFIG = { apiUrl: '/api/chat' };
+
+window.ENV = {
+    SUPABASE_URL: 'https://ehaxnltgapcfxhwpqhyb.supabase.co',
+    SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVoYXhubHRnYXBjZnhod3BxaHliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjczNDg1NjksImV4cCI6MjA4MjkyNDU2OX0.-XLe5c2sgzGxv9Olc13Lu3S0hTHjSbs2brbvVC556Ec'
+};
 
 const DOC_NAMES = {
     definition_projet: 'Definition de projet',
@@ -25,5 +31,4 @@ const DOC_FOLDERS = {
 function applyLogo() {
     document.querySelectorAll('.app-logo').forEach(img => img.src = LOGO_URL);
 }
-
 document.addEventListener('DOMContentLoaded', applyLogo);
