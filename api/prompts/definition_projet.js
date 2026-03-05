@@ -11,9 +11,11 @@ REGLES STRICTES :
 - Style professionnel, phrases completes
 - Contenu COURT : 2-3 lignes max par section (maximum 120 caracteres par cellule)
 - Le document doit tenir sur UNE SEULE PAGE A4 PORTRAIT (210mm x 297mm)
-- LIMITE DE CONTENU : chaque cellule ne doit PAS depasser 120 caracteres. Si tu depasses, raccourcis.
+- LIMITE DE CONTENU : chaque cellule ne doit PAS depasser 180 caracteres. Si tu depasses, raccourcis.
 - IMPORTANT pour le Contexte : COMMENCE par une phrase qui definit clairement le projet
 - IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets []
+- MINIMUM 150 caracteres par cellule : si ton contenu est plus court, developpe et enrichis
+- MAXIMUM 180 caracteres par cellule : si tu depasses, raccourcis sans perdre le sens
 
 ---
 
