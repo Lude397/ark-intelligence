@@ -108,19 +108,18 @@ function renderInIframe(container, htmlContent) {
     iframe.addEventListener('load', function() {
         try {
             const contentHeight = iframe.contentDocument.documentElement.scrollHeight;
-            iframe.style.height = contentHeight + 'px';
 
-            // Largeur reelle du conteneur — documentBody fait deja la bonne taille
+            // Largeur reelle du conteneur
             const availableWidth = container.getBoundingClientRect().width;
             const scale = Math.min(1, availableWidth / desktopWidth);
 
             if (isMobile) {
-                // Mobile : scale pour tenir dans l'ecran, zoom natif autorise
+                // Mobile : transform:scale pour tenir dans l'ecran + zoom natif autorise
                 iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale + ');opacity:1;';
                 wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
             } else {
-                // Desktop : scale base sur la largeur reelle disponible sans sidebar
-                iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale + ');opacity:1;';
+                // Desktop : zoom CSS — reflow natif, texte net et lisible
+                iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;zoom:' + scale + ';opacity:1;';
                 wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
             }
         } catch(e) {
