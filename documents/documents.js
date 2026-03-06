@@ -96,7 +96,11 @@ function renderInIframe(container, htmlContent) {
     const iframe = document.createElement('iframe');
     iframe.setAttribute('scrolling', 'auto'); // safe partout, libere le zoom natif sur mobile
 
-    const fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:white;width:${desktopWidth}px;}</style></head><body>${htmlContent}</body></html>`;
+    // CSS injecte dans le srcdoc pour eviter le texte coupe sur mobile
+    const mobileCss = `@media (max-width: 768px) {
+        td, th { overflow: visible !important; white-space: normal !important; height: auto !important; word-wrap: break-word !important; word-break: break-word !important; }
+    }`;
+    const fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:white;width:${desktopWidth}px;}${mobileCss}</style></head><body>${htmlContent}</body></html>`;
     iframe.srcdoc = fullHtml;
     wrapper.appendChild(iframe);
     container.appendChild(wrapper);
@@ -106,15 +110,17 @@ function renderInIframe(container, htmlContent) {
             const contentHeight = iframe.contentDocument.documentElement.scrollHeight;
             iframe.style.height = contentHeight + 'px';
 
-            const containerWidth = container.offsetWidth || window.innerWidth;
-            const scale = Math.min(1, containerWidth / desktopWidth);
+            // Mesurer la largeur reelle du conteneur principal (sans sidebar)
+            const docContent = document.querySelector('.document-content');
+            const availableWidth = docContent ? docContent.getBoundingClientRect().width : (container.offsetWidth || window.innerWidth);
+            const scale = Math.min(1, availableWidth / desktopWidth);
 
             if (isMobile) {
                 // Mobile : scale pour tenir dans l'ecran, zoom natif autorise
                 iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale + ');opacity:1;';
                 wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
             } else {
-                // Desktop : scale base sur la largeur du conteneur
+                // Desktop : scale base sur la largeur reelle disponible sans sidebar
                 iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale + ');opacity:1;';
                 wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
             }
