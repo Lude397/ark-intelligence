@@ -17,7 +17,7 @@ REGLES STRICTES :
 
 <style>
 @page { size: A4 landscape; margin: 10mm; }
-.bmc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; width: 100%; max-width: 297mm; max-height: 190mm; margin: 0 auto; display: flex; flex-direction: column; }
+.bmc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; width: 100%; max-width: 297mm; min-height: 190mm; margin: 0 auto; display: flex; flex-direction: column; }
 .bmc-header { background: #2c3e50; padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
 .bmc-header-left { display: flex; align-items: center; gap: 14px; }
 .bmc-header-logo { height: 44px; }
