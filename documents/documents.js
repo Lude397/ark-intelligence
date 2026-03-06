@@ -110,9 +110,11 @@ function renderInIframe(container, htmlContent) {
             const contentHeight = iframe.contentDocument.documentElement.scrollHeight;
             iframe.style.height = contentHeight + 'px';
 
-            // Mesurer la largeur reelle du conteneur principal (sans sidebar)
+            // Mesurer la largeur reelle du conteneur principal (sans sidebar, sans padding)
             const docContent = document.querySelector('.document-content');
-            const availableWidth = docContent ? docContent.getBoundingClientRect().width : (container.offsetWidth || window.innerWidth);
+            const availableWidth = docContent 
+                ? docContent.getBoundingClientRect().width - 48  // 24px padding de chaque cote
+                : (container.offsetWidth || window.innerWidth);
             const scale = Math.min(1, availableWidth / desktopWidth);
 
             if (isMobile) {
