@@ -137,8 +137,9 @@ function renderInIframe(container, htmlContent) {
                     iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale + ');opacity:1;';
                     wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
                 } else {
+                    const scaledWidth = Math.ceil(desktopWidth * scale);
                     iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale.toFixed(2) + ');opacity:1;';
-                    wrapper.style.cssText = 'width:100%;overflow:visible;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
+                    wrapper.style.cssText = 'width:' + scaledWidth + 'px;overflow:visible;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;margin:0 auto;';
                 }
             };
 
@@ -381,11 +382,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Zoom buttons
     if (el.zoomIn) el.zoomIn.addEventListener('click', () => applyZoom(0.1));
     if (el.zoomOut) el.zoomOut.addEventListener('click', () => applyZoom(-0.1));
-    if (el.zoomFit) el.zoomFit.addEventListener('click', () => applyZoom(0, true));
+    if (el.zoomFit) el.zoomFit.addEventListener('click', () => {
+        const isActive = el.zoomFit.classList.toggle('active');
+        applyZoom(0, isActive ? 1.2 : 1);
+    });
 });
 
 // ===== ZOOM =====
-function applyZoom(delta, fit) {
+function applyZoom(delta, target) {
     const iframe = el.documentBody.querySelector('iframe');
     const wrapper = el.documentBody.querySelector('div');
     if (!iframe || !wrapper) return;
@@ -393,14 +397,17 @@ function applyZoom(delta, fit) {
     const isLandscape = state.currentDoc && (state.currentDoc.type === 'design_thinking' || state.currentDoc.type === 'business_model');
     const desktopWidth = isLandscape ? 1100 : 820;
 
-    if (fit) {
-        state.currentZoom = 1;
+    if (target !== undefined) {
+        state.currentZoom = target;
     } else {
         state.currentZoom = Math.min(2, Math.max(0.3, state.currentZoom + delta));
+        if (el.zoomFit) el.zoomFit.classList.remove('active');
     }
 
     const contentHeight = iframe.contentDocument ? iframe.contentDocument.documentElement.scrollHeight : parseInt(iframe.style.height);
+    const scaledWidth = Math.ceil(desktopWidth * state.currentZoom);
     iframe.style.transform = 'scale(' + state.currentZoom.toFixed(2) + ')';
+    wrapper.style.width = scaledWidth + 'px';
     wrapper.style.height = Math.ceil(contentHeight * state.currentZoom) + 'px';
     if (el.zoomLevel) el.zoomLevel.textContent = Math.round(state.currentZoom * 100) + '%';
 }
