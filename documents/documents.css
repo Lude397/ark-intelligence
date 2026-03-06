@@ -136,6 +136,7 @@
 .zoom-controls { display: flex; align-items: center; gap: 6px; padding: 0; border: none; }
 .zoom-controls button { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; color: var(--text-primary); font-size: 16px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
 .zoom-controls button:hover { background: var(--bg-tertiary); }
+.zoom-controls button.active { background: var(--accent); color: white; border-color: var(--accent); }
 .zoom-controls #zoomLevel { font-size: 13px; color: var(--text-secondary); min-width: 40px; text-align: center; }
 .landscape-only { display: none; }
 @media (max-width: 768px) { .desktop-only { display: none !important; } }
