@@ -3,7 +3,8 @@
 const state = {
     allDocuments: [],
     currentDoc: null,
-    projetNom: null
+    projetNom: null,
+    currentZoom: 1
 };
 
 // ===== ELEMENTS =====
@@ -27,7 +28,12 @@ const el = {
     statsList: document.getElementById('statsList'),
     docMenuBtn: document.getElementById('docMenuBtn'),
     printDoc: document.getElementById('printDoc'),
-    deleteDoc: document.getElementById('deleteDoc')
+    deleteDoc: document.getElementById('deleteDoc'),
+    zoomIn: document.getElementById('zoomIn'),
+    zoomOut: document.getElementById('zoomOut'),
+    zoomFit: document.getElementById('zoomFit'),
+    zoomLevel: document.getElementById('zoomLevel'),
+    zoomControls: document.getElementById('zoomControls')
 };
 
 // ===== LOAD DOCUMENTS =====
@@ -178,6 +184,15 @@ function showDocument(docType, content, metadata) {
     state.currentDoc = { type: docType, content: updatedContent, id: (metadata && metadata.id) || null };
     el.documentTitle.textContent = DOC_NAMES[docType] || docType;
     el.documentScreen.classList.add('visible');
+
+    // Boutons zoom : visibles uniquement pour DT et BMC sur desktop
+    const isLandscapeDoc = docType === 'design_thinking' || docType === 'business_model';
+    if (el.zoomControls) {
+        el.zoomControls.style.display = (isLandscapeDoc && window.matchMedia('(min-width: 769px)').matches) ? 'flex' : 'none';
+    }
+    // Reset zoom a 100%
+    state.currentZoom = 1;
+    if (el.zoomLevel) el.zoomLevel.textContent = '100%';
 
     // Desktop : masquer la sidebar AVANT renderInIframe pour que la largeur soit correcte
     const sidebar = document.getElementById('sidebar');
@@ -355,4 +370,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     el.statsModalClose.addEventListener('click', closeStatsModal);
     el.statsModal.addEventListener('click', (e) => { if (e.target === el.statsModal) closeStatsModal(); });
+
+    // Zoom buttons
+    if (el.zoomIn) el.zoomIn.addEventListener('click', () => applyZoom(0.1));
+    if (el.zoomOut) el.zoomOut.addEventListener('click', () => applyZoom(-0.1));
+    if (el.zoomFit) el.zoomFit.addEventListener('click', () => applyZoom(0, true));
 });
+
+// ===== ZOOM =====
+function applyZoom(delta, fit) {
+    const iframe = el.documentBody.querySelector('iframe');
+    const wrapper = el.documentBody.querySelector('div');
+    if (!iframe || !wrapper) return;
+
+    const isLandscape = state.currentDoc && (state.currentDoc.type === 'design_thinking' || state.currentDoc.type === 'business_model');
+    const desktopWidth = isLandscape ? 1100 : 820;
+
+    if (fit) {
+        state.currentZoom = 1;
+    } else {
+        state.currentZoom = Math.min(2, Math.max(0.3, state.currentZoom + delta));
+    }
+
+    const contentHeight = iframe.contentDocument ? iframe.contentDocument.documentElement.scrollHeight : parseInt(iframe.style.height);
+    iframe.style.transform = 'scale(' + state.currentZoom.toFixed(2) + ')';
+    wrapper.style.height = Math.ceil(contentHeight * state.currentZoom) + 'px';
+    if (el.zoomLevel) el.zoomLevel.textContent = Math.round(state.currentZoom * 100) + '%';
+}
