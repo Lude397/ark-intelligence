@@ -15,7 +15,7 @@ REGLES STRICTES :
 
 <style>
 @page { size: A4 landscape; margin: 10mm; }
-.dt-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; width: 100%; max-width: 297mm; max-height: 190mm; margin: 0 auto; display: flex; flex-direction: column; }
+.dt-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; width: 100%; max-width: 297mm; min-height: 190mm; margin: 0 auto; display: flex; flex-direction: column; }
 .dt-header { background: #2c3e50; padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
 .dt-header-left { display: flex; align-items: center; gap: 14px; }
 .dt-header-logo { height: 44px; }
@@ -25,8 +25,8 @@ REGLES STRICTES :
 .dt-header-field .label { color: #aaa; font-size: 13px; }
 .dt-header-field .value { font-size: 17px; font-weight: bold; color: #d4a017; }
 .dt-body { padding: 14px 18px; flex: 1; display: flex; flex-direction: column; min-height: 0; }
-.dt-canvas { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; flex: 1; min-height: 0; }
-.dt-column { border: 1px solid #ccc; display: flex; flex-direction: column; overflow: hidden; }
+.dt-canvas { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; flex: 1; }
+.dt-column { border: 1px solid #ccc; display: flex; flex-direction: column; overflow: visible; }
 .dt-column-header { background: #2c3e50; color: #fff; font-weight: bold; font-size: 15px; padding: 11px 12px; text-align: center; flex-shrink: 0; }
 .dt-column-content { padding: 12px 13px; font-size: 15px; line-height: 1.7; color: #222; flex: 1; }
 .dt-resume-row { display: grid; grid-template-columns: 1fr; gap: 7px; margin-top: 7px; flex-shrink: 0; }
