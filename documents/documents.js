@@ -173,10 +173,20 @@ function showDocument(docType, content, metadata) {
     }
     
     el.documentScreen.classList.add('visible');
+
+    // Desktop : masquer la sidebar pour maximiser la largeur disponible
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar && window.matchMedia('(min-width: 769px)').matches) {
+        sidebar.style.display = 'none';
+    }
 }
 
 function hideDocument() {
     el.documentScreen.classList.remove('visible');
+
+    // Restaurer la sidebar
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) sidebar.style.display = '';
 }
 
 function markdownToHtml(md) {
