@@ -115,7 +115,7 @@ function renderInIframe(container, htmlContent) {
 
     // Styles initiaux pour eviter tout debordement avant le load
     iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;opacity:0;';
-    wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;';
+    wrapper.style.cssText = 'width:100%;overflow:visible;background:white;';
 
     iframe.srcdoc = fullHtml;
     wrapper.appendChild(iframe);
@@ -125,7 +125,12 @@ function renderInIframe(container, htmlContent) {
         try {
             const applyScale = function() {
                 const contentHeight = iframe.contentDocument.documentElement.scrollHeight;
-                const availableWidth = container.getBoundingClientRect().width;
+                // window.innerWidth est toujours fiable — documentBody peut retourner 0
+                // On soustrait le padding du document-content (24px * 2 = 48px)
+                const docContent = document.querySelector('.document-content');
+                const availableWidth = docContent 
+                    ? docContent.getBoundingClientRect().width - 48
+                    : window.innerWidth - 48;
                 const scale = Math.min(1, availableWidth / desktopWidth);
 
                 if (isMobile) {
@@ -133,7 +138,7 @@ function renderInIframe(container, htmlContent) {
                     wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
                 } else {
                     iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale.toFixed(2) + ');opacity:1;';
-                    wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
+                    wrapper.style.cssText = 'width:100%;overflow:visible;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
                 }
             };
 
@@ -184,6 +189,7 @@ function showDocument(docType, content, metadata) {
     state.currentDoc = { type: docType, content: updatedContent, id: (metadata && metadata.id) || null };
     el.documentTitle.textContent = DOC_NAMES[docType] || docType;
     el.documentScreen.classList.add('visible');
+    document.body.classList.add('document-open');
 
     // Boutons zoom : visibles uniquement pour DT et BMC sur desktop
     const isLandscapeDoc = docType === 'design_thinking' || docType === 'business_model';
@@ -210,6 +216,7 @@ function showDocument(docType, content, metadata) {
 
 function hideDocument() {
     el.documentScreen.classList.remove('visible');
+    document.body.classList.remove('document-open');
 
     // Restaurer la sidebar
     const sidebar = document.getElementById('sidebar');
