@@ -99,6 +99,8 @@ function renderInIframe(container, htmlContent) {
     // CSS injecte dans le srcdoc pour eviter le texte coupe sur mobile
     const mobileCss = `@media (max-width: 768px) {
         td, th { overflow: visible !important; white-space: normal !important; height: auto !important; word-wrap: break-word !important; word-break: break-word !important; }
+        .dt-canvas, .bmc-grid { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
+        .dt-column, .bmc-cell { min-width: 0 !important; overflow: visible !important; }
     }`;
     const fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:white;width:${desktopWidth}px;}${mobileCss}</style></head><body>${htmlContent}</body></html>`;
     iframe.srcdoc = fullHtml;
@@ -107,20 +109,27 @@ function renderInIframe(container, htmlContent) {
 
     iframe.addEventListener('load', function() {
         try {
-            const contentHeight = iframe.contentDocument.documentElement.scrollHeight;
+            const applyScale = function() {
+                const contentHeight = iframe.contentDocument.documentElement.scrollHeight;
+                const availableWidth = container.getBoundingClientRect().width;
+                const scale = Math.min(1, availableWidth / desktopWidth);
 
-            // Largeur reelle du conteneur
-            const availableWidth = container.getBoundingClientRect().width;
-            const scale = Math.min(1, availableWidth / desktopWidth);
+                if (isMobile) {
+                    // Mobile : transform:scale pour tenir dans l'ecran + zoom natif autorise
+                    iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale + ');opacity:1;';
+                    wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
+                } else {
+                    // Desktop : zoom CSS apres reflow sidebar — texte net et lisible
+                    iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;zoom:' + scale.toFixed(2) + ';opacity:1;';
+                    wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
+                }
+            };
 
-            if (isMobile) {
-                // Mobile : transform:scale pour tenir dans l'ecran + zoom natif autorise
-                iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale + ');opacity:1;';
-                wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
+            if (!isMobile) {
+                // Attendre double frame pour garantir le reflow apres masquage sidebar
+                requestAnimationFrame(() => requestAnimationFrame(applyScale));
             } else {
-                // Desktop : zoom CSS — reflow natif, texte net et lisible
-                iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;zoom:' + scale + ';opacity:1;';
-                wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
+                applyScale();
             }
         } catch(e) {
             iframe.style.cssText = 'border:none;display:block;width:100%;height:' + (isLandscape ? '650px' : '1000px') + ';opacity:1;';
@@ -163,20 +172,19 @@ function showDocument(docType, content, metadata) {
     
     state.currentDoc = { type: docType, content: updatedContent, id: (metadata && metadata.id) || null };
     el.documentTitle.textContent = DOC_NAMES[docType] || docType;
-    
+    el.documentScreen.classList.add('visible');
+
+    // Desktop : masquer la sidebar AVANT renderInIframe pour que la largeur soit correcte
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar && window.matchMedia('(min-width: 769px)').matches) {
+        sidebar.style.display = 'none';
+    }
+
     const trimmed = updatedContent.trim();
     if (trimmed.startsWith('<!DOCTYPE html>') || trimmed.startsWith('<html') || trimmed.includes('<table>') || trimmed.includes('dt-wrapper') || trimmed.includes('bmc-wrapper') || trimmed.includes('<style>')) {
         renderInIframe(el.documentBody, updatedContent);
     } else {
         renderInIframe(el.documentBody, markdownToHtml(updatedContent));
-    }
-    
-    el.documentScreen.classList.add('visible');
-
-    // Desktop : masquer la sidebar pour maximiser la largeur disponible
-    const sidebar = document.getElementById('sidebar');
-    if (sidebar && window.matchMedia('(min-width: 769px)').matches) {
-        sidebar.style.display = 'none';
     }
 }
 
