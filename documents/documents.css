@@ -1,3 +1,4 @@
+/* FICHIER : documents/documents.css */
 /* ===== MES DOCUMENTS SCREEN ===== */
 .mydocs-screen {
     flex: 1;
@@ -115,7 +116,7 @@
 .document-actions button { padding: 8px 16px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 14px; cursor: pointer; transition: all 0.2s; }
 .document-actions button:hover { background: var(--bg-tertiary); }
 
-.document-content { flex: 1; overflow-y: auto; overflow-x: auto; padding: 24px; }
+.document-content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 24px; }
 .document-body { max-width: 800px; margin: 0 auto; background: none; border-radius: 0; padding: 0; line-height: 1.7; }
 .document-body:has(.dt-wrapper), .document-body:has(.bmc-wrapper) { max-width: 100%; }
 .document-body .dt-column, .document-body .bmc-cell { overflow: visible; }
