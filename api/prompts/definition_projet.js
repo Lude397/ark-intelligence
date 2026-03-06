@@ -1,66 +1,120 @@
-// ==================== DEFINITION DE PROJET ====================
-// Interview : 12 questions, 5 phases, avec etape de nom
+// FICHIER : api/prompts/design_thinking.js
 
-export const TEMPLATE = `Genere une DEFINITION DE PROJET sous forme de tableau HTML professionnel. 
+export const TEMPLATE = `Genere un document DESIGN THINKING sous forme de CANVAS HTML.
 
 REGLES STRICTES :
-- Utilise UNIQUEMENT les reponses des 12 questions collectees
-- Format: Tableau HTML 2 colonnes (label a gauche, contenu a droite)
-- Texte en paragraphe SANS puces ni numeros a l interieur
-- Pas de mention de source (Q1, Q2...)
-- Style professionnel, phrases completes
-- Contenu COURT : 2-3 lignes max par section (maximum 180 caracteres par cellule)
-- Le document doit tenir sur UNE SEULE PAGE A4 PORTRAIT (210mm x 297mm)
-- LIMITE DE CONTENU : chaque cellule ne doit PAS depasser 180 caracteres. Si tu depasses, raccourcis.
-- IMPORTANT pour le Contexte : COMMENCE par une phrase qui definit clairement le projet
-- IMPORTANT : Copie EXACTEMENT le HTML ci-dessous, remplace UNIQUEMENT le texte entre crochets []
-- MINIMUM 150 caracteres par cellule : si ton contenu est plus court, developpe et enrichis
-- MAXIMUM 180 caracteres par cellule : si tu depasses, raccourcis sans perdre le sens
+- Utilise les reponses de l interview Design Thinking ET la Definition de Projet
+- NE MODIFIE PAS le HTML/CSS ci-dessous, remplace UNIQUEMENT le texte entre [crochets]
+- Texte en paragraphe fluide, SANS puces ni numeros
+- Le document doit tenir sur UNE SEULE PAGE A4 PAYSAGE (297mm x 210mm)
+- MINIMUM 120 caracteres par cellule : si ton contenu est plus court, developpe et enrichis
+- MAXIMUM 150 caracteres par cellule : si tu depasses, raccourcis sans perdre le sens
+- GARDE les placeholders {{PROJECT_NAME}}, {{OWNER_NAME}}, {{DATE}} tels quels
 
 ---
 
 <style>
-@page { size: A4 portrait; margin: 10mm; }
-.doc-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; padding: 20px; width: 100%; max-width: 210mm; max-height: 277mm; margin: 0 auto; }
-.doc-wrapper .doc-logo { display: block; margin: 0 auto 12px; height: 55px; }
-.doc-wrapper .doc-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 6px; }
-.doc-wrapper .doc-project-name { text-align: center; font-size: 16px; font-weight: bold; color: #b8860b; margin-bottom: 10px; }
-.doc-wrapper .doc-info { text-align: center; font-size: 12px; line-height: 1.8; margin-bottom: 16px; }
-.doc-wrapper table { width: 100%; border-collapse: collapse; }
-.doc-wrapper td { border: 1px solid #ddd; padding: 8px 12px; vertical-align: top; font-size: 12px; line-height: 1.55; }
-.doc-wrapper .label-cell { background: #2c3e50; color: #fff; font-weight: bold; width: 28%; font-size: 11.5px; }
-.doc-wrapper .content-cell { background: #fff; width: 72%; }
-.doc-footer { text-align: center; margin-top: 16px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 10px; color: #888; }
-.doc-footer a { color: #4a7c59; text-decoration: none; }
+@page { size: A4 landscape; margin: 10mm; }
+.dt-wrapper { font-family: 'Times New Roman', serif; color: #000; background: #fff; width: 100%; max-width: 297mm; min-height: 190mm; margin: 0 auto; display: flex; flex-direction: column; }
+.dt-header { background: #2c3e50; padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.dt-header-left { display: flex; align-items: center; gap: 14px; }
+.dt-header-logo { height: 44px; }
+.dt-header-title { font-size: 30px; font-weight: 900; color: #fff; }
+.dt-header-right { display: flex; gap: 36px; }
+.dt-header-field { color: #ccc; font-size: 14px; line-height: 1.5; }
+.dt-header-field .label { color: #aaa; font-size: 13px; }
+.dt-header-field .value { font-size: 17px; font-weight: bold; color: #d4a017; }
+.dt-body { padding: 14px 18px; flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.dt-canvas { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; flex: 1; min-height: 0; }
+.dt-column { border: 1px solid #ccc; display: flex; flex-direction: column; overflow: visible; }
+.dt-column-header { background: #2c3e50; color: #fff; font-weight: bold; font-size: 15px; padding: 11px 12px; text-align: center; flex-shrink: 0; }
+.dt-column-content { padding: 12px 13px; font-size: 15px; line-height: 1.7; color: #222; flex: 1; }
+.dt-resume-row { display: grid; grid-template-columns: 1fr; gap: 7px; margin-top: 7px; flex-shrink: 0; }
+.dt-resume { border: 1px solid #ccc; display: flex; flex-direction: column; }
+.dt-resume-header { background: #2c3e50; color: #fff; font-weight: bold; font-size: 15px; padding: 11px 12px; text-align: center; flex-shrink: 0; }
+.dt-resume-content { padding: 12px 13px; font-size: 15px; line-height: 1.7; color: #222; flex: 1; }
+.dt-footer { padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.dt-footer-date { font-size: 15px; color: #333; border-bottom: 2.5px solid #2c3e50; padding-bottom: 4px; font-weight: bold; }
+.dt-footer-logo { height: 40px; opacity: 0.6; }
+.dt-footer-link { color: #4a7c59; text-decoration: none; font-size: 14px; font-style: italic; }
+
+@media screen and (max-width: 768px) {
+    .dt-wrapper { max-width: 100%; max-height: none; }
+    .dt-header { flex-direction: column; align-items: flex-start; gap: 10px; padding: 12px; }
+    .dt-header-left { gap: 10px; }
+    .dt-header-logo { height: 36px; }
+    .dt-header-title { font-size: 22px; }
+    .dt-header-right { flex-direction: column; gap: 6px; }
+    .dt-header-field .value { font-size: 14px; }
+    .dt-body { padding: 10px 12px; }
+    .dt-canvas { grid-template-columns: 1fr; gap: 6px; }
+    .dt-column-header { font-size: 13px; padding: 8px 10px; }
+    .dt-column-content { font-size: 13px; line-height: 1.5; padding: 10px; }
+    .dt-resume-header { font-size: 13px; padding: 8px 10px; }
+    .dt-resume-content { font-size: 13px; line-height: 1.5; padding: 10px; }
+    .dt-footer { flex-direction: column; gap: 8px; align-items: flex-start; padding: 10px 12px; }
+    .dt-footer-logo { height: 32px; }
+    .dt-footer-link { font-size: 12px; }
+}
 </style>
 
-<div class="doc-wrapper">
-<img class="doc-logo" src="/assets/logo.png" alt="Ark Intelligence">
-<div class="doc-title">Definition de Projet</div>
-<div class="doc-project-name">{{PROJECT_NAME}}</div>
-<div class="doc-info">Proprietaire : {{OWNER_NAME}}<br>Date : {{DATE}}</div>
-<table>
-  <tr><td class="label-cell">1. Contexte</td><td class="content-cell">[COMMENCE par definir le projet puis explique pourquoi il est lance. 120 car. max.]</td></tr>
-  <tr><td class="label-cell">2. Probleme a resoudre</td><td class="content-cell">[Decris le probleme concret. 120 car. max.]</td></tr>
-  <tr><td class="label-cell">3. Beneficiaire principal</td><td class="content-cell">[Identifie les premiers clients. 120 car. max.]</td></tr>
-  <tr><td class="label-cell">4. Objectif a 12 mois</td><td class="content-cell">[Objectifs concrets. 120 car. max.]</td></tr>
-  <tr><td class="label-cell">5. Besoin reel</td><td class="content-cell">[Ressources indispensables. 120 car. max.]</td></tr>
-  <tr><td class="label-cell">6. Limites actuelles</td><td class="content-cell">[Freins ou obstacles. 120 car. max.]</td></tr>
-  <tr><td class="label-cell">7. Livrable attendu</td><td class="content-cell">[Resultat concret attendu. 120 car. max.]</td></tr>
-  <tr><td class="label-cell">8. Hors perimetre</td><td class="content-cell">[Ce qui ne fait PAS partie du projet. 120 car. max.]</td></tr>
-  <tr><td class="label-cell">9. Exigences fonctionnelles</td><td class="content-cell">[Fonctionnalite prioritaire. 120 car. max.]</td></tr>
-  <tr><td class="label-cell">10. Contraintes</td><td class="content-cell">[Contraintes principales. 120 car. max.]</td></tr>
-  <tr><td class="label-cell">11. Risques</td><td class="content-cell">[Risques majeurs. 120 car. max.]</td></tr>
-  <tr><td class="label-cell">12. Criteres de succes</td><td class="content-cell">[Comment mesurer le succes. 120 car. max.]</td></tr>
-</table>
-<div class="doc-footer"><a href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a></div>
+<div class="dt-wrapper">
+<div class="dt-header">
+  <div class="dt-header-left">
+    <img class="dt-header-logo" src="/assets/logo.png" alt="Ark Intelligence">
+    <span class="dt-header-title">Design Thinking</span>
+  </div>
+  <div class="dt-header-right">
+    <div class="dt-header-field"><span class="label">Nom du projet :</span><br><span class="value">{{PROJECT_NAME}}</span></div>
+    <div class="dt-header-field"><span class="label">Cree par :</span><br><span class="value">{{OWNER_NAME}}</span></div>
+  </div>
+</div>
+<div class="dt-body">
+  <div class="dt-canvas">
+    <div class="dt-column">
+      <div class="dt-column-header">Experience utilisateur</div>
+      <div class="dt-column-content">[Synthese de la journee typique de l utilisateur, ses difficultes, frustrations et habitudes. 120-150 car.]</div>
+    </div>
+    <div class="dt-column">
+      <div class="dt-column-header">Definition du Probleme</div>
+      <div class="dt-column-content">[Probleme central reformule et impact concret si non resolu. 120-150 car.]</div>
+    </div>
+    <div class="dt-column">
+      <div class="dt-column-header">Solution</div>
+      <div class="dt-column-content">[Idee principale retenue, alternatives envisagees et raisons du choix. 120-150 car.]</div>
+    </div>
+    <div class="dt-column">
+      <div class="dt-column-header">Prototype</div>
+      <div class="dt-column-content">[Forme du prototype, ce qu il permet de tester, perimetre limite. 120-150 car.]</div>
+    </div>
+    <div class="dt-column">
+      <div class="dt-column-header">Test</div>
+      <div class="dt-column-content">[Methode de test, nombre de testeurs, criteres de validation et seuil de reussite. 120-150 car.]</div>
+    </div>
+  </div>
+  <div class="dt-resume-row">
+    <div class="dt-resume">
+      <div class="dt-resume-header">Resume</div>
+      <div class="dt-resume-content">[Synthese en 3-4 phrases de l approche Design Thinking pour ce projet. 120-150 car.]</div>
+    </div>
+  </div>
+</div>
+<div class="dt-footer">
+  <span class="dt-footer-date"><strong>Date :</strong> {{DATE}}</span>
+  <img class="dt-footer-logo" src="/assets/logo.png" alt="Ark Intelligence">
+  <a class="dt-footer-link" href="https://www.arkintelligence.africa" target="_blank">Document genere par Ark Intelligence</a>
+</div>
 </div>`;
 
-export const LABELS = [
-    '1. Contexte', '2. Probleme a resoudre', '3. Beneficiaire principal',
-    '4. Objectif a 12 mois', '5. Besoin reel', '6. Limites actuelles',
-    '7. Livrable attendu', '8. Hors perimetre', '9. Exigences fonctionnelles',
-    '10. Contraintes', '11. Risques', '12. Criteres de succes'
+export const COLUMNS = [
+    'Experience utilisateur',
+    'Definition du Probleme',
+    'Solution',
+    'Prototype',
+    'Test',
+    'Resume'
 ];
-export const TITLE = 'Definition de Projet';
-export const CONFIG = { totalQuestions: 12, hasNameStep: true };
+
+export const TITLE = 'Design Thinking';
+
+export const CONFIG = { totalQuestions: 8, hasNameStep: false, requiresDefinition: true, layout: 'canvas' };
