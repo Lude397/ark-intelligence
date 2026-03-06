@@ -105,7 +105,14 @@
             </button>
             <div class="document-title" id="documentTitle">Document</div>
             <div class="document-actions">
-                <button id="docMenuBtn" class="doc-menu-btn">&#8942;</button>
+                <!-- Boutons zoom : desktop uniquement, visibles pour DT et BMC -->
+                <div class="zoom-controls desktop-only landscape-only" id="zoomControls">
+                    <button id="zoomOut" title="Zoom -">&#8722;</button>
+                    <span id="zoomLevel">100%</span>
+                    <button id="zoomIn" title="Zoom +">&#43;</button>
+                    <button id="zoomFit" title="Plein ecran">&#x26F6;</button>
+                </div>
+                <button id="docMenuBtn" class="doc-menu-btn">&#8943;</button>
                 <div id="docDropdownMenu" class="doc-dropdown-menu">
                     <button id="copyDoc">Copier</button>
                     <button id="shareDoc">Partager</button>
