@@ -197,6 +197,9 @@ function showDocument(docType, content, metadata) {
     if (el.zoomControls) {
         el.zoomControls.style.display = (isLandscapeDoc && window.matchMedia('(min-width: 769px)').matches) ? 'flex' : 'none';
     }
+    // Supprimer max-width pour les docs paysage afin de permettre le centrage
+    el.documentBody.style.maxWidth = isLandscapeDoc ? 'none' : '800px';
+    el.documentBody.style.width = isLandscapeDoc ? '100%' : '';
     // Reset zoom a 100%
     state.currentZoom = 1;
     if (el.zoomLevel) el.zoomLevel.textContent = '100%';
