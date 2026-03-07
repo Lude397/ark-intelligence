@@ -417,8 +417,8 @@
                         const scale = Math.min(1, availableWidth / desktopWidth);
 
                         if (isMobile) {
-                            iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale + ');opacity:1;';
-                            wrapper.style.cssText = 'width:' + availableWidth + 'px;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;margin:0 auto;';
+                            iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top center;transform:scale(' + scale + ');opacity:1;margin:0 auto;';
+                            wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
                         } else {
                             const scaledWidth = Math.ceil(desktopWidth * scale);
                             iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale.toFixed(2) + ');opacity:1;';
@@ -468,7 +468,12 @@
                 document.querySelector('.container').classList.add('landscape');
             }
 
-            renderInIframe(document.getElementById('documentContent'), htmlContent);
+            // Supprimer le padding du cadre quand le doc est charge via iframe
+            const docEl = document.getElementById('documentContent');
+            docEl.style.padding = '0';
+            docEl.style.borderRadius = '0';
+            docEl.style.boxShadow = 'none';
+            renderInIframe(docEl, htmlContent);
             
             const userData = localStorage.getItem('ark_user');
             if (!userData) {
