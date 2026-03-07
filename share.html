@@ -409,12 +409,16 @@
                 try {
                     const applyScale = function() {
                         const contentHeight = iframe.contentDocument.documentElement.scrollHeight;
-                        const availableWidth = window.innerWidth - 40;
+                        // Mesurer le container reeel — padding .container (24px) + padding .document (64px) = 88px
+                        const docEl = document.getElementById('documentContent');
+                        const availableWidth = docEl
+                            ? docEl.getBoundingClientRect().width
+                            : window.innerWidth - 88;
                         const scale = Math.min(1, availableWidth / desktopWidth);
 
                         if (isMobile) {
                             iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale + ');opacity:1;';
-                            wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
+                            wrapper.style.cssText = 'width:' + availableWidth + 'px;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
                         } else {
                             const scaledWidth = Math.ceil(desktopWidth * scale);
                             iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale.toFixed(2) + ');opacity:1;';
