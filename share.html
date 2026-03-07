@@ -418,7 +418,7 @@
 
                         if (isMobile) {
                             iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale + ');opacity:1;';
-                            wrapper.style.cssText = 'width:' + availableWidth + 'px;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
+                            wrapper.style.cssText = 'width:' + availableWidth + 'px;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;margin:0 auto;';
                         } else {
                             const scaledWidth = Math.ceil(desktopWidth * scale);
                             iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale.toFixed(2) + ');opacity:1;';
