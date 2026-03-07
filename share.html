@@ -417,8 +417,9 @@
                         const scale = Math.min(1, availableWidth / desktopWidth);
 
                         if (isMobile) {
-                            iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top center;transform:scale(' + scale + ');opacity:1;margin:0 auto;';
-                            wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
+                            const scaledWidth = Math.ceil(desktopWidth * scale);
+                            iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale + ');opacity:1;';
+                            wrapper.style.cssText = 'width:' + scaledWidth + 'px;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;margin:0 auto;';
                         } else {
                             const scaledWidth = Math.ceil(desktopWidth * scale);
                             iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale.toFixed(2) + ');opacity:1;';
