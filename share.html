@@ -380,6 +380,59 @@
             }
         }
         
+        function renderInIframe(container, htmlContent) {
+            container.innerHTML = '';
+            const isLandscape = htmlContent.includes('dt-wrapper') || htmlContent.includes('bmc-wrapper');
+            const desktopWidth = isLandscape ? 1100 : 820;
+            const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+            const wrapper = document.createElement('div');
+            const iframe = document.createElement('iframe');
+
+            iframe.setAttribute('scrolling', isMobile ? 'auto' : 'no');
+
+            const mobileCss = `@media (max-width: 768px) {
+                td, th { overflow: visible !important; white-space: normal !important; height: auto !important; word-wrap: break-word !important; word-break: break-word !important; }
+                .dt-canvas, .bmc-grid { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
+                .dt-column, .bmc-cell { min-width: 0 !important; overflow: visible !important; }
+            }`;
+            const fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:white;width:${desktopWidth}px;}${mobileCss}</style></head><body>${htmlContent}</body></html>`;
+
+            iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;opacity:0;';
+            wrapper.style.cssText = 'width:100%;overflow:visible;background:white;';
+
+            iframe.srcdoc = fullHtml;
+            wrapper.appendChild(iframe);
+            container.appendChild(wrapper);
+
+            iframe.addEventListener('load', function() {
+                try {
+                    const applyScale = function() {
+                        const contentHeight = iframe.contentDocument.documentElement.scrollHeight;
+                        const availableWidth = window.innerWidth - 40;
+                        const scale = Math.min(1, availableWidth / desktopWidth);
+
+                        if (isMobile) {
+                            iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale + ');opacity:1;';
+                            wrapper.style.cssText = 'width:100%;overflow:hidden;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;';
+                        } else {
+                            const scaledWidth = Math.ceil(desktopWidth * scale);
+                            iframe.style.cssText = 'border:none;display:block;width:' + desktopWidth + 'px;height:' + contentHeight + 'px;transform-origin:top left;transform:scale(' + scale.toFixed(2) + ');opacity:1;';
+                            wrapper.style.cssText = 'width:' + scaledWidth + 'px;overflow:visible;background:white;height:' + Math.ceil(contentHeight * scale) + 'px;margin:0 auto;';
+                        }
+                    };
+
+                    if (!isMobile) {
+                        requestAnimationFrame(() => requestAnimationFrame(applyScale));
+                    } else {
+                        applyScale();
+                    }
+                } catch(e) {
+                    iframe.style.cssText = 'border:none;display:block;width:100%;height:' + (isLandscape ? '650px' : '1000px') + ';opacity:1;';
+                }
+            });
+        }
+
         function showDocument(htmlContent, owner, project, createdAt) {
             const ownerName = owner.split('-').map(word => 
                 word.charAt(0).toUpperCase() + word.slice(1)
@@ -405,20 +458,13 @@
                 .replace(/\{\{DATE\}\}/g, formattedDate)
                 .replace(/arkintelligence\.vercel\.app/g, 'www.arkintelligence.africa')
                 .replace(/https:\/\/arkintelligence\.vercel\.app/g, 'https://www.arkintelligence.africa');
-            
-            document.getElementById('documentContent').innerHTML = htmlContent;
-            
-            // Adapter le conteneur pour les documents paysage (DT, BMC)
-            if (htmlContent.includes('dt-wrapper') || htmlContent.includes('bmc-wrapper')) {
+
+            const isLandscape = htmlContent.includes('dt-wrapper') || htmlContent.includes('bmc-wrapper');
+            if (isLandscape) {
                 document.querySelector('.container').classList.add('landscape');
             }
-            
-            // Ajuster la police pour que le document tienne sur une page A4
-            requestAnimationFrame(function() {
-                if (typeof fitToPage === 'function') {
-                    fitToPage(document.getElementById('documentContent'));
-                }
-            });
+
+            renderInIframe(document.getElementById('documentContent'), htmlContent);
             
             const userData = localStorage.getItem('ark_user');
             if (!userData) {
