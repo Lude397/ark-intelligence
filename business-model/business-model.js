@@ -184,6 +184,7 @@ function addMessage(content, type, saveToHistory = true) {
     div.className = 'message ' + type;
     div.innerHTML = '<div class="message-content">' + formatMessage(content) + '</div>';
     el.chatMessages.appendChild(div);
+    if (type === 'ai' && saveToHistory) addFeedbackThumbs(div);
     scrollToBottom();
     if (saveToHistory) state.history.push({ type, content });
 }
@@ -331,6 +332,8 @@ function showDocument(docType, content, metadata) {
     el.documentTitle.textContent = DOC_NAMES[docType] || docType;
     
     el.documentBody.innerHTML = updatedContent;
+
+    addFeedbackStars(el.documentBody);
     
     switchScreen('document');
 }
