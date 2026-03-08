@@ -1,3 +1,4 @@
+//design-thinking/design-thinking.js
 // ===== STATE =====
 const state = {
     history: [],
@@ -5,7 +6,7 @@ const state = {
     currentDoc: null,
     cadrageComplete: false,
     projetNom: null,
-    orientationData: null
+    definitionData: null
 };
 
 // ===== ELEMENTS =====
@@ -56,8 +57,8 @@ function switchScreen(screen) {
     }
 }
 
-// ===== CHECK PREREQUISITE: ORIENTATION DE SOLUTION =====
-async function checkOrientationExists() {
+// ===== CHECK PREREQUISITE: DEFINITION DE PROJET =====
+async function checkDefinitionExists() {
     const userData = JSON.parse(localStorage.getItem('ark_user'));
     if (!userData || !userData.id) {
         el.welcomeSubtitle.textContent = 'Vous devez etre connecte pour acceder a cette phase.';
@@ -73,50 +74,50 @@ async function checkOrientationExists() {
         const data = await response.json();
 
         if (data.success && data.documents) {
-            const orientations = data.documents.filter(d => d.doc_type === 'orientation_solution');
-            if (orientations.length > 0) {
-                return orientations;
+            const definitions = data.documents.filter(d => d.doc_type === 'definition_projet');
+            if (definitions.length > 0) {
+                return definitions;
             }
         }
     } catch (error) {
-        console.error('Erreur verification orientation:', error);
+        console.error('Erreur verification definition:', error);
     }
 
-    el.welcomeSubtitle.textContent = 'Vous devez d\'abord completer une Orientation de solution avant de passer a la Formulation.';
+    el.welcomeSubtitle.textContent = 'Vous devez d\'abord completer une Definition de projet avant de passer au Design Thinking.';
     el.welcomeSubtitle.style.color = '#dc2626';
     return false;
 }
 
 // ===== LOAD PROJECTS LIST =====
 async function loadProjects() {
-    const orientations = await checkOrientationExists();
-    if (!orientations) return;
+    const definitions = await checkDefinitionExists();
+    if (!definitions) return;
 
-    if (orientations.length === 1) {
-        state.projetNom = orientations[0].projet_nom;
-        state.orientationData = orientations[0].contenu;
+    if (definitions.length === 1) {
+        state.projetNom = definitions[0].projet_nom;
+        state.definitionData = definitions[0].contenu;
         el.welcomeSubtitle.textContent = 'Projet : ' + state.projetNom;
         el.welcomeInputContainer.classList.add('visible');
         el.welcomeInput.value = state.projetNom;
         el.welcomeInput.style.display = 'none';
-        el.welcomeSend.textContent = 'Commencer la formulation';
+        el.welcomeSend.textContent = 'Commencer le Design Thinking';
     } else {
-        el.welcomeSubtitle.textContent = 'Selectionnez le projet a formuler :';
+        el.welcomeSubtitle.textContent = 'Selectionnez le projet a analyser :';
         el.welcomeInputContainer.classList.add('visible');
         
         const selectHtml = document.createElement('div');
         selectHtml.style.cssText = 'width:100%;max-width:600px;display:flex;flex-direction:column;gap:8px;margin-bottom:16px;';
         
-        orientations.forEach((ori) => {
+        definitions.forEach((def) => {
             const btn = document.createElement('button');
-            btn.textContent = ori.projet_nom;
+            btn.textContent = def.projet_nom;
             btn.style.cssText = 'padding:14px 20px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:15px;cursor:pointer;text-align:left;transition:all 0.2s;';
             btn.addEventListener('mouseenter', () => { btn.style.background = 'var(--bg-tertiary)'; });
             btn.addEventListener('mouseleave', () => { btn.style.background = 'var(--bg-secondary)'; });
             btn.addEventListener('click', () => {
-                state.projetNom = ori.projet_nom;
-                state.orientationData = ori.contenu;
-                startFormulation();
+                state.projetNom = def.projet_nom;
+                state.definitionData = def.contenu;
+                startInterview();
             });
             selectHtml.appendChild(btn);
         });
@@ -127,18 +128,18 @@ async function loadProjects() {
     }
 }
 
-// ===== START FORMULATION =====
-function startFormulation() {
+// ===== START INTERVIEW =====
+function startInterview() {
     switchScreen('chat');
     
-    const contextMessage = 'Je souhaite faire la formulation de solution pour mon projet "' + state.projetNom + '". Voici l\'orientation de solution validee :\n\n' + extractOrientationSummary(state.orientationData);
+    const contextMessage = 'Je souhaite faire le Design Thinking pour mon projet "' + state.projetNom + '". Voici la definition de projet validee :\n\n' + extractDefinitionSummary(state.definitionData);
     
-    addMessage('Formulation de solution pour : ' + state.projetNom, 'user');
+    addMessage('Design Thinking pour : ' + state.projetNom, 'user');
     sendToAPI(contextMessage);
 }
 
-// ===== EXTRACT KEY DATA FROM ORIENTATION =====
-function extractOrientationSummary(htmlContent) {
+// ===== EXTRACT KEY DATA FROM DEFINITION =====
+function extractDefinitionSummary(htmlContent) {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = htmlContent;
     
@@ -161,8 +162,8 @@ function extractOrientationSummary(htmlContent) {
 
 // ===== WELCOME SEND =====
 async function handleWelcomeSend() {
-    if (state.projetNom && state.orientationData) {
-        startFormulation();
+    if (state.projetNom && state.definitionData) {
+        startInterview();
     }
 }
 
@@ -183,10 +184,11 @@ function addMessage(content, type, saveToHistory = true) {
     div.className = 'message ' + type;
     div.innerHTML = '<div class="message-content">' + formatMessage(content) + '</div>';
     el.chatMessages.appendChild(div);
+    if (type === 'ai' && saveToHistory) addFeedbackThumbs(div);
     scrollToBottom();
     if (saveToHistory) state.history.push({ type, content });
 }
-
+ 
 function formatMessage(text) {
     let html = text.replace(/\n/g, '<br>');
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -218,12 +220,7 @@ async function sendToAPI(message) {
         const response = await fetch(CONFIG.apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                mode: 'chat', 
-                message, 
-                history: state.history.slice(0, -1),
-                docType: 'formulation_solution'
-            })
+            body: JSON.stringify({ mode: 'chat', message, history: state.history.slice(0, -1), docType: 'design_thinking' })
         });
         hideTypingIndicator();
         const data = await response.json();
@@ -233,7 +230,7 @@ async function sendToAPI(message) {
             addMessage(cleanResponse, 'ai', true);
             disableChatInput();
             await delay(500);
-            addMessage('Je vais generer votre document de formulation...', 'ai', false);
+            addMessage('Je vais generer votre canvas Design Thinking...', 'ai', false);
             showTypingIndicator();
             await generateDocumentsInBackground();
             hideTypingIndicator();
@@ -255,19 +252,19 @@ function delay(ms) {
 function disableChatInput() {
     el.chatInput.disabled = true;
     el.chatSend.disabled = true;
-    el.chatInput.placeholder = 'Formulation en cours...';
+    el.chatInput.placeholder = 'Interview en cours...';
 }
 
 function showCadrageComplete() {
     state.cadrageComplete = true;
     el.chatInput.disabled = true;
     el.chatSend.disabled = true;
-    el.chatInput.placeholder = 'Formulation terminee - Consultez votre document';
+    el.chatInput.placeholder = 'Design Thinking termine - Consultez votre document';
     el.chatInput.style.opacity = '0.6';
     el.chatSend.style.opacity = '0.6';
 
-    if (state.documentCache['formulation_solution']) {
-        showDocument('formulation_solution', state.documentCache['formulation_solution'], {
+    if (state.documentCache['design_thinking']) {
+        showDocument('design_thinking', state.documentCache['design_thinking'], {
             projetNom: state.projetNom,
             createdAt: new Date().toISOString()
         });
@@ -285,7 +282,7 @@ async function generateDocumentsInBackground() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 mode: 'generate', 
-                docType: 'formulation_solution', 
+                docType: 'design_thinking', 
                 history: state.history,
                 userId: userId,
                 projetNom: state.projetNom
@@ -294,7 +291,7 @@ async function generateDocumentsInBackground() {
         const data = await response.json();
         if (data.success) {
             const baseUrl = window.location.origin;
-            state.documentCache['formulation_solution'] = data.document.replace(/PLACEHOLDER_BASE_URL/g, baseUrl);
+            state.documentCache['design_thinking'] = data.document.replace(/PLACEHOLDER_BASE_URL/g, baseUrl);
         }
     } catch (error) {
         console.error('Erreur generation:', error);
@@ -334,36 +331,10 @@ function showDocument(docType, content, metadata) {
     state.currentDoc = { type: docType, content: updatedContent };
     el.documentTitle.textContent = DOC_NAMES[docType] || docType;
     
-    const trimmedContent = updatedContent.trim();
-    if (trimmedContent.startsWith('<!DOCTYPE html>') || 
-        trimmedContent.startsWith('<html') ||
-        trimmedContent.includes('<table>')) {
-        el.documentBody.innerHTML = updatedContent;
-    } else {
-        el.documentBody.innerHTML = markdownToHtml(updatedContent);
-    }
-    
-    switchScreen('document');
-}
+    el.documentBody.innerHTML = updatedContent;
 
-function markdownToHtml(md) {
-    let html = md;
-    html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
-    html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
-    html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    html = html.replace(/^\|(.+)\|$/gm, (match, content) => {
-        const cells = content.split('|').map(c => c.trim());
-        if (cells.every(c => /^[-:]+$/.test(c))) return '<!--separator-->';
-        return '<tr>' + cells.map(c => '<td>' + c + '</td>').join('') + '</tr>';
-    });
-    html = html.replace(/<!--separator-->/g, '');
-    html = html.replace(/(<tr>.*<\/tr>\n?)+/g, '<table>$&</table>');
-    html = html.replace(/^- (.*$)/gm, '<li>$1</li>');
-    html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
-    html = html.replace(/^(?!<[hultro])(.*$)/gm, (match) => match.trim() ? '<p>' + match + '</p>' : '');
-    html = html.replace(/<p><\/p>/g, '');
-    return html;
+    addFeedbackStars(el.documentBody);
+    switchScreen('document');
 }
 
 // ===== DOCUMENT ACTIONS =====
