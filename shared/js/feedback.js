@@ -7,8 +7,8 @@
 
     // ===== CONFIGURATION =====
     var FEEDBACK_CONFIG = {
-        supabaseUrl: typeof CONFIG !== 'undefined' ? CONFIG.supabaseUrl : '',
-        supabaseKey: typeof CONFIG !== 'undefined' ? CONFIG.supabaseKey : ''
+        supabaseUrl: (typeof window.ENV !== 'undefined' && window.ENV.SUPABASE_URL) ? window.ENV.SUPABASE_URL : '',
+        supabaseKey: (typeof window.ENV !== 'undefined' && window.ENV.SUPABASE_ANON_KEY) ? window.ENV.SUPABASE_ANON_KEY : ''
     };
 
     // ===== UTILITAIRE : recuperer le user_id =====
