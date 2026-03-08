@@ -183,6 +183,7 @@ function addMessage(content, type, saveToHistory = true) {
     div.className = 'message ' + type;
     div.innerHTML = '<div class="message-content">' + formatMessage(content) + '</div>';
     el.chatMessages.appendChild(div);
+    if (type === 'ai' && saveToHistory) addFeedbackThumbs(div);
     scrollToBottom();
     if (saveToHistory) state.history.push({ type, content });
 }
@@ -339,6 +340,7 @@ function showDocument(docType, content, metadata) {
         trimmedContent.startsWith('<html') ||
         trimmedContent.includes('<table>')) {
         el.documentBody.innerHTML = updatedContent;
+        addFeedbackStars(el.documentBody);
     } else {
         el.documentBody.innerHTML = markdownToHtml(updatedContent);
     }
